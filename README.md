@@ -48,7 +48,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### TODO: add remainder of the used tech stack (still to be defined)
 
-## Design <a name="design"></a> :triangular_flag_on_post:
+## Design <a name="design"></a> :memo:
 
 When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters: 
 - Open now.
