@@ -72,7 +72,7 @@ It seems to have most of the fields necessary to replicate a similar list to the
 
 I also compared Jumbo's store finder with Walmart's. The UI is very similar, having a search-box within the map that displays an expandable list of stores, the main difference being that Walmart's does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the ammount of stores).
 
-Therefore, a simpler but functional version of the existing Jumbo store finder will be created here.
+Therefore, a simpler but functional version of the existing Jumbo store finder will be created in this small project.
 
 <p align="center">
   <img src="images/Jumbo Store Locator.png" title="Proposed design" alt="Proposed design"/>
@@ -87,7 +87,7 @@ TODO: add run instructions, needed software (e.g. Java 8, Maven), etc.
 Before implementing a front-end, every API was tested using [Postman](https://www.postman.com/):
 
 <p align="center">
-  <img src="images/Postman.png" title="Postman HTTP tests" alt="Postman HTTP tests"/>
+  <img src="images/Postman.png" title="Postman API tests" alt="Postman API tests"/>
 </p>
 
 This tool facilitates API testing by allowing the creation of collections containing pre-defined get/post/put/delete/etc requests.
