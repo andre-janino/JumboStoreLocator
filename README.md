@@ -51,14 +51,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 ## Design <a name="design"></a> :memo:
 
-When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters: 
-- Open now.
-- Open on Sundays.
-- Open until 19/20/21/22h.
-- New store.
-- Pickup-point.
-- Store.
-- Store + pickup-point.
+When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, "New store`_, _`Pickup-point`_, "Store`_, and _`Store + pickup-point`_.
 
 It has a wide range of filters, but it lacks what is being asked here: to display only the 5 nearest stores. Therefore, it makes sense to implement that filter in a way that is easy to incorporate it among the others. From what I've observed, stores are already ordered by distance on the existing page.
 
@@ -66,9 +59,9 @@ On the details of each found store, the page also allows the user to navigate to
 - Store details (e.g. https://www.jumbo.com/winkel/jumbo-heinkenszand-stenevate)
 - Reserve pick-up time (e.g. https://www.jumbo.com/INTERSHOP/web/WFS/Jumbo-Grocery-Site/nl_NL/-/EUR/ViewDeliveryOptions-Start?storeUUID=8E0KYx4XCQQAAAFoMTtWMVlg)
 
-The store information I can work with is provided in a json format, and contains the following fields: "city", "postalCode", "street", "street2", "street3", "addressName", "uuid", "longitude", "latitude", "complexNumber", "showWarningMessage", "todayOpen", "locationType", "collectionPoint", "sapStoreID" and "todayClose". 
+The store information I can work with is provided in a json format, and contains the following fields: _`city`_, _`postalCode`_, _`street`_, _`street2`_, _`street3`_, _`addressName`_, _`uuid`_, _`longitude`_, _`latitude`_, _`complexNumber`_, _`showWarningMessage`_, _`todayOpen`_, _`locationType`_, _`collectionPoint`_, _`sapStoreID`_ and _`todayClose`_. 
 
-It seems to have most of the fields necessary to replicate a similar list to the one provided at Jumbo's website, except by the open/close times on other days of the week. The uuid field would also allow the "reserve pick-up time" button to be implemented. However, the data needed for the store details button does not seem to be available. 
+It seems to have most of the fields necessary to replicate a similar list to the one provided at Jumbo's website, except by the open/close times on other days of the week. The _`uuid`_ field would also allow the _`reserve pick-up time`_ button to be implemented. However, the data needed for the store details button does not seem to be available. 
 
 I also compared Jumbo's store finder with Walmart's. The UI is very similar, having a search-box within the map that displays an expandable list of stores, the main difference being that Walmart's does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the ammount of stores).
 
