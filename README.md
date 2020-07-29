@@ -45,7 +45,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Google Maps API
 
-- _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as wel as displaying said stores on an embeeded map on the _`frontend`_ project.
+- _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embeeded map on the _`frontend`_ project.
 
 #### TODO: add remainder of the used tech stack (still to be defined)
 
@@ -92,3 +92,4 @@ TODO: When development is done, share the postman collections here.
 - Migrate the h2 database into another database. PostgreeSQL and MySQL are valid options in terms of SQL, while MongoDB and DynamoDB are appealing ones in terms of NoSQL.
 - Add user roles so that admin accounts may be managed, allowing for store registering, user management and so forth.
 - Add new functionalities (favoriting a store, link to store details, other filters, etc.)
+- Add unit tests (that is, don't rely on postman alone).
