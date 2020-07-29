@@ -13,6 +13,7 @@ TODO: improve the readme as the project starts to take shape, adding missing mic
 - [About the project](#about)
 - [Design](#design)
 - [How to run](#run)
+- [Testing](#testing)
 - [Future enhancements](#future)
 
 ## About the project <a name="about"></a> :scroll:
@@ -59,7 +60,7 @@ When designing a new feature, it makes sense to understand what is already in pl
 - Store.
 - Store + pickup-point.
 
-It has a wide range of filters, but it lacks what is being asked here: to bring only the 5 nearest stores. Therefore, it makes sense to implement that filter in a way that is easy to incorporate it among the others. From what I've observed, stores are already ordered by distance on the existing page.
+It has a wide range of filters, but it lacks what is being asked here: to display only the 5 nearest stores. Therefore, it makes sense to implement that filter in a way that is easy to incorporate it among the others. From what I've observed, stores are already ordered by distance on the existing page.
 
 On the details of each found store, the page also allows the user to navigate to 2 other pages:
 - Store details (e.g. https://www.jumbo.com/winkel/jumbo-heinkenszand-stenevate)
@@ -81,8 +82,20 @@ Therefore, a simpler but functional version of the existing Jumbo store finder w
 
 TODO: add run instructions, needed software (e.g. Java 8, Maven), etc.
 
+## Testing <a name="testing"></a> :beetle:
+
+Before implementing a front-end, every API was tested using [Postman](https://www.postman.com/):
+
+<p align="center">
+  <img src="images/Postman.png" title="Postman HTTP tests" alt="Postman HTTP tests"/>
+</p>
+
+This tool facilitates API testing by allowing the creation of collections containing pre-defined get/post/put/delete/etc requests.
+
+TODO: When development is done, share the postman collections here.
+
 ## Future enhancements <a name="future"></a> :clock130:
 
 - Migrate the h2 database into another database. PostgreeSQL and MySQL are valid options in terms of SQL, while MongoDB and DynamoDB are appealing ones in terms of NoSQL.
 - Add user roles so that admin accounts may be managed, allowing for store registering, user management and so forth.
-- Add new functionalities (link to store details, other filters, etc.)
+- Add new functionalities (favoriting a store, link to store details, other filters, etc.)
