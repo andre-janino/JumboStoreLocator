@@ -20,11 +20,12 @@ TODO: improve the readme as the project starts to take shape, adding missing mic
 
 This project was developed using _`Spring Boot (2.3.2.RELEASE)`_ for the back-end microservices and _`Vue.js 2.6.11`_ for the front-end components.
 
-The solution is divided into the _`frontend`_ project for the user interface and _`user-service, api-gateway, store-service`_ for the back-end:
-- frontend: Vue.js project with a _`login`_ and _`find store`_ page. Communicates directly with the _`api-gateway`_.
-- api-gateway: deals with user authentication and redirects requests to _`user-service and store-service`_.
-- user-service: customer entity/controller/service/etc with a simple in-memory h2 database.
-- store-service: store entity/controller/service/etc with a mongodb database implementation, returns N closest stores to a given location.
+The solution is divided into the _`frontend`_ project for the user interface and _`user-service`_, _`api-gateway`_, _`store-service`_ and _`discovery-service`_ for the back-end:
+- _`frontend`_: Vue.js project with a _`login`_ and _`find store`_ page. Communicates directly with the _`api-gateway`_.
+- _`api-gateway`_: deals with user authentication and redirects requests to other microservices.
+- _`user-service`_: customer entity/controller/service/etc with a simple in-memory h2 database.
+- _`store-service`_: store entity/controller/service/etc with a mongodb (atlas) database implementation, returns N closest stores to a given location.
+- _`discovery-service`_: eureka discovery service that all other services subscribe to.
 
 Why have microservices for such a small application? Creating small, independent microservices allow us to integrate/replace/maintain functionality in a bigger project with minimal effort. In this particular case, what is really being asked is that a store locator API is implemented, but as I have no access to Jumbo's API Gateway, front-end, user/customer service, etc, it makes sense to create my own and keep them separate, simply acting as palceholders for an MVP demonstration.
 
@@ -77,13 +78,22 @@ TODO: add run instructions, needed software (e.g. Java 8, Maven), etc.
 
 ## Testing <a name="testing"></a> :beetle:
 
-Before implementing a front-end, every API was tested using [Postman](https://www.postman.com/):
+This project was tested in three ways:
+- Controllers, Services and Repositories were tested with JUnit.
+- API calls were tested with [Postman](https://www.postman.com/).
+- And last but not least, the UI was tested manually (TODO: add selenium for this project).
+
+#### JUnit
+
+_`JUnit`_ was used alongside _`Mockito`_ for the unit tests in this project. _`MockMvc`_ was used to test _`Controllers`_ and _`Object mappers`_ for serialization purposes, while _`TestEntityManager`_ was used to test _`Repositories`_.
+
+#### Postman
+
+This tool facilitates API testing by allowing the creation of collections containing pre-defined get/post/put/delete/etc requests.
 
 <p align="center">
   <img src="images/Postman.png" title="Postman API tests" alt="Postman API tests"/>
 </p>
-
-This tool facilitates API testing by allowing the creation of collections containing pre-defined get/post/put/delete/etc requests.
 
 TODO: When development is done, share the postman collections here.
 
@@ -92,4 +102,4 @@ TODO: When development is done, share the postman collections here.
 - Migrate the h2 database into another database. PostgreeSQL and MySQL are valid options in terms of SQL, while MongoDB and DynamoDB are appealing ones in terms of NoSQL.
 - Add user roles so that admin accounts may be managed, allowing for store registering, user management and so forth.
 - Add new functionalities (favoriting a store, link to store details, other filters, etc.)
-- Add unit tests (that is, don't rely on postman alone).
+- Add selenium tests (that is, don't rely on JUnit and Postman alone).
