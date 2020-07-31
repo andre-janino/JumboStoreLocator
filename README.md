@@ -91,7 +91,7 @@ _`JUnit`_ was used alongside _`Mockito`_ for the _`Services`_, _`Controllers`_ a
 
 #### Postman
 
-This tool facilitates API testing by allowing the creation of collections containing pre-defined get/post/put/delete/etc requests.
+This tool facilitates API testing by allowing the creation of get/post/put/delete/etc requests collections, which helps back-end developers a lot when a frontend is not yet available.
 
 <p align="center">
   <img src="_resources/Postman.png" title="Postman API tests" alt="Postman API tests"/>
