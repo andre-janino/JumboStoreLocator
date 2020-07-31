@@ -85,7 +85,7 @@ This project was tested in three ways:
 
 #### JUnit
 
-_`JUnit`_ was used alongside _`Mockito`_ for the unit tests in this project. _`MockMvc`_ was used to test _`Controllers`_ and _`Object mappers`_ for serialization purposes, while _`TestEntityManager`_ was used to test _`Repositories`_.
+_`JUnit`_ was used alongside _`Mockito`_ for the unit tests in this project. _`MockMvc`_ was used to test _`Controllers`_ response, while _`TestEntityManager`_ was used to test _`Repositories`_. For _`Service`_ tests, repositories were mocked.
 
 #### Postman
 
