@@ -27,7 +27,9 @@ The solution is divided into the _`frontend`_ project for the user interface and
 - _`store-service`_: store entity/controller/service/etc with a mongodb (atlas) database implementation, returns N closest stores to a given location.
 - _`discovery-service`_: eureka discovery service that all other services subscribe to.
 
-Why have microservices for such a small application? Creating small, independent microservices allow us to integrate/replace/maintain functionality in a bigger project with minimal effort. In this particular case, what is really being asked is that a store locator API is implemented, but as I have no access to Jumbo's API Gateway, front-end, user/customer service, etc, it makes sense to create my own and keep them separate, simply acting as palceholders for an MVP demonstration.
+It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything that was done on this small project.
+
+Why have microservices for such a small application? Creating small, independent microservices allow us to integrate/replace/maintain functionality in a bigger project with minimal effort. In this particular case, what is really being asked is that a store locator API is implemented, but as I have no access to Jumbo's API Gateway, front-end, user/customer service, etc, it makes sense to create my own and keep them separate, simply acting as placeholders for an MVP demonstration.
 
 Several libraries were used to fulfill the needed business logics; the main ones are listed in the following sub-sections.
 
@@ -46,7 +48,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Google Maps API
 
-- _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embeeded map on the _`frontend`_ project.
+- _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embedded map on the _`frontend`_ project.
 
 #### TODO: add remainder of the used tech stack (still to be defined)
 
@@ -64,7 +66,7 @@ The store information I can work with is provided in a json format, and contains
 
 It seems to have most of the fields necessary to replicate a similar list to the one provided at Jumbo's website, except by the open/close times on other days of the week. The _`uuid`_ field would also allow the _`reserve pick-up time`_ button to be implemented. However, the data needed for the store details button does not seem to be available. 
 
-I also compared Jumbo's store finder with Walmart's. The UI is very similar, having a search-box within the map that displays an expandable list of stores, the main difference being that Walmart's does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the ammount of stores).
+I also compared Jumbo's store finder with Walmart's. The UI is very similar, having a search-box within the map that displays an expandable list of stores, the main difference being that Walmart's does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the amount of stores).
 
 Therefore, a simpler but functional version of the existing Jumbo store finder will be created in this small project.
 
