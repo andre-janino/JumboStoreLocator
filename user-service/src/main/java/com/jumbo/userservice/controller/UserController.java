@@ -1,4 +1,4 @@
-package com.jumbo.stores.userservice.controller;
+package com.jumbo.userservice.controller;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jumbo.stores.userservice.entity.User;
-import com.jumbo.stores.userservice.service.UserService;
+import com.jumbo.userservice.entity.User;
+import com.jumbo.userservice.service.UserService;
 
 /**
  * Request controller for the user entity.
@@ -69,7 +69,7 @@ public class UserController {
 	 * @param id of the user object
 	 * @return the updated user object, or an error response
 	 */
-	@PutMapping("/user/{id}")
+	@PutMapping("/users/{id}")
 	public User updateUser(@RequestBody User user, @PathVariable long id) {
 		return service.update(id, user);
 	}
@@ -79,7 +79,7 @@ public class UserController {
 	 * 
 	 * @param id of the user to be deleted.
 	 */
-	@DeleteMapping("/user/{id}")
+	@DeleteMapping("/users/{id}")
 	public void deleteUser(@PathVariable long id) {
 		service.delete(id);
 	}

@@ -1,4 +1,4 @@
-package com.jumbo.stores.userservice;
+package com.jumbo.userservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

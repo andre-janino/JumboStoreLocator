@@ -4,4 +4,4 @@
  */
 
 insert into users
-values(1001, 'André', 'Armstrong Janino Cizotto', 'andre.janino@gmail.com', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6');
+values(1001, 'andre.janino@gmail.com', 'André', 'Armstrong Janino Cizotto', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6');

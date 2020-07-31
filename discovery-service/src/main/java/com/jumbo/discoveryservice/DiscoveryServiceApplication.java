@@ -6,7 +6,6 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 /**
  * Spring Boot main class for the Eureka discovery service registry.
- * 
  * All hail the all knowing service provider!
  * 
  * @author André Janino

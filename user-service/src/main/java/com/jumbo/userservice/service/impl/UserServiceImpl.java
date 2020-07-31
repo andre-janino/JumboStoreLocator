@@ -1,4 +1,4 @@
-package com.jumbo.stores.userservice.service.impl;
+package com.jumbo.userservice.service.impl;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.jumbo.stores.userservice.entity.User;
-import com.jumbo.stores.userservice.exception.BadRequest;
-import com.jumbo.stores.userservice.exception.ResourceNotFound;
-import com.jumbo.stores.userservice.repository.UserRepository;
-import com.jumbo.stores.userservice.service.UserService;
+import com.jumbo.userservice.entity.User;
+import com.jumbo.userservice.exception.BadRequest;
+import com.jumbo.userservice.exception.ResourceNotFound;
+import com.jumbo.userservice.repository.UserRepository;
+import com.jumbo.userservice.service.UserService;
 
 /**
  * CRUDE service implementation for the User entity.
@@ -38,8 +38,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User create(User user) {
-		User found = repository.findByEmail(user.getEmail());
-		if(found != null) throw new BadRequest("Email '" + user.getEmail() + "' is already in use.");
+		if(emailExists(user)) throw new BadRequest("Email '" + user.getEmail() + "' is already in use.");
 		
 		// encrypt the password and create the user
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
@@ -54,9 +53,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void delete(Long userId) {
+	public boolean delete(Long userId) {
 		User found = repository.findById(userId).orElseThrow(() -> 
 		new ResourceNotFound("User not found."));
-		repository.delete(found);	
+		repository.delete(found);
+		return true;
+	}
+	
+	private boolean emailExists(User user) {
+		return repository.findByEmail(user.getEmail()) != null;
 	}
 }
