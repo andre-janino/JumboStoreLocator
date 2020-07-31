@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/JumboBanner.jpg" title="Jumbo" alt="Jumbo supermarkten"/>
+  <img src="_images/JumboBanner.jpg" title="Jumbo" alt="Jumbo supermarkten"/>
 </p>
 
 # Jumbo Store Locator
@@ -71,7 +71,7 @@ I also compared Jumbo's store finder with Walmart's. The UI is very similar, hav
 Therefore, a simpler but functional version of the existing Jumbo store finder will be created in this small project.
 
 <p align="center">
-  <img src="images/Jumbo Store Locator.png" title="Proposed design" alt="Proposed design"/>
+  <img src="_images/Jumbo Store Locator.png" title="Proposed design" alt="Proposed design"/>
 </p>
 
 ## How to run <a name="run"></a> :wrench:
@@ -94,7 +94,7 @@ _`JUnit`_ was used alongside _`Mockito`_ for the _`Services`_, _`Controllers`_ a
 This tool facilitates API testing by allowing the creation of collections containing pre-defined get/post/put/delete/etc requests.
 
 <p align="center">
-  <img src="images/Postman.png" title="Postman API tests" alt="Postman API tests"/>
+  <img src="_images/Postman.png" title="Postman API tests" alt="Postman API tests"/>
 </p>
 
 TODO: When development is done, share the postman collections here.
