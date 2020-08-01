@@ -20,10 +20,11 @@ TODO: improve the readme as the project starts to take shape, adding missing mic
 
 This project was developed using _`Spring Boot (2.3.2.RELEASE)`_ for the back-end microservices and _`Vue.js 2.6.11`_ for the front-end components.
 
-The solution is divided into the _`frontend`_ project for the user interface and _`user-service`_, _`api-gateway`_, _`store-service`_ and _`discovery-service`_ for the back-end:
+The solution is divided into the _`frontend`_ project for the user interface and several microservices for the back-end:
 - _`frontend`_: Vue.js project with a _`login`_ and _`find store`_ page. Communicates directly with the _`api-gateway`_.
-- _`api-gateway`_: deals with user authentication and redirects requests to other microservices.
-- _`user-service`_: customer entity/controller/service/etc with a simple in-memory h2 database.
+- _`api-gateway`_: deals with token validation and redirects requests to other microservices.
+- _`auth-service`_: validates user credentials and issue tokens.
+- _`user-service`_: customer entity/controller/service/etc with a simple in-memory h2 database, used in conjunction with auth-service.
 - _`store-service`_: store entity/controller/service/etc with a mongodb (atlas) database implementation, returns N closest stores to a given location.
 - _`discovery-service`_: eureka discovery service that all other services subscribe to.
 
