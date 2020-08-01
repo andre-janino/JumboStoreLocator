@@ -104,5 +104,8 @@ TODO: When development is done, share the postman collections here.
 
 - Migrate the h2 database into another database. PostgreeSQL and MySQL are valid options in terms of SQL, while MongoDB and DynamoDB are appealing ones in terms of NoSQL.
 - Add user roles so that admin accounts may be managed, allowing for store registering, user management and so forth.
+- With the introduction of roles, add authorization to some of the rest APIs based on the user profile (e.g. user creation).
+- Add logging (ELK Stack).
+- Centralize configuration (Spring Cloud Config).
 - Add new functionalities (favoriting a store, link to store details, other filters, etc.)
 - Add selenium tests (that is, don't rely on JUnit and Postman alone).
