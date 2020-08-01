@@ -25,7 +25,7 @@ The solution is divided into the _`frontend`_ project for the user interface and
 - _`api-gateway`_: deals with token validation and redirects requests to other microservices.
 - _`auth-service`_: validates user credentials and issue tokens.
 - _`user-service`_: customer entity/controller/service/etc with a simple in-memory h2 database, used in conjunction with auth-service.
-- _`store-service`_: store entity/controller/service/etc with a mongodb (atlas) database implementation, returns N closest stores to a given location.
+- _`store-service`_: store entity/controller/service/etc with mongodb (atlas), returns N closest stores to a given location.
 - _`discovery-service`_: eureka discovery service that all other services subscribe to.
 
 It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything that was done on this small project.
