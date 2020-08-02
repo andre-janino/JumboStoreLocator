@@ -107,6 +107,7 @@ Having downloaded the project and installed all the needed libraries, you have t
 - Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on the installation folder.
 - On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`run serve`_ to start the Vue.js application.
 - On _`discovery-service`_ folder, execute _`java -jar discovery-service`_.
+- On _`config-service`_ folder, execute _`java -jar config-service`_.
 - On _`api-gateway`_ folder, execute _`java -jar api-gateway`_.
 - On _`auth-service`_ folder, execute _`java -jar auth-service`_.
 - On _`user-service`_ folder, execute _`java -jar user-service`_.
