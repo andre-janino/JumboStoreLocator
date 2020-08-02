@@ -66,7 +66,7 @@ It is important to note that, in a production environment, each of these project
 
 Why have microservices for such a small application? Creating small, independent microservices allow us to integrate/replace/maintain functionality in a bigger project with minimal effort. In this particular case, what is really being asked is that a store locator API is implemented, but as I have no access to Jumbo's API Gateway, front-end, user/customer service, etc, it makes sense to create my own and keep them separate, simply acting as placeholders for an MVP demonstration.
 
-Several libraries were used to fulfill the needed business logics; the main ones are listed in the following sub-sections.
+Several libraries were used to fulfill the needed business logics; the main ones are listed below:
 
 #### Netflix Eureka
 
