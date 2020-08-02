@@ -105,12 +105,12 @@ In order to run this project locally, make sure you have:
 
 Having downloaded the project and installed all the needed libraries, you have to do the following in separate terminals:
 - Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on the installation folder.
-- On the _`finder-client`_ project folder, run _`npm install`_  to intall all the dependencies, and execute _`run serve`_ to start the Vue.js application.
-- On the _`discovery-service`_ project folder, execute _`java -jar discovery-service`_.
-- On the _`api-gateway`_ project folder, execute _`java -jar api-gateway`_.
-- On the _`auth-service`_ project folder, execute _`java -jar auth-service`_.
-- On the _`user-service`_ project folder, execute _`java -jar user-service`_.
-- On the _`store-service`_ project folder, execute _`java -jar store-service`_.
+- On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`run serve`_ to start the Vue.js application.
+- On _`discovery-service`_ folder, execute _`java -jar discovery-service`_.
+- On _`api-gateway`_ folder, execute _`java -jar api-gateway`_.
+- On _`auth-service`_ folder, execute _`java -jar auth-service`_.
+- On _`user-service`_ folder, execute _`java -jar user-service`_.
+- On _`store-service`_ folder, execute _`java -jar store-service`_.
 
 Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser.
 
