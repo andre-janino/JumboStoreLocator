@@ -107,7 +107,7 @@ Having downloaded the project and installed all the needed libraries, you have t
 - On the _`user-service`_ project folder, execute _`java -jar user-service`_.
 - On the _`store-service`_ project folder, execute _`java -jar store-service`_.
 
-Having it all up and running, you can get the [UI running](#manual) by typing http://localhost:8081 on your favorite browser.
+Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser.
 
 TODO: double-check run instructions when project is done.
 
