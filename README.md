@@ -99,8 +99,8 @@ In order to run this project locally, make sure you have:
 - [npm](https://www.npmjs.com/get-npm) for the Vue.js front-end application.
 
 Having downloaded the project and installed all the needed libraries, you have to do the following in separate terminals:
-- Get RabbitMQ up and running by executing _`rabbitmq-server`_ on the installation folder.
-- On the _`finder-client`_ project folder, run _`npm install`_  to intall all the front-end dependencies. Having done that, run _`run serve`_ to start the Vue.js application.
+- Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on the installation folder.
+- On the _`finder-client`_ project folder, run _`npm install`_  to intall all the dependencies, and run _`run serve`_ to start the Vue.js application.
 - On the _`discovery-service`_ project folder, execute _`java -jar discovery-service`_.
 - On the _`api-gateway`_ project folder, execute _`java -jar api-gateway`_.
 - On the _`auth-service`_ project folder, execute _`java -jar auth-service`_.
