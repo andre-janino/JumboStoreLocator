@@ -54,12 +54,13 @@ The supported features at the present version are:
 This project was developed using _`Spring Boot (2.3.2.RELEASE)`_ for the back-end microservices and _`Vue.js 2.6.11`_ for the front-end components. The back-end modules were implemented with a microservice architecture in mind.
 
 The solution is divided into the _`frontend`_ project for the user interface and several microservices for the back-end:
-- _`frontend`_: Vue.js project with a _`login`_ and _`find store`_ page. Communicates directly with the _`api-gateway`_.
+- _`finder-client`_: Vue.js project with a _`login`_ form and _`find store`_ page. Communicates directly with the _`api-gateway`_.
+- _`discovery-service`_: eureka discovery service that all other services subscribe to.
 - _`api-gateway`_: deals with token validation and redirects requests to other microservices.
 - _`auth-service`_: validates user credentials and issue tokens.
 - _`user-service`_: customer entity/controller/service/etc with a simple in-memory h2 database, used in conjunction with auth-service.
 - _`store-service`_: store entity/controller/service/etc with mongodb (atlas), returns N closest stores to a given location.
-- _`discovery-service`_: eureka discovery service that all other services subscribe to.
+- _`config-service`_: centralized configuration service that store properties used by other microservices.
 
 It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything that was done on this small project.
 
@@ -87,6 +88,10 @@ Several libraries were used to fulfill the needed business logics; the main ones
 #### Google Maps API
 
 - _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embedded map on the _`frontend`_ project.
+
+#### Spring Cloud Config
+
+- _`Spring Cloud Config`_ implements the third factor in the Twelve-Factor App Methodology, which ensures separation between code and configuration.
 
 #### TODO: add remainder of the used tech stack (still to be defined)
 
