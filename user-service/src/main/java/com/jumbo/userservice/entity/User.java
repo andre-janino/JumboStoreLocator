@@ -8,9 +8,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
 /**
  * User entity class with auto-generated ID, first and last name and email. Could also be expanded to require phone number and other info.
  * 
@@ -33,7 +30,6 @@ public class User {
     @NotEmpty
 	@Column(unique=true)
 	private String email;
-	@JsonProperty(access = Access.WRITE_ONLY)
 	@Size(min=6)
     private String password;
 	

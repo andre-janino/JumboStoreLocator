@@ -2,6 +2,7 @@ package com.jumbo.userservice.controller;
 
 import java.util.List;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -82,5 +83,10 @@ public class UserController {
 	@DeleteMapping("/users/{id}")
 	public void deleteUser(@PathVariable long id) {
 		service.delete(id);
+	}
+	
+	@RabbitListener(queues = "user.rpc.requests")
+	private String getUserMessageRpc(String email) {
+		return service.getUserMessageRpc(email);
 	}
 }

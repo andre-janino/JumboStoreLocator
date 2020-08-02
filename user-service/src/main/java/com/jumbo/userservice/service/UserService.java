@@ -18,4 +18,5 @@ public interface UserService {
 	public User create(@RequestBody User user);
 	public User update(@PathVariable("id") Long id, @RequestBody User user);
 	public boolean delete(@PathVariable("id") Long id);
+	public String getUserMessageRpc(String email);
 }

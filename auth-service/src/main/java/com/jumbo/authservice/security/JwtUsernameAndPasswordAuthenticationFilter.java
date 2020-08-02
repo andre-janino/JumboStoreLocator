@@ -18,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
@@ -58,7 +59,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 			UserCredentials creds = new ObjectMapper().readValue(request.getInputStream(), UserCredentials.class);
 			
 			// Create an object with user credentials for the auth manager
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(creds.getUserEmail(), creds.getPassword(), Collections.emptyList());
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(), Collections.emptyList());
 			
 			// authenticate and load the user info
 			return authManager.authenticate(authToken);
@@ -92,14 +93,18 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	 * 
 	 * @author André Janino
 	 */
-	private static class UserCredentials {
-	    private String email, password;    
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	static class UserCredentials {
+	    private String username, password, email;    
 	    
-	    public String getUserEmail() {
-			return email;
+	    public String getUsername() {
+			return username;
 		}
 	    public String getPassword() {
 			return password;
+		}
+	    public String getEmail() {
+			return email;
 		}
 	}
 }
