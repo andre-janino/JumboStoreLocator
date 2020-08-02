@@ -98,7 +98,18 @@ In order to run this project locally, make sure you have:
 - [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable.
 - [npm](https://www.npmjs.com/get-npm) for the Vue.js front-end application.
 
-TODO: add build/run instructions, etc.
+Having downloaded the project and installed all the needed libraries, you have to do the following in separate terminals:
+- Get RabbitMQ up and running by executing _`rabbitmq-server`_ on the installation folder.
+- On the _`finder-client`_ project folder, run _`npm install`_  to intall all the front-end dependencies. Having done that, run _`run serve`_ to start the Vue.js application.
+- On the _`discovery-service`_ project folder, execute _`java -jar discovery-service`_.
+- On the _`api-gateway`_ project folder, execute _`java -jar api-gateway`_.
+- On the _`auth-service`_ project folder, execute _`java -jar auth-service`_.
+- On the _`user-service`_ project folder, execute _`java -jar user-service`_.
+- On the _`store-service`_ project folder, execute _`java -jar store-service`_.
+
+Having it all up and running, you can get the [UI running](run) by typing http://localhost:8081 on your favorite browser.
+
+TODO: double-check run instructions when project is done.
 
 ## Testing <a name="testing"></a> :beetle:
 
@@ -121,7 +132,7 @@ This tool facilitates API testing by allowing the creation of get/post/put/delet
 
 TODO: When development is done, share the postman collections here.
 
-#### Manual tests
+#### Manual tests <a name="manual"></a>
 
 With the application [up and running](#run), head towards http://localhost:8081 on your favorite browser and you will be greeted with the store locator landing page.
 
