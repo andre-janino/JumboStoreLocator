@@ -87,7 +87,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 #### Spring Cloud Config
 
 - _`Spring Cloud Config`_ implements the third factor in the Twelve-Factor App Methodology, which ensures separation between code and configuration.
-- As there is little concern about dev/prod environments on this project, only a single profile was set (default). 
+- As there is little concern about dev/prod environments on this project, only a single profile was set (default). Not much was done also in terms of security (encryption/authentication) for the stored properties, which is mandatory in a productioin environment.
 
 #### Google Maps API
 
