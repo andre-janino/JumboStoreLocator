@@ -72,6 +72,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 - _`Spring Zuul`_ is employed as an _`API Gateway`_. It uses Eureka to discover microservices' instances and redirects requests accordingly.
 - _`JWT tokens`_ are validated by this module, preventing that requests delve much deeper into the architecture if not necessary. 
+- _`Authorization`_ rules are put in place to prevent non-admins from accessing restriced APIs. Guest users are restricted even further.
 
 #### Netflix Eureka
 
@@ -81,12 +82,12 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 - _`RabbitMQ`_ is is usually employed for asynchronous message exchange between microservices. However, in this project, is it used to establish synchronous RPC communication between _`user-service`_ and _`auth-service`_.\
 - Using message-based RPC, services have no direct dependencies on other services; a service only depends on a response to a message request it makes to that queue. What it does is send a string to a queue (the start of asynchronous communication) and waiting for a message in a different queue to send it back as an HTTP response.
-- Generally speaking, it would be better to employ CQRS + event sourcing. This way, user-service would issue events whenever a user is registered/altered/deleted, and auth-service would capture these events and store a relation of user emails/passwords (and roles, if it comes to it). However, this is a fairly small application, and it seemed overkill to implement such pattern.
+- Generally speaking, it would be better to employ CQRS + event sourcing. This way, user-service would issue events whenever a user is registered/altered/deleted, and auth-service would capture these events and store a relation of user emails/passwords/roles. However, this is a fairly small application, and it seemed overkill to implement such pattern.
 
 #### Spring Cloud Config
 
 - _`Spring Cloud Config`_ implements the third factor in the Twelve-Factor App Methodology, which ensures separation between code and configuration.
-- As there is little concern about dev/prod environments on this project, _`Spring Cloud Config`_ was underutilized; it was mostly use to centralize JWT token parameters, but it can do so much more if needed (setting up ports and other behaviors, allowing for local vs. aws config patterns).
+- As there is little concern about dev/prod environments on this project, only a single profile was set (default). 
 
 #### Google Maps API
 
@@ -151,9 +152,7 @@ TODO: Add screenshots and general instructions.
 ## Future enhancements <a name="future"></a> :clock130:
 
 - Migrate the h2 database into another database. PostgreeSQL and MySQL are valid options in terms of SQL, while MongoDB and DynamoDB are appealing ones in terms of NoSQL.
-- Add user roles so that admin accounts may be managed, allowing for store registering, user management and so forth.
-- With the introduction of roles, add authorization to some of the rest APIs based on the user profile (e.g. user creation).
+- Add admin-specific pages for managing users and stores.
 - Add logging (ELK Stack).
-- Centralize configuration (Spring Cloud Config).
 - Add new functionalities (favoriting a store, link to store details, other filters, etc.)
 - Add selenium tests (that is, don't rely on JUnit and Postman alone).
