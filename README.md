@@ -95,7 +95,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 #### Netflix Hystrix
 
 - _`Netflix Hystrix`_ is used to implement the _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure.
-- _`Bulkhead`_ design pattern is also covered by this library, by isolating threads through Hystrix's _`threadPoolKey`_.
+- In this particular project, it is used to provide a guest user as a fall-back, in case _`user-service`_ is unavailable.
 
 #### TODO: add remainder of the used tech stack (still to be defined)
 
