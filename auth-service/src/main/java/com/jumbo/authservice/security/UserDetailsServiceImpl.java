@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -28,17 +29,27 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService  {
 
-	private static final String ROLE_PREFIX = "ROLE_";
-	private static final String GUEST_USER = "Guest";
-	private static final String ROLE_READ_ONLY = "READONLY";
+	private static final String ROLE_PREFIX = "ROLE_";	
+	
+	@Value("${user.guest.name:Guest}")
+	private String guestUserName;
+	
+	@Value("${user.guest.password}")
+	private String guestUserPass;
+	
+	@Value("${user.guest.role:GUEST}")
+	private String guestUserRole; 
 
 	private RabbitTemplate rabbitTemplate;
 	private DirectExchange directExchange;
 	
+	/**
+	 * Guest user singleton, employed when user-service is down.
+	 */
 	private static UserCredentials guestUser;
-    private static UserCredentials getGuestUser() {
+    private static UserCredentials getGuestUser(String guestUserName, String guestUserPass, String guestUserRole) {
         if (guestUser == null){ 
-        	guestUser = new UserCredentials(GUEST_USER, GUEST_USER, "$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6", ROLE_READ_ONLY);
+        	guestUser = new UserCredentials(guestUserName, guestUserName, guestUserPass, guestUserRole);
         }
         return guestUser;
     }
@@ -105,7 +116,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * @return A UserDetails object based on  a guest user instance.
 	 */
 	public UserDetails loadGuestUser(String username, Throwable hystrixCommand) {
-		UserCredentials user = getGuestUser();
+		UserCredentials user = getGuestUser(guestUserName, guestUserPass, guestUserRole);
 		
 		// grant read_only capabilities so that the user is able to access the app with limited functionalities
 		List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(user.getRole());

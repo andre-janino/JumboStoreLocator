@@ -1,8 +1,6 @@
 /** 
  * Insert the default key/values for Spring Cloud Config properties on the PROPERTIES table.
  * e.g.: INSERT INTO PROPERTIES VALUES ('app-service', 'default', 'master', 'prop', 'val');
- * 
- * Values which would not change depending on the profile (such as zuul routes) are still defined in application.properties.
  */
 
 /** 
@@ -19,6 +17,7 @@ INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'prefix', 'Be
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'secretKey', 'SuperSecretJumboKey');
 
 /** discovery-service application properties */
+INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'server.port', '9000');
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka.client.register-with-eureka', 'false');
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka.client.fetch-registry', 'false');
@@ -26,6 +25,7 @@ INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://${eureka.instance.hostname}:${server.port}/eureka/');
 
 /** api-gateway application properties */
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'server.port', '3000');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.registerWithEureka', 'false');
@@ -36,14 +36,20 @@ INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ReadT
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.host.connect-timeout-millis', '3000');
 
 /** auth-service application properties */
+INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'server.port', '4000');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
 /** define hystrix threasholds: if 10 out of 20 requests have failed in the past 5 seconds, call the fallback method */
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'hystrix.command.default.circuitBreaker.requestVolumeThreshold', '20');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'hystrix.command.default.circuitBreaker.errorThresholdPercentage', '50');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds', '5000');
+/** define default Guest user in case user-service is unavailable */
+INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'user.guest.name', 'Guest');
+INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'user.guest.password', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6');
+INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'user.guest.role', 'GUEST');
 
 /** user-service application properties */
+INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'server.port', '8082');
 INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.datasource.url', 'jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1');
 INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.datasource.username', 'sa');
@@ -54,5 +60,3 @@ INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'eureka.clie
 /** 
  * TODO: production profile
  */
- 
- 
