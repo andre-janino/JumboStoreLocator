@@ -98,8 +98,6 @@ Several libraries were used to fulfill the needed business logics; the main ones
 - _`Netflix Hystrix`_ is used to implement the _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure.
 - In this particular project, it is used to provide a guest user as a fall-back, in case _`user-service`_ is unavailable.
 
-#### TODO: add remainder of the used tech stack (still to be defined)
-
 ## How to run <a name="run"></a> :wrench:
 
 In order to run this project locally, make sure you have:
@@ -153,6 +151,6 @@ TODO: Add screenshots and general instructions.
 
 - Migrate the h2 database into another database. PostgreeSQL and MySQL are valid options in terms of SQL, while MongoDB and DynamoDB are appealing ones in terms of NoSQL.
 - Add admin-specific pages for managing users and stores.
-- Add logging (ELK Stack).
-- Add new functionalities (favoriting a store, link to store details, other filters, etc.)
+- Add security for _`Spring Cloud Config`_.
+- Improve logging (ELK Stack).
 - Add selenium tests (that is, don't rely on JUnit and Postman alone).
