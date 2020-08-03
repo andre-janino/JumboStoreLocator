@@ -68,30 +68,34 @@ Why have microservices for such a small application? Creating small, independent
 
 Several libraries were used to fulfill the needed business logics; the main ones are listed below:
 
+#### Netflix Zuul
+
+- _`Spring Zuul`_ is employed as an _`API Gateway`_. It uses Eureka to discover microservices' instances and redirects requests accordingly.
+- _`JWT tokens`_ are validated by this module, preventing that requests delve much deeper into the architecture if not necessary. 
+
 #### Netflix Eureka
 
 - _`Service Discovery`_ is performed by _`Netflix Eureka`_. This is needed due to the microservice architecture that was adopted.
 
-#### Netflix Hystrix
-
-- _`Netflix Hystrix`_ is used to implement the _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure.
-- _`Bulkhead`_ design pattern is also covered by this library, by isolating threads through Hystrix's _`threadPoolKey`_.
-
-#### Netflix Zuul
-
-- _`Spring Zuul`_ is employed as an _`API Gateway`_. It uses Eureka to discover microservices' instances and redirects requests accordingly.
-
 #### RabbitMQ
 
-- _`RabbitMQ`_ is is usually employed for asynchronous message exchange between microservices. However, in this project, is it used to establish synchrnous RPC communication between _`user-service`_ and _`auth-service`_.
+- _`RabbitMQ`_ is is usually employed for asynchronous message exchange between microservices. However, in this project, is it used to establish synchronous RPC communication between _`user-service`_ and _`auth-service`_.\
+- Using message-based RPC, services have no direct dependencies on other services; a service only depends on a response to a message request it makes to that queue. What it does is send a string to a queue (the start of asynchronous communication) and waiting for a message in a different queue to send it back as an HTTP response.
+- Generally speaking, it would be better to employ CQRS + event sourcing. This way, user-service would issue events whenever a user is registered/altered/deleted, and auth-service would capture these events and store a relation of user emails/passwords (and roles, if it comes to it). However, this is a fairly small application, and it seemed overkill to implement such pattern.
+
+#### Spring Cloud Config
+
+- _`Spring Cloud Config`_ implements the third factor in the Twelve-Factor App Methodology, which ensures separation between code and configuration.
+- As there is little concern about dev/prod environments on this project, _`Spring Cloud Config`_ was underutilized; it was mostly use to centralize JWT token parameters, but it can do so much more if needed (setting up ports and other behaviors, allowing for local vs. aws config patterns).
 
 #### Google Maps API
 
 - _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embedded map on the _`frontend`_ project.
 
-#### Spring Cloud Config
+#### Netflix Hystrix
 
-- _`Spring Cloud Config`_ implements the third factor in the Twelve-Factor App Methodology, which ensures separation between code and configuration.
+- _`Netflix Hystrix`_ is used to implement the _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure.
+- _`Bulkhead`_ design pattern is also covered by this library, by isolating threads through Hystrix's _`threadPoolKey`_.
 
 #### TODO: add remainder of the used tech stack (still to be defined)
 
