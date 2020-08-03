@@ -3,7 +3,6 @@ package com.jumbo.userservice.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +24,7 @@ import com.jumbo.userservice.service.UserService;
  */
 @Service
 public class UserServiceImpl implements UserService {
-
+	
 	@Autowired
 	private UserRepository repository;
 	
@@ -43,9 +42,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User create(User user) {
 		if(emailExists(user)) throw new BadRequest("Email '" + user.getEmail() + "' is already in use.");
-		
-		// encrypt the password and create the user
-		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		return repository.save(user);
 	}
 

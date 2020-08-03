@@ -11,7 +11,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 /**
- * This class is responsible for returning a custom message when authentication fails
+ * This class is responsible for returning a custom message when authentication fails.
  * 
  * @author André Janino
  */

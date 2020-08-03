@@ -22,33 +22,56 @@ import io.jsonwebtoken.Jwts;
  * 
  * @author André Janino
  */
-public class JwtTokenAuthFilter extends  OncePerRequestFilter {
+public class JwtTokenAuthFilter extends OncePerRequestFilter {
 	
-	// prefix/key properties. TODO: move it all to a centralized and safe cloud config.
-	private static final String PREFIX = "Bearer";
-	private static final String SECRET_KEY = "JwtSecretKey";
+	private String header; 
+	private String prefix;
+	private String secretKey;
 
+	/**
+	 * Initialize the JWT token properties
+	 * 
+	 * Note: Perhaps it would be better to encapsulate all the Jwt properties on a class. 
+	 * Given that both auth-service and api-gateway make use of it, perhaps it would be better if this was defined on an independent project imported by both.
+	 * 
+	 * @param header The name of the header parameter that holds the token.
+	 * @param prefix The string that represents the prefix of the JWT token.
+	 * @param secret_key The secret key used to parse the JWT token. 
+	 */
+	public JwtTokenAuthFilter(String header, String prefix, String secretKey) {
+		this.header = header;
+		this.prefix = prefix;
+		this.secretKey = secretKey;
+	}
+
+	/**
+	 * If the authentication header is present and starts with the configured prefix, call the authenticate method.
+	 * 
+	 * @param request The HTTP request object, used to extract the user credentials.
+	 * @param response The HTTP servlet response object, unused on this particular implementation.
+	 * @param chain A chain of invocations
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 		// get the authentication header and check if it is valid
-		String header = request.getHeader("Authorization");
-		if(header != null && header.startsWith(PREFIX)) {
-			authenticate(header);
+		String reqHeader = request.getHeader(header);
+		if(reqHeader != null && reqHeader.startsWith(prefix)) {
+			authenticate(reqHeader);
 		}
 		// move forward with the filter chain
 		chain.doFilter(request, response);
 	}
 
 	/**
-	 * Authenticate the user based on the provided token
+	 * Authenticate the user based on the provided JWT token.
 	 * 
-	 * @param header
+	 * @param header The authorization header object
 	 */
-	private void authenticate(String header) {
+	private void authenticate(String reqHeader) {
 		try {
 			// extract the needed information from the token
-			String token = header.replace(PREFIX, "");		
-			Claims claims = Jwts.parser().setSigningKey(SECRET_KEY.getBytes()).parseClaimsJws(token).getBody();
+			String token = reqHeader.replace(prefix, "");		
+			Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
 			String username = claims.getSubject();
 			if(username != null) {
 				@SuppressWarnings("unchecked")

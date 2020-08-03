@@ -31,26 +31,41 @@ import io.jsonwebtoken.SignatureAlgorithm;
  */
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	
-	// It is a good practice that JWT tokens are expired after 15 minutes. However, for testing purposes, it is configured to last an hour.
-	private static final int JWT_EXPIRATION = 60 * 60;
-	
-	// header/prefix/key properties. TODO: move it all to a centralized and safe cloud config.
-	private static final String HEADER = "Authorization";
-	private static final String PREFIX = "Bearer";
-	private static final String SECRET_KEY = "JwtSecretKey";
-	
-	// object responsible for validating the user credentials
+	private String header; 
+	private String prefix;
+	private String secretKey;
+	private Integer jwtExpiration; 
+
 	private AuthenticationManager authManager;
     
-	public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authManager) {
+	/**
+	 * Initialize the JWT token properties.
+	 * 
+	 * Note: Perhaps it would be better to encapsulate all the Jwt properties on a class. 
+	 * Given that both auth-service and api-gateway make use of it, perhaps it would be better if this was defined on an independent project imported by both.
+	 * 
+	 * @param authManager Responsible for validating the user credentials
+	 * @param header The name of the header parameter that holds the token.
+	 * @param prefix The string that represents the prefix of the JWT token.
+	 * @param secretKey The secret key used to parse the JWT token.
+	 * @param jwtExpiration The expiration time of the JWT token (1h by default).
+	 */
+	public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authManager, String header, String prefix, String secretKey, Integer jwtExpiration) {
 		this.authManager = authManager;
+		this.header = header;
+		this.prefix = prefix;
+		this.secretKey = secretKey;
+		this.jwtExpiration = jwtExpiration;
 		
 		// listen to "/auth" path
 		this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/auth/**", "POST"));
 	}
 	
 	/**
-	 * Authenticate the user.
+	 * Extract user credentials and authenticate the user.
+	 * 
+	 * @param request The HTTP request object, used to extract the user credentials.
+	 * @param response The HTTP servlet response object, unused on this particular implementation.
 	 */
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -69,9 +84,14 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	}
 	
 	/**
-	 * Generates a token with the user info. 
+	 * Generates a token with the user info and append it on the response header. 
 	 * 
-	 * Token expires in JWT_EXPIRATION seconds.
+	 * Token expires in jwtExpiration seconds (1 hour by default).
+	 * 
+	 * @param request The HTTP request object, not used in this particular implementation
+	 * @param response The response object, which is filled with the authentication header info
+	 * @param chain A chain of invocations
+	 * @param auth The authentication object containing user credentials
 	 */
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {	
@@ -80,12 +100,12 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 			.setSubject(auth.getName())	
 			.claim("authorities", auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
 			.setIssuedAt(new Date(now))
-			.setExpiration(new Date(now + JWT_EXPIRATION * 1000)) 
-			.signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
+			.setExpiration(new Date(now + jwtExpiration * 1000)) 
+			.signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
 			.compact();
 		
 		// Add the token to header
-		response.addHeader(HEADER, PREFIX + token);
+		response.addHeader(header, prefix + token);
 	}
 	
 	/**

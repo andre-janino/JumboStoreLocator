@@ -25,7 +25,7 @@ import com.jumbo.authservice.security.JwtUsernameAndPasswordAuthenticationFilter
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService  {
-	
+
 	// TODO: remove this hardcoded admin role handle it on the user-service.
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
