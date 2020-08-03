@@ -48,8 +48,7 @@ public class User {
 	@JsonProperty("role")
     private Role role;
 
-	public User() {
-	}
+	public User() {}
 
 	public User(String firstName) {
 		this.firstName = firstName;
@@ -111,7 +110,7 @@ public class User {
 		return role;
 	}
 
-	public void setRoles(Role role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 }

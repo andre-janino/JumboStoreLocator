@@ -3,14 +3,17 @@ package com.jumbo.userservice.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jumbo.userservice.entity.Role;
 import com.jumbo.userservice.entity.User;
 import com.jumbo.userservice.exception.BadRequest;
 import com.jumbo.userservice.exception.ResourceNotFound;
 import com.jumbo.userservice.repository.UserRepository;
+import com.jumbo.userservice.repository.UserRoleRepository;
 import com.jumbo.userservice.service.UserService;
 
 /**
@@ -25,45 +28,68 @@ import com.jumbo.userservice.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 	
+	@Value("${userNotFound:NOT_FOUND}")
+	private String notFound;
+	
 	@Autowired
-	private UserRepository repository;
+	private UserRepository userRepository;
+	
+	@Autowired
+	private UserRoleRepository roleRepository;
 	
 	@Override
 	public List<User> findAll() {
-		return repository.findAll();
+		return userRepository.findAll();
 	}
 
 	@Override
 	public User findOne(Long userId) {
-		return repository.findById(userId).orElseThrow(() -> 
+		return userRepository.findById(userId).orElseThrow(() -> 
 		new ResourceNotFound("User not found."));
 	}
 
 	@Override
 	public User create(User user) {
 		if(emailExists(user)) throw new BadRequest("Email '" + user.getEmail() + "' is already in use.");
-		return repository.save(user);
+		
+		// if no role is provided, assign a user role and save
+		assignDefaultRole(user);
+		return userRepository.save(user);
+	}
+
+	private void assignDefaultRole(User user) {
+		if(user.getRole() == null) {
+			Role role = roleRepository.findByName("USER");
+			if(role != null) {
+				user.setRole(role);
+			}
+		}
 	}
 
 	@Override
 	public User update(Long userId, User user) {
-		repository.findById(userId).orElseThrow(() -> 
+		userRepository.findById(userId).orElseThrow(() -> 
 		new ResourceNotFound("User not found."));
-		return repository.save(user);
+		return userRepository.save(user);
 	}
 
 	@Override
 	public boolean delete(Long userId) {
-		User found = repository.findById(userId).orElseThrow(() -> 
+		User found = userRepository.findById(userId).orElseThrow(() -> 
 		new ResourceNotFound("User not found."));
-		repository.delete(found);
+		userRepository.delete(found);
 		return true;
 	}
 	
 	@Override
 	public String getUserMessageRpc(String email) {
 		// find a user by email, which in this implementation is considered as the login username
-		User user = repository.findByEmail(email);
+		User user = userRepository.findByEmail(email);
+		
+		// if no user is present, return a message stating so (so that the consumer knows whether it failed due to a timeout or a user that does not exist)
+		if(user == null) {
+			return notFound;
+		}
 		
 		// convert the found user into json, and return
 		return serializeToJson(user);
@@ -89,6 +115,6 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	private boolean emailExists(User user) {
-		return repository.findByEmail(user.getEmail()) != null;
+		return userRepository.findByEmail(user.getEmail()) != null;
 	}
 }

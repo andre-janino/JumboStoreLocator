@@ -1,6 +1,5 @@
 package com.jumbo.authservice.security;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.amqp.core.DirectExchange;
@@ -14,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumbo.authservice.security.JwtUsernameAndPasswordAuthenticationFilter.UserCredentials;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -55,21 +56,27 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
     }
 	
 	/**
-	 * Load a user from user-service
+	 * Load a user from user-service.
 	 * 
 	 * @param username The username key of the user credentials. In this case, the user email.
 	 */
 	@Override
 	@HystrixCommand(fallbackMethod = "loadGuestUser")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// retrieve a representation of the user object from user-service
-		UserCredentials user = this.getUserInfoMessageRpc(username);
-		
-		// define the user role
-		List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(getRole(user));
-		
-		// returns a Spring user, which is employed by UserDetailsService to manage the authentication
-		return new User(username, user.getPassword(), grantedAuthorities);
+		try {
+			// retrieve a representation of the user object from user-service
+			UserCredentials user = this.getUserInfoMessageRpc(username);
+			
+			// define the user role
+			List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(getRole(user));
+			
+			// returns a Spring user, which is employed by UserDetailsService to manage the authentication
+			return new User(username, user.getPassword(), grantedAuthorities);
+			
+		} catch(Exception e) {
+			System.out.println("There was a problem loading the user: " + e.getMessage());
+		} 
+		return null;
 	}
 	
 	/**
@@ -77,8 +84,10 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * 
 	 * @param email
 	 * @return the user info, if any.
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
 	 */
-	public UserCredentials getUserInfoMessageRpc(String email) {
+	public UserCredentials getUserInfoMessageRpc(String email) throws JsonMappingException, JsonProcessingException {
 		// get a user json object from user-service
 	    String user = (String) rabbitTemplate.convertSendAndReceive(directExchange.getName(), "rpc", email);
 	    if(user == null) throw new UsernameNotFoundException("Username: " + email + " not found");
@@ -88,7 +97,8 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	}
 	
 	/**
-	 * Fallback method in case the RPC communication channel fails.
+	 * Fallback method in case the RPC communication channel fails. 
+	 * It is important to note that if a user is not found because the username is incorrect, this fallback is not fired.
 	 * 
 	 * @param email The original requested email.
 	 * @param hystrixCommand The hytrix exception that was captured.
@@ -109,16 +119,13 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * 
 	 * @param user json object
 	 * @return a UserCredentials object
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
 	 */
-	private UserCredentials deserializeToUserCredentials(String user) {
+	private UserCredentials deserializeToUserCredentials(String user) throws JsonMappingException, JsonProcessingException {
 		TypeReference<UserCredentials> mapType = new TypeReference<UserCredentials>() {};
 	    ObjectMapper objectMapper = new ObjectMapper();
-	    try {
-	    	return objectMapper.readValue(user, mapType);
-	    } catch (IOException e) {
-	        System.out.println(String.valueOf(e));
-	    }
-	    return null;
+	    return objectMapper.readValue(user, mapType);
 	}
 	
 	/**

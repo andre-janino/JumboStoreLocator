@@ -13,4 +13,5 @@ import com.jumbo.userservice.entity.Role;
 @Repository
 public interface UserRoleRepository extends JpaRepository<Role, Long> {
     
+	public Role findByName(String firstName);
 }
