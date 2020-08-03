@@ -37,12 +37,16 @@ public class SecurityTokenConfig extends WebSecurityConfigurerAdapter {
 		http
 			.csrf().disable() // disable csrf as we're using JWT
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) 	
-		.and()
-			.exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED)) 	
-		.and()
-			.addFilterAfter(new JwtTokenAuthFilter(header, prefix, secretKey), UsernamePasswordAuthenticationFilter.class)
-		.authorizeRequests()
-		   .antMatchers(HttpMethod.POST, "/auth/**").permitAll()  
-		   .anyRequest().authenticated(); 
+			.and()
+				.exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED)) 	
+			.and()
+				.addFilterAfter(new JwtTokenAuthFilter(header, prefix, secretKey), UsernamePasswordAuthenticationFilter.class)
+			.authorizeRequests()
+			   .antMatchers(HttpMethod.POST, "/auth/**").permitAll() // everyone is allowed to authenticate
+			   .antMatchers(HttpMethod.GET, "/user/users").hasAnyRole("ADMIN","USER") // allow admin and users to get their info (guests not allowed)
+			   .antMatchers(HttpMethod.POST, "/user/users").hasRole("ADMIN") // manual creation of users is only allowed by admins
+			   .antMatchers(HttpMethod.PUT, "/user/users").hasRole("ADMIN") // manual update of users is only allowed by admins
+			   .antMatchers(HttpMethod.DELETE, "/user/users").hasRole("ADMIN") // manual deletion of users is only allowed by admins
+			   .anyRequest().authenticated(); 
 	}
 }

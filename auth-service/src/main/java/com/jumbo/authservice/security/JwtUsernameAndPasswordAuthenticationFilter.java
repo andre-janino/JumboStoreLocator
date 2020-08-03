@@ -35,7 +35,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	private String prefix;
 	private String secretKey;
 	private Integer jwtExpiration; 
-
+	
 	private AuthenticationManager authManager;
     
 	/**
@@ -115,7 +115,15 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	 */
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	static class UserCredentials {
-	    private String username, password, email;    
+	    private String username, password, email, role;    
+	    
+	    UserCredentials() {}
+	    UserCredentials(String username, String email, String password, String role) {
+	    	this.username = username;
+	    	this.email = email;
+	    	this.password = password;
+	    	this.role = role;
+	    }
 	    
 	    public String getUsername() {
 			return username;
@@ -126,5 +134,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	    public String getEmail() {
 			return email;
 		}
+	    public String getRole() {
+	    	return role;
+	    }
 	}
 }

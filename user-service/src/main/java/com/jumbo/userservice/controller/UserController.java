@@ -19,6 +19,8 @@ import com.jumbo.userservice.service.UserService;
  * 
  * Bad requests (BadRequest) and resources not found (ResourceNotFound) errors are handled on UserService.
  * 
+ * No service is exposed to manage roles; at this point in time, the supported roles are hard-coded on the database.
+ * 
  * @author André Janino
  */
 @RestController

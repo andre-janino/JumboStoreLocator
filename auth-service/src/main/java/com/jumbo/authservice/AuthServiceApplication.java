@@ -2,6 +2,7 @@ package com.jumbo.authservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 
 /**
  * Authentication service, responsible for validating and issuing JWT tokens. 
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author André Janino
  */
 @SpringBootApplication
+@EnableCircuitBreaker
 public class AuthServiceApplication {
 
 	public static void main(String[] args) {

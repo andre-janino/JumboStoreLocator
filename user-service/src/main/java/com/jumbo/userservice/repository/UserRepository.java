@@ -6,10 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.jumbo.userservice.entity.User;
 
 /**
- * Repository interface that manages users. 
- * 
- * At this point in time, it may be that updating/creating and deleting won't be supported in the first version by the front-end,
- * but the user service should be ready for it.
+ * Repository that manages users. 
  * 
  * @author André Janino
  */

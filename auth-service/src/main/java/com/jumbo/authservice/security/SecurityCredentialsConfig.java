@@ -52,13 +52,13 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter {
 		http
 		    .csrf().disable() // disable csrf as we're using JWT
 		    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-	    .and()
-	    	.exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED))
-        .and()
-        	.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), header, prefix, secretKey, jwtExpiration))	
-        .authorizeRequests()
-	    	.antMatchers(HttpMethod.POST, "/auth/**").permitAll()
-	    	.anyRequest().authenticated();
+		    .and()
+		    	.exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+	        .and()
+	        	.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), header, prefix, secretKey, jwtExpiration))	
+	        .authorizeRequests()
+		    	.antMatchers(HttpMethod.POST, "/auth/**").permitAll()
+		    	.anyRequest().authenticated();
 	}
 	
 	/**
