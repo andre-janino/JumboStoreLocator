@@ -100,8 +100,8 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Sleuth
 
-- Although I usually prefer running _`Elk Stack`_ for serious production projects, _`Sleuth`_ was used as it is very easey to setup and fulfill the needs of this project. 
-- It allows tracing logs across multiple services through unique IDs. Moreover, logs can be visualized in a centralized manner through [zipkin](https://zipkin.io/), if so desired.
+- _`Sleuth`_ is a logging solution that allows tracing actions across multiple services through unique IDs. 
+- Logs can be visualized in a centralized manner through [zipkin](https://zipkin.io/), if so desired.
 
 ## How to run <a name="run"></a> :wrench:
 
