@@ -9,6 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +29,8 @@ public class JwtTokenAuthFilter extends OncePerRequestFilter {
 	private String header; 
 	private String prefix;
 	private String secretKey;
+	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * Initialize the JWT token properties
@@ -53,12 +57,19 @@ public class JwtTokenAuthFilter extends OncePerRequestFilter {
 	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+		log.info("Authentication method initiated.");
+		
 		// get the authentication header and check if it is valid
 		String reqHeader = request.getHeader(header);
 		if(reqHeader != null && reqHeader.startsWith(prefix)) {
+			log.info(header + " header is present: " + reqHeader);
 			authenticate(reqHeader);
+		} else {
+			log.info(header + "authentication header not present.");
 		}
+		
 		// move forward with the filter chain
+		log.info("Processing done. Moving forward to other filters in the chain.");
 		chain.doFilter(request, response);
 	}
 
@@ -74,6 +85,8 @@ public class JwtTokenAuthFilter extends OncePerRequestFilter {
 			Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
 			String username = claims.getSubject();
 			if(username != null) {
+				log.info("Attempting authentication for user: " + username);
+				
 				@SuppressWarnings("unchecked")
 				List<String> authorities = (List<String>) claims.get("authorities");
 				
@@ -82,8 +95,11 @@ public class JwtTokenAuthFilter extends OncePerRequestFilter {
 				 
 				// authenticate the user
 				SecurityContextHolder.getContext().setAuthentication(auth);
-			}	
+			} else {
+				log.info("User information not found on the " + header + " header, it was not possible to authenticate the user.");
+			}
 		} catch (Exception e) {
+			log.error("There was a problem authenticating the user.", e);
 			SecurityContextHolder.clearContext();
 		}
 	}

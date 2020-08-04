@@ -2,6 +2,8 @@ package com.jumbo.authservice.security;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,8 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	private RabbitTemplate rabbitTemplate;
 	private DirectExchange directExchange;
 	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	
 	/**
 	 * Guest user singleton, employed when user-service is down.
 	 */
@@ -75,6 +79,8 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	@HystrixCommand(fallbackMethod = "loadGuestUser")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
+			log.info("Attempting to load user " + username);
+			
 			// retrieve a representation of the user object from user-service
 			UserCredentials user = this.getUserInfoMessageRpc(username);
 			
@@ -82,10 +88,11 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 			List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(getRole(user));
 			
 			// returns a Spring user, which is employed by UserDetailsService to manage the authentication
-			return new User(username, user.getPassword(), grantedAuthorities);
+			log.info("UserDetails object built for " + user.getUsername());
+			return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
 			
 		} catch(Exception e) {
-			System.out.println("There was a problem loading the user: " + e.getMessage());
+			log.error("There was a problem loading the user.", e);
 		} 
 		return null;
 	}
@@ -100,10 +107,15 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 */
 	public UserCredentials getUserInfoMessageRpc(String email) throws JsonMappingException, JsonProcessingException {
 		// get a user json object from user-service
+		log.info("Requesting user information through user.rpc call for: " + email);
 	    String user = (String) rabbitTemplate.convertSendAndReceive(directExchange.getName(), "rpc", email);
-	    if(user == null) throw new UsernameNotFoundException("Username: " + email + " not found");
+	    if(user == null) {
+	    	log.info("It was not possible to retrieve the user information, user-service is likely unavailable.");
+	    	throw new UsernameNotFoundException("Username: " + email + " not found");
+	    }
 	    
 	    // deserialize into UserCredentials and return
+	    log.info("Received json user properties: " + user);
 	    return deserializeToUserCredentials(user);
 	}
 	
@@ -134,6 +146,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * @throws JsonMappingException 
 	 */
 	private UserCredentials deserializeToUserCredentials(String user) throws JsonMappingException, JsonProcessingException {
+		log.info("Deserializing user json into UserCredentials object");
 		TypeReference<UserCredentials> mapType = new TypeReference<UserCredentials>() {};
 	    ObjectMapper objectMapper = new ObjectMapper();
 	    return objectMapper.readValue(user, mapType);

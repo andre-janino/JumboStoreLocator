@@ -10,6 +10,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,6 +39,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	private Integer jwtExpiration; 
 	
 	private AuthenticationManager authManager;
+	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
     
 	/**
 	 * Initialize the JWT token properties.
@@ -72,13 +76,16 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 		try {
 			// Get credentials from request.
 			UserCredentials creds = new ObjectMapper().readValue(request.getInputStream(), UserCredentials.class);
+			log.info("Attempting to authenticate user " + creds.getUsername());
 			
 			// Create an object with user credentials for the auth manager
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(), Collections.emptyList());
 			
 			// authenticate and load the user info
+			log.info("Authenticating the user.");
 			return authManager.authenticate(authToken);
 		} catch (IOException e) {
+			log.error("There was a problem authenticating the user.", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -105,6 +112,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 			.compact();
 		
 		// Add the token to header
+		log.info("Auth token generated successfully: " + token);
 		response.addHeader(header, prefix + token);
 	}
 	
