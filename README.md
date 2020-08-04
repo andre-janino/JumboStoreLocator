@@ -100,8 +100,8 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Sleuth
 
-- _`Sleuth`_ is a logging solution that allows tracing actions across multiple services through unique IDs. 
-- Logs can be visualized in a centralized manner through [zipkin](https://zipkin.io/), if so desired.
+- _`Sleuth`_ is a logging solution that allows tracing actions across multiple services through unique trace IDs (done automatically), which makes it a perfect solution for a microservice architecture. 
+- Logs can be visualized in a dashboard through [zipkin](https://zipkin.io/), if so desired.
 
 ## How to run <a name="run"></a> :wrench:
 
