@@ -45,9 +45,9 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<User> findAll() {
-		log.info("[Find all users] called.");
+		log.info("Find all users called.");
 		List<User> users = userRepository.findAll();
-		log.info("Found" + users.size() + " user(s), returning.");
+		log.info("Found " + users.size() + " user(s), returning.");
 		return users;
 	}
 
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User findOne(Long userId) {
-		log.info("[Find user] called for id '" + userId + "'");
+		log.info("Find user called for id '" + userId + "'");
 		User user = userRepository.findById(userId).orElseThrow(() -> 
 		new ResourceNotFound("User not found."));
 		log.info("User found, returning.");
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User create(User user) {
-		log.info("[Create user] called.");
+		log.info("Create user called.");
 		if(emailExists(user)) throw new BadRequest("Email '" + user.getEmail() + "' is already in use.");
 		
 		// if no role is provided, assign a user role and save
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User update(Long userId, User user) {
-		log.info("[Update user] called for id '" + user.getId() + "'");
+		log.info("Update user called for id '" + user.getId() + "'");
 		
 		// verify if the user exists before updating
 		userRepository.findById(userId).orElseThrow(() -> 
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public boolean delete(Long userId) {
-		log.info("[Delete user] called for id '" + userId + "'");
+		log.info("Delete user called for id '" + userId + "'");
 		
 		// check if the user exists
 		User found = userRepository.findById(userId).orElseThrow(() -> 
@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public String getUserMessageRpc(String email) {
-		log.info("[RPC Get user] called for email '" + email + "'");
+		log.info("RPC Get user called for email '" + email + "'");
 		
 		// find a user by email, which in this implementation is considered as the login username
 		User user = userRepository.findByEmail(email);

@@ -53,7 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	private static UserCredentials guestUser;
     private static UserCredentials getGuestUser(String guestUserName, String guestUserPass, String guestUserRole) {
         if (guestUser == null){ 
-        	guestUser = new UserCredentials(guestUserName, guestUserName, guestUserPass, guestUserRole);
+        	guestUser = new UserCredentials(guestUserName, guestUserPass, guestUserRole);
         }
         return guestUser;
     }
@@ -88,8 +88,8 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 			List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(getRole(user));
 			
 			// returns a Spring user, which is employed by UserDetailsService to manage the authentication
-			log.info("UserDetails object built for " + user.getUsername());
-			return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
+			log.info("UserDetails object built for " + user.getEmail());
+			return new User(username, user.getPassword(), grantedAuthorities);
 			
 		} catch(Exception e) {
 			log.error("There was a problem loading the user.", e);
@@ -105,13 +105,13 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * @throws JsonProcessingException 
 	 * @throws JsonMappingException 
 	 */
-	public UserCredentials getUserInfoMessageRpc(String email) throws JsonMappingException, JsonProcessingException {
+	public UserCredentials getUserInfoMessageRpc(String username) throws JsonMappingException, JsonProcessingException {
 		// get a user json object from user-service
-		log.info("Requesting user information through user.rpc call for: " + email);
-	    String user = (String) rabbitTemplate.convertSendAndReceive(directExchange.getName(), "rpc", email);
+		log.info("Requesting user information through user.rpc call for: " + username);
+	    String user = (String) rabbitTemplate.convertSendAndReceive(directExchange.getName(), "rpc", username);
 	    if(user == null) {
 	    	log.info("It was not possible to retrieve the user information, user-service is likely unavailable.");
-	    	throw new UsernameNotFoundException("Username: " + email + " not found");
+	    	throw new UsernameNotFoundException("User '" + username + "' not found");
 	    }
 	    
 	    // deserialize into UserCredentials and return
@@ -128,6 +128,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * @return A UserDetails object based on  a guest user instance.
 	 */
 	public UserDetails loadGuestUser(String username, Throwable hystrixCommand) {
+		log.info("Load breaker activated, loading guest user as fall-back login method.");
 		UserCredentials user = getGuestUser(guestUserName, guestUserPass, guestUserRole);
 		
 		// grant read_only capabilities so that the user is able to access the app with limited functionalities

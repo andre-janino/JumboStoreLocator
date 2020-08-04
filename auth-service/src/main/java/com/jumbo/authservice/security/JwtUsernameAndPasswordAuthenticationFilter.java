@@ -76,10 +76,10 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 		try {
 			// Get credentials from request.
 			UserCredentials creds = new ObjectMapper().readValue(request.getInputStream(), UserCredentials.class);
-			log.info("Attempting to authenticate user " + creds.getUsername());
+			log.info("Attempting to authenticate user " + creds.getEmail());
 			
 			// Create an object with user credentials for the auth manager
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(), Collections.emptyList());
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), Collections.emptyList());
 			
 			// authenticate and load the user info
 			log.info("Authenticating the user.");
@@ -123,19 +123,15 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	 */
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	static class UserCredentials {
-	    private String username, password, email, role;    
+	    private String password, email, role;    
 	    
 	    UserCredentials() {}
-	    UserCredentials(String username, String email, String password, String role) {
-	    	this.username = username;
+	    UserCredentials(String email, String password, String role) {
 	    	this.email = email;
 	    	this.password = password;
 	    	this.role = role;
 	    }
 	    
-	    public String getUsername() {
-			return username;
-		}
 	    public String getPassword() {
 			return password;
 		}
