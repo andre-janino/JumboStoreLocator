@@ -98,6 +98,11 @@ Several libraries were used to fulfill the needed business logics; the main ones
 - _`Netflix Hystrix`_ is used to implement the _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure.
 - In this particular project, it is used to provide a guest user as a fall-back, in case _`user-service`_ is unavailable.
 
+#### Sleuth
+
+- Although I usually prefer running _`Elk Stack`_ for serious production projects, _`Sleuth`_ was used as it is very easey to setup and fulfill the needs of this project. 
+- It allows tracing logs across multiple services through unique IDs. Moreover, logs can be visualized in a centralized manner through [zipkin](https://zipkin.io/), if so desired.
+
 ## How to run <a name="run"></a> :wrench:
 
 In order to run this project locally, make sure you have:
