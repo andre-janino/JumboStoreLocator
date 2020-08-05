@@ -16,6 +16,3 @@ values(1001, 'andre.janino@gmail.com', 'André', 'Armstrong Janino Cizotto', '$2
 
 insert into users (id, email, first_name, password, role_id)
 values(1002, 'jumbotest@jumbo.com', 'Jumbo', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 2);
-
-insert into users (id, email, first_name, password, role_id)
-values(1003, 'Guest', 'Guest', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 1);
