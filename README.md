@@ -76,7 +76,8 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Netflix Eureka
 
-- _`Service Discovery`_ is performed by _`Netflix Eureka`_. This is needed due to the microservice architecture that was adopted.
+- _`Service Discovery`_ is performed by _`Netflix Eureka`_. This allows microservices to communicate with one-another through Feign Client (which has not yet been used on this project, as RabbitMQ was employed instead). 
+- Even if Feign Client is not used, it is useful to enable load balancing on Zuul (which, so far, was also not used, as the application was only tested locally).
 
 #### RabbitMQ
 
