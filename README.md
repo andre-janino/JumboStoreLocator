@@ -76,7 +76,8 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Netflix Eureka
 
-- _`Service Discovery`_ is performed by _`Netflix Eureka`_. This is needed due to the microservice architecture that was adopted.
+- _`Service Discovery`_ is performed by _`Netflix Eureka`_. This allows microservices to communicate with one-another through Feign Client (which has not yet been used on this project, as RabbitMQ was employed instead). 
+- Even if _`Feign Client`_ is not used, it is useful to enable load balancing on Zuul. The latter is still not applied, as the application was only tested locally with dev settings; however, it is important to leave such things in place when the need to setup a production environment with multiple instances arises.
 
 #### RabbitMQ
 
@@ -92,11 +93,6 @@ Several libraries were used to fulfill the needed business logics; the main ones
 #### Google Maps API
 
 - _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embedded map on the _`frontend`_ project.
-
-#### Netflix Hystrix
-
-- _`Netflix Hystrix`_ is used to implement the _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure.
-- In this particular project, it is used to provide a guest user as a fall-back, in case _`user-service`_ is unavailable.
 
 #### Sleuth
 
