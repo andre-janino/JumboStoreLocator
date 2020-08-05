@@ -94,11 +94,6 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 - _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embedded map on the _`frontend`_ project.
 
-#### Netflix Hystrix
-
-- _`Netflix Hystrix`_ is used to implement the _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure.
-- In this particular project, it is used to provide a guest user as a fall-back, in case _`user-service`_ is unavailable.
-
 #### Sleuth
 
 - _`Sleuth`_ is a logging solution that allows tracing actions across multiple services through unique trace IDs (done automatically), which makes it a perfect solution for a microservice architecture. 
