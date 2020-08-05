@@ -7,10 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +19,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumbo.authservice.security.JwtUsernameAndPasswordAuthenticationFilter.UserCredentials;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 /**
  * If the provided user is present on the database, create a Spring user object with the proper authorities
@@ -32,31 +29,11 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 public class UserDetailsServiceImpl implements UserDetailsService  {
 
 	private static final String ROLE_PREFIX = "ROLE_";	
-	
-	@Value("${user.guest.name:Guest}")
-	private String guestUserName;
-	
-	@Value("${user.guest.password}")
-	private String guestUserPass;
-	
-	@Value("${user.guest.role:GUEST}")
-	private String guestUserRole; 
 
 	private RabbitTemplate rabbitTemplate;
 	private DirectExchange directExchange;
 	
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	
-	/**
-	 * Guest user singleton, employed when user-service is down.
-	 */
-	private static UserCredentials guestUser;
-    private static UserCredentials getGuestUser(String guestUserName, String guestUserPass, String guestUserRole) {
-        if (guestUser == null){ 
-        	guestUser = new UserCredentials(guestUserName, guestUserPass, guestUserRole);
-        }
-        return guestUser;
-    }
 	
 	/**
 	 * Initialize the properties needed for RabbitMQ 
@@ -76,25 +53,36 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * @param username The username key of the user credentials. In this case, the user email.
 	 */
 	@Override
-	@HystrixCommand(fallbackMethod = "loadGuestUser")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		try {
-			log.info("Attempting to load user " + username);
-			
-			// retrieve a representation of the user object from user-service
-			UserCredentials user = this.getUserInfoMessageRpc(username);
-			
-			// define the user role
-			List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(getRole(user));
-			
-			// returns a Spring user, which is employed by UserDetailsService to manage the authentication
-			log.info("UserDetails object built for " + user.getEmail());
-			return new User(username, user.getPassword(), grantedAuthorities);
-			
-		} catch(Exception e) {
-			log.error("There was a problem loading the user.", e);
-		} 
-		return null;
+		// retrieve a representation of the user object from user-service. 
+		log.info("Attempting to load user: " + username);
+		UserCredentials user = this.getUserInfoMessageRpc(username);
+
+		// define the user role
+		List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(getRole(user));
+		
+		// returns a Spring user, which is employed by UserDetailsService to manage the authentication
+		return buildAuthUser(username, user, grantedAuthorities);
+	}
+
+	/**
+	 * Build a custom auth user to hold additional information.
+	 * 
+	 * @param username The requested username. 
+	 * @param user The temp user credentials object, deserialized from user-service RPC response
+	 * @param grantedAuthorities The granted authorities (ADMIN, USER or GUEST)
+	 * @return A custom authenticated user object
+	 */
+	private UserDetails buildAuthUser(String username, UserCredentials user, List<GrantedAuthority> grantedAuthorities) {
+		// build the default object and fill in the remainder of the info
+		AuthenticatedUser authUser = new AuthenticatedUser(username, user.getPassword(), grantedAuthorities);
+		authUser.setFirstName(user.getFirstName());
+		authUser.setLastName(user.getLastName());
+		authUser.setRole(user.getRole());
+		authUser.setEmail(user.getEmail());
+		
+		log.info("UserDetails object built for " + user.getEmail());
+		return authUser;
 	}
 	
 	/**
@@ -105,37 +93,14 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * @throws JsonProcessingException 
 	 * @throws JsonMappingException 
 	 */
-	public UserCredentials getUserInfoMessageRpc(String username) throws JsonMappingException, JsonProcessingException {
+	public UserCredentials getUserInfoMessageRpc(String username) {
 		// get a user json object from user-service
 		log.info("Requesting user information through user.rpc call for: " + username);
 	    String user = (String) rabbitTemplate.convertSendAndReceive(directExchange.getName(), "rpc", username);
-	    if(user == null) {
-	    	log.info("It was not possible to retrieve the user information, user-service is likely unavailable.");
-	    	throw new UsernameNotFoundException("User '" + username + "' not found");
-	    }
-	    
+
 	    // deserialize into UserCredentials and return
 	    log.info("Received json user properties: " + user);
 	    return deserializeToUserCredentials(user);
-	}
-	
-	/**
-	 * Fallback method in case the RPC communication channel fails. 
-	 * It is important to note that if a user is not found because the username is incorrect, this fallback is not fired.
-	 * 
-	 * @param email The original requested email.
-	 * @param hystrixCommand The hytrix exception that was captured.
-	 * @return A UserDetails object based on  a guest user instance.
-	 */
-	public UserDetails loadGuestUser(String username, Throwable hystrixCommand) {
-		log.info("Load breaker activated, loading guest user as fall-back login method.");
-		UserCredentials user = getGuestUser(guestUserName, guestUserPass, guestUserRole);
-		
-		// grant read_only capabilities so that the user is able to access the app with limited functionalities
-		List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(user.getRole());
-		
-		// return the guest user
-		return new User(user.getEmail(), user.getPassword(), grantedAuthorities);
 	}
 
 	/**
@@ -146,11 +111,16 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 	 * @throws JsonProcessingException 
 	 * @throws JsonMappingException 
 	 */
-	private UserCredentials deserializeToUserCredentials(String user) throws JsonMappingException, JsonProcessingException {
+	private UserCredentials deserializeToUserCredentials(String user) {
 		log.info("Deserializing user json into UserCredentials object");
 		TypeReference<UserCredentials> mapType = new TypeReference<UserCredentials>() {};
 	    ObjectMapper objectMapper = new ObjectMapper();
-	    return objectMapper.readValue(user, mapType);
+	    try {
+			return objectMapper.readValue(user, mapType);
+		} catch (Exception e) {
+			log.error("There was a problem deserializing the provided user json.", e);
+		} 
+	    return null;
 	}
 	
 	/**

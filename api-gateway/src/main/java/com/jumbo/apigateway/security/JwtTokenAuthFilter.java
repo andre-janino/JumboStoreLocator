@@ -65,7 +65,7 @@ public class JwtTokenAuthFilter extends OncePerRequestFilter {
 			log.info(header + " header is present: " + reqHeader);
 			authenticate(reqHeader);
 		} else {
-			log.info(header + "authentication header not present.");
+			log.info(header + " header not present.");
 		}
 		
 		// move forward with the filter chain

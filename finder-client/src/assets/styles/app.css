@@ -1,0 +1,230 @@
+html {
+    overflow-y: auto !important;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji  !important;
+    color: #353535;
+}
+
+.appheader {
+    background-color: #fcbe00 !important;
+    height: 48px !important;
+}
+
+.jumbo {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: "sans-serif";
+    font-size: 16px;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -webkit-font-variant-ligatures: none;
+    font-variant-ligatures: none;
+    line-height: 1.375;
+    text-rendering: optimizeLegibility;
+    text-shadow: rgba(0,0,0,.01) 0 0 1px;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+.jum-button {
+    align-items: center !important;
+    background-color: #fdc513  !important;
+    border: 1px solid  !important;
+    border-color: transparent  !important;
+    border-radius: 30px  !important;
+    color: #000  !important;
+    display: inline-flex  !important;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji  !important;
+    font-size: .875em  !important;
+    font-weight: 700  !important;
+    min-height: 30px  !important;
+    padding-bottom: 4px  !important;
+    padding-left: 20px  !important;
+    padding-right: 20px  !important;
+    padding-top: 4px  !important;
+    text-decoration: none  !important;
+    transition-duration: .2s  !important;
+    transition-property: background-color,border,color  !important;
+    transition-timing-function: ease-in-out  !important;
+    vertical-align: middle  !important;
+}
+
+.jumbo a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.jumbo *, .jumbo :after, .jumbo :before {
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+.v-messages__message {
+    position: absolute; 
+}
+
+.formLayout > div:not(:first-child) {
+    padding-left: 48px !important;
+}
+
+.container{
+    max-width: none !important;
+ }
+
+.customTitlebar > header {
+    flex-shrink: 0;
+    display: inline-flex;
+    width: 100%;
+}
+
+.customContent {
+    flex-grow: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.toolbar-title {
+    font-size: 1.25rem !important;
+    line-height: 1.5rem;
+    font-weight: normal;
+    padding-left: 16px;
+}
+
+.mainContainer {
+    width: 100%;
+}
+
+button.v-btn[disabled] {
+    opacity: 0.6;
+}
+
+.v-progress-linear {
+    -moz-transform: scale(1, -1);
+    -webkit-transform: scale(1, -1);
+    -o-transform: scale(1, -1);
+    -ms-transform: scale(1, -1);
+    transform: scale(1, -1);
+}
+
+.v-toolbar__extension {
+    padding: 0px !important;
+}
+
+.loginLogo {
+    float: right;
+}
+
+.appLogo > div {
+    margin-left: -75px;
+    margin-top: 0px;
+}
+
+.appLogo {
+    margin-top: -15px;
+}
+
+.logoff {
+    margin-top: -13px;
+    color: #353535 !important;
+}
+
+.jumbo-special-yellow {
+    font-weight: 400;
+    color: #fcbe00;
+}
+
+.jumbo-special-black {
+    font-weight: 800;
+    color: rgb(38, 38, 38)  !important;
+    font-size: 24px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.jumbo-black {
+    font-weight: 800;
+    color: rgb(38, 38, 38)  !important;
+    font-size: 16px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.navbar-nav {
+    display: inherit;
+}
+
+.loginbackground-static {
+    background-color: #efc630;
+    margin-top: -12px;
+    margin-bottom: -12px;
+}
+
+.loginOpacity {
+    background-color: rgba(78, 72, 72, 0.4);
+    height: 100%;
+    width: 100%;
+}
+
+.loginbackground {
+	background: linear-gradient(-45deg, rgb(34, 33, 33), #292925, #443f31, #817a50) !important;
+	background-size: 400% 400% !important;
+    animation: gradient 20s ease infinite !important;
+    -webkit-animation: gradient 20s ease infinite !important;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@-webkit-keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.slide-enter-active {
+    -moz-transition-duration: 0.3s;
+    -webkit-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -moz-transition-timing-function: ease-in;
+    -webkit-transition-timing-function: ease-in;
+    -o-transition-timing-function: ease-in;
+    transition-timing-function: ease-in;
+ }
+ 
+ .slide-leave-active {
+    -moz-transition-duration: 0.3s;
+    -webkit-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+ }
+ 
+ .slide-enter-to, .slide-leave {
+    max-height: 100px;
+    overflow: hidden;
+ }
+ 
+ .slide-enter, .slide-leave-to {
+    overflow: hidden;
+    max-height: 0;
+ }
