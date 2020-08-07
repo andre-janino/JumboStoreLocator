@@ -32,22 +32,47 @@ On the details of each found store, the page also allows the user to navigate to
 
 The store information I can work with is provided in a json format, and contains the following fields: _`city`_, _`postalCode`_, _`street`_, _`street2`_, _`street3`_, _`addressName`_, _`uuid`_, _`longitude`_, _`latitude`_, _`complexNumber`_, _`showWarningMessage`_, _`todayOpen`_, _`locationType`_, _`collectionPoint`_, _`sapStoreID`_ and _`todayClose`_. 
 
-It seems to have most of the fields necessary to replicate a similar list to the one provided at Jumbo's website, except by the open/close times on other days of the week. The _`uuid`_ field would also allow the _`reserve pick-up time`_ button to be implemented. However, the data needed for the store details button does not seem to be available. 
+It seems to have most of the fields necessary to replicate a similar list to the one provided at Jumbo's website, except by the open/close times on other days of the week. The _`uuid`_ field would also allow the _`reserve pick-up time`_ button to be implemented. The _`store details button`_ seems to require some logic to be applied, for example: when the same _`addressName`_ field is used twice (e.g. Jumbo Hulst Stationsplein *22H* and *30*), the _`street2`_ field is embedded on the url: https://www.jumbo.com/winkel/jumbo-hulst-stationsplein-30. This is problematic with the provided test data because *Jumbo Hulst Stationsplein 22H* is missing, so there is no good way to know if the `_street2_` field should be appended or not on the url.
 
-I also compared Jumbo's store finder with Walmart's. The UI is very similar, having a search-box within the map that displays an expandable list of stores, the main difference being that Walmart's does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the amount of stores).
+I also compared Jumbo's store finder with the one provided by Walmart. The UI is very similar, having a search-box within the map that displays an expandable list of stores; the main difference being that Walmart's does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the amount of stores). The UI also has different quirks in terms of how details of a shop are displayed.
 
 #### Proposed design
 
-In terms of functionality, the original system offers much more than the scope of this project. The filters are very specific and seem to convey that it was something that was built over time, by listening to customer feedback. It also makes sense to have the search bar within the map, as mobile users do not have much screen real-state and need to have a compact and responsive UI. Therefore, a simpler but functional version of the existing Jumbo store finder will be created in this small project.
+In terms of functionality, the original system offers much more than the scope of this project. The filters are very specific and seem to convey that it was something that was built over time, by listening to customer feedback. It also makes sense to have the search bar within the map, as mobile users do not have much screen real-state and need to have a compact and responsive UI. Therefore, a simpler but functional version of the existing Jumbo store finder was designed for this project.
 
 <p align="center">
   <img src="_resources/Jumbo Store Locator.png" title="Proposed design" alt="Proposed design"/>
 </p>
 
-The supported features at the present version are:
-- TODO: add feature #1
-- TODO: add feature #2
-- TODO: add feature #3
+Geneal premisses:
+- Users are able to log-in through email/password or with a guest user, but for this MVP no registration page is provided (hardcoded users). 
+- After logging in, the user is presented with a map centered at the Netherlands, displaying all available stores on a map. 
+- The map displays a list of found stores (all by default), contains a search panel and allows filtering. 
+- The search panel does not display any stores until the user makes his first query. 
+
+The following filters are supported:
+- All stores: query all stores, ordered by distance of the provided address.
+- Closes stores: query the 5 nearest stores, ordered by distance of the provided address.
+- Favorite stores*: query only the favorited stores, ordered by distance of the provided address.
+- Store types: in combination to the selected filter, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and `_drive-through of walk-in pick-up point`_.
+
+*Note: the favorite store query is only enabled if the user is logged in; guest users can't favorite a store.
+
+The "collapsed" details of a store displays the following info:
+- Title: _`addressName`_.
+- Line 1: _`street`_ +  _`street2`_.
+- Line 2: _`city`_.
+- Line 3: Open today: _`todayOpen`_ - _`todayClose`_.
+- Side info: distance from current location.
+
+When expanded, additional info is displayed:
+- Store type.
+- Button: route from current location to the store (opens google maps on a new tab).
+- Button: favorite/unfavorite the store (for non-guest users).
+
+The "nearest stores" logic is managed by the back-end.
+
+Disclaimer: several icons, styling and text were obtained from Jumbo's website and are not to be utilized outside of this private repository.
 
 ## Architecture <a name="about"></a> :scroll:
 
@@ -59,7 +84,7 @@ The solution is divided into the _`frontend`_ project for the user interface and
 - _`api-gateway`_: deals with token validation and redirects requests to other microservices.
 - _`auth-service`_: validates user credentials and issue tokens.
 - _`user-service`_: customer entity/controller/service/etc with a simple in-memory h2 database, used in conjunction with auth-service.
-- _`store-service`_: store entity/controller/service/etc with mongodb (atlas), returns N closest stores to a given location.
+- _`store-service`_: store entity/controller/service/etc with mongodb (atlas), returns N closest stores (by type) to a given location.
 - _`config-service`_: centralized configuration service that store properties used by other microservices.
 
 It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything that was done on this small project.
@@ -92,12 +117,20 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Google Maps API
 
-- _`Google maps API`_ is used to retrieve the 5 closes stores based on a given location, as well as displaying said stores on an embedded map on the _`frontend`_ project.
+- _`Maps JavaScript API`_ enables the use of google maps on a javascript front-end.
+- _`Geocoding API`_ is used to convert addresses (e.g. Netherlands) into geographic coordinates.
+- _`Places API`_ helps with address auto-complete.
 
 #### Sleuth
 
 - _`Sleuth`_ is a logging solution that allows tracing actions across multiple services through unique trace IDs (done automatically), which makes it a perfect solution for a microservice architecture. 
 - Logs can be visualized in a dashboard through [zipkin](https://zipkin.io/), if so desired.
+
+#### Libraries/Design patterns that were considered initially, but dropped
+
+I initially planned to employ _`Netflix Hystrix`_ to implement _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure. My first idea was to do that within _`auth-serive`_, but automatically logging the user in as a guest if _`user-service`_ is down and unble to provide user info. However, it feels a bit cluncky from the user perspective, so I decided against it in the end. 
+
+I also wanted to have _`store-service`_ only deal with CRUDE store operations, creating a microservice dedicated to store search operations (specially favoriting) to better separate concerns. However, not having event-sourcing implemeted would lead to tight coupling between the services and make it a little pointless at this stage in the project, adding more latency and complexity with very little gain. With that in mind, when/if _`RabbitMQ`_ is employed to notify other services of changes, it will make sense to separate these services.
 
 ## How to run <a name="run"></a> :wrench:
 
@@ -119,8 +152,6 @@ Having downloaded the project and installed all the needed libraries, you have t
 
 Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser.
 
-TODO: double-check run instructions when project is done.
-
 ## Testing <a name="testing"></a> :beetle:
 
 This project was tested in three ways:
@@ -140,8 +171,6 @@ This tool facilitates API testing by allowing the creation of get/post/put/delet
   <img src="_resources/Postman.png" title="Postman API tests" alt="Postman API tests"/>
 </p>
 
-TODO: When development is done, share the postman collections here.
-
 #### Manual tests <a name="manual"></a>
 
 With the application [up and running](#run), head towards http://localhost:8081 on your favorite browser and you will be greeted with the store locator landing page.
@@ -150,8 +179,9 @@ TODO: Add screenshots and general instructions.
 
 ## Future enhancements <a name="future"></a> :clock130:
 
-- Migrate the h2 database into another database. PostgreeSQL and MySQL are valid options in terms of SQL, while MongoDB and DynamoDB are appealing ones in terms of NoSQL.
-- Add admin-specific pages for managing users and stores.
-- Add security for _`Spring Cloud Config`_.
+- Migrate the h2 database into another database for _`user-service`_. PostgreeSQL and MySQL are valid options in terms of SQL.
+- Add admin-specific pages for managing users and stores. When this is done, also implement _`event-sourcing`_ to synchronize services which rely on this data (eliminate querying across services as much as possible).
+- With the previous point implemented, separate the "favorite stores" functionality into its own microservice and refactor auth-service to have its own user db.
+- Add security for _`Spring Cloud Config`_ and move the config to a github repo (JDBC-based Spring Cloud Config is interesting, but harder to configure).
 - Improve logging (ELK Stack).
 - Add selenium tests (that is, don't rely on JUnit and Postman alone).
