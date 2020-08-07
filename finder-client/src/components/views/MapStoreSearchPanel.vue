@@ -19,6 +19,7 @@
       <!-- Expandable panels with the found stores -->
        <MapStoreSearchPanelBody
         :foundStores="foundStores"
+        :selectedStore="selectedStore"
         @setSelectedStore="setSelectedStore"
         />
     </v-card>
@@ -30,7 +31,7 @@ import MapStoreSearchPanelHeader from "./MapStoreSearchPanelHeader";
 import MapStoreSearchPanelBody from "./MapStoreSearchPanelBody";
 
 export default {
-    props: ["address","foundStores", "storeTypes"],
+    props: ["address","foundStores","selectedStore","storeTypes"],
     name: "MapStoreSearchPanel",
     components: {
       MapStoreSearchPanelHeader,

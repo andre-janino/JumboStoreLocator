@@ -4,15 +4,16 @@
         :accordion=true
         :multiple=false
         :focusable=false
-        :hover=false>
-        <v-expansion-panel v-for="store in foundStores" :key="store.uuid">
-          <v-expansion-panel-header @click="setSelectedStore(store.uuid)">
+        :hover=false
+        v-model="currentStore">
+        <v-expansion-panel v-for="store in foundStores" :key="store.markerId">
+          <v-expansion-panel-header>
             <template>
               <div>{{store.city}}</div>
               <div>{{store.street}}</div>
             </template>
           </v-expansion-panel-header>
-          <v-expansion-panel-content onshowhide="log()">
+          <v-expansion-panel-content>
             <template>
               <div>{{store.street}}</div>
             </template>
@@ -23,15 +24,17 @@
 
 <script>
 export default {
-    props: ["foundStores"],
+    props: ["foundStores", "selectedStore"],
     name: "MapStoreSearchPanelBody",
-    methods: {
-        log (aaaa) {
-            console.log("Section click:", aaaa);
-        },
-        setSelectedStore(item) {
-            this.$emit("setSelectedStore", item);
-        },
+    computed: {
+        currentStore: {
+            get() {
+                return this.selectedStore;
+            },
+            set(newVal) {
+                this.$emit("setSelectedStore", newVal);
+            } 
+        }
     },
 }
 
