@@ -1,4 +1,5 @@
 <template>
+  <!-- Completely bare page just to check the info is there, no actual profile button has been added for the user to access, for now. -->
   <div class="container">
     <header class="jumbotron">
       <h3>

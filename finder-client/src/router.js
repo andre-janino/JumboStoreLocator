@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import LoginPage from "./components/views/Login";
-import MainPage from "./components/views/MainPage";
+import MapMainPage from "./components/views/MapMainPage";
 import Profile from "./components/views/Profile";
 
 Vue.use(Router);
@@ -10,7 +10,7 @@ const router = new Router({
   routes: [
     {
       path: "/",
-      component: MainPage
+      component: MapMainPage
     },
     {
       path: "/login",

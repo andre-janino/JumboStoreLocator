@@ -64,10 +64,6 @@ html {
     position: absolute; 
 }
 
-.formLayout > div:not(:first-child) {
-    padding-left: 48px !important;
-}
-
 .container{
     max-width: none !important;
  }
@@ -95,6 +91,37 @@ html {
     width: 100%;
 }
 
+.mapStoreTypes {
+    margin-top: 20px;
+}
+
+.chipStoreIcon {
+    width: 30px;
+    margin-right: 10px
+}
+
+.searchStoresButton {
+    margin-left: 20px !important;
+    margin-top: 20px !important;
+}
+
+.searchInput {
+    min-width: 320px;
+}
+
+.v-expansion-panel-header__icon {
+    display: none !important;
+}
+
+.searchCard {
+    border-bottom: 2px solid black !important;
+}
+
+.searchResults {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
 button.v-btn[disabled] {
     opacity: 0.6;
 }
@@ -111,12 +138,161 @@ button.v-btn[disabled] {
     padding: 0px !important;
 }
 
+.storeLocator {
+    width: calc(100%);
+    height: calc(100%);
+}
+
+.mapPage {
+    width: 100%;
+    height: 100%;
+}
+
+.mapCard {
+    width: 100%;
+    height: 100%;
+}
+
+.v-expansion-panel--active {
+    border: 2px solid black;
+    border-radius: 4px;
+}
+
+.mapToolbar {
+    margin-bottom: 5px;
+    margin-left: 16px;
+    height: 45px !important;
+}
+
+.mapToolbar > .v-toolbar__content {
+    display: none;
+}
+
+.verticalDivider {
+    padding-left: 0px !important;
+    max-width: 10px !important;
+}
+
+.mapHeaderText {
+    margin-bottom: 0px !important;
+    font-weight: 400;
+    color: rgb(38, 38, 38) !important;
+    font-size: 14px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    -webkit-font-smoothing: antialiased;
+    float: right;
+}
+
+.storeDescription {
+    max-width: 50px;
+}
+
+.v-tabs-slider-wrapper {
+    height: 4px !important;
+}
+
+@media only screen and (max-width: 650px) {
+    .tabText {
+        display: none;
+    }
+}
+
+.searchContainer {
+    display: block;
+    position: absolute !important;
+    overflow: hidden;
+    top: 30px !important;
+    left: 30px !important;
+}
+
+.searchSection {
+    display: inline-block;
+}
+
+.searchBox {
+    padding: 20px;
+    padding-bottom: 5px;
+}
+
+.searchWrapper {
+    margin: 0;
+    padding: 0;
+    min-width: 100%;
+    table-layout: auto;
+}
+
+.arrange-fill, .arrange-fit {
+    display: table-cell;
+    padding: 0;
+    vertical-align: top;
+}
+
+.arrange-fill {
+    width: 100%;
+}
+
+.searchBar {
+    height: 40px;
+    width: 100%;
+    font-size: 16px;
+    font-family: "JumboRegular";
+    padding: 0 40px 0 15px;
+    border: 0;
+    outline: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: #fff;
+    -webkit-box-shadow: 0px 0px 15px rgba(0,0,0,0.25);
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.25);
+}
+
+.searchLabelText {
+    font-weight: 400;
+    color: rgb(38, 38, 38) !important;
+    font-size: 16px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    -webkit-font-smoothing: antialiased;
+    padding-top: 3px;
+    margin-bottom: 0px !important;
+}
+
+.searchLabelTextBold {
+    font-weight: 500;
+    color: rgb(38, 38, 38) !important;
+    font-size: 16px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    -webkit-font-smoothing: antialiased;
+    padding-top: 3px;
+    padding-left: 7px;
+    margin-bottom: 0px !important;
+}
+
+.searchButton {
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.25);
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    padding: 0;
+    background-color: #FFF;
+    border-color: #FFF;
+    color: #262626;
+    border-width: 0px;
+    vertical-align: top;
+    position: absolute;
+    top: 15px;
+    left: 91%;
+    left: -webkit-calc(100% - 45px);
+    left: calc(100% - 45px);
+}
+
 .loginLogo {
     float: right;
 }
 
 .appLogo > div {
-    margin-left: -75px;
     margin-top: 0px;
 }
 
@@ -127,6 +303,8 @@ button.v-btn[disabled] {
 .logoff {
     margin-top: -13px;
     color: #353535 !important;
+    width: 40px !important;
+    margin-right: -10px !important;
 }
 
 .jumbo-special-yellow {
@@ -143,7 +321,7 @@ button.v-btn[disabled] {
 }
 
 .jumbo-black {
-    font-weight: 800;
+    font-weight: 600;
     color: rgb(38, 38, 38)  !important;
     font-size: 16px;
     text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;

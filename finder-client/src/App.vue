@@ -1,12 +1,12 @@
 <template>
   <v-app>
     <v-app-bar v-if="currentUser" app class="appheader">
-      <v-img class="mx-1 appLogo" src="./assets/logo-1.png" max-height="28" max-width="330" contain></v-img>
+      <v-img class="mx-1 appLogo" src="./assets/img/logo-1.png" max-height="28" max-width="120" contain></v-img>
       <div v-if="currentUser" class="navbar-nav ml-auto"> 
         <p class="jumbo-black">
-           Hallo, {{ currentUser.firstName }} !
+           Hallo, {{ currentUser.firstName }}!
         </p>
-        <v-tooltip left max-width="300px">
+        <v-tooltip left max-width="250px">
           <template v-slot:activator="{ on }">
             <v-btn
               class="logoff"

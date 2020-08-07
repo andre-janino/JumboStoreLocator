@@ -13,7 +13,6 @@ class AuthService {
         return http.post(API_URL + "auth", user).then((response) => {
             let user = response.data;
             let token = response.headers.authorization;
-            console.log(token);
             if (token) {
                 user.token = token;
                 localStorage.setItem("user", JSON.stringify(user));
@@ -26,7 +25,6 @@ class AuthService {
         return http.post(API_URL + "auth/guest").then((response) => {
             let user = response.data;
             let token = response.headers.authorization;
-            console.log(token);
             if (token) {
                 user.token = token;
                 localStorage.setItem("user", JSON.stringify(user));
