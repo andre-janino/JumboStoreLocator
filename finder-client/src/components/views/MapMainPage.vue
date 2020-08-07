@@ -136,6 +136,7 @@ export default {
       }
 
       // TODO query the stores
+      console.log('Query for: ' + this.address);
 
       // update the search parameters
       this.searchParameters = newSearchParameters;
@@ -216,10 +217,34 @@ export default {
               google.maps.event.removeListener(zoomChangeBoundsListener);
           });
       });
-      google.maps.event.addListenerOnce(map, 'idle', function(){
-          document.getElementById('searchContainer').style.visibility = 'show';
-      });
       map.initialZoom = true;
+
+      //  enables the visibility of the search panel upon loading and add autocomplete to the search input
+      const self = this;
+      google.maps.event.addDomListener(window, 'load', function(){
+          // display the search panel
+          document.getElementById('searchContainer').style.visibility = 'show';
+
+          // enable the autocomplete operation
+          var input = document.getElementById('searchInput');
+          var options = {
+              componentRestrictions: {country: 'nl'}
+          };
+          const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+          // listen for changes on the autocomplete control, capturing the address and fetching a new list of stores
+          autocomplete.addListener('place_changed', () => {
+            let place = autocomplete.getPlace();
+            if(place.formatted_address) {
+              self.address = place.formatted_address;
+              self.queryStores();
+            }
+
+            // coordinates, in case we decide to use them directly
+            // let lat = place.geometry.location.lat();
+            // let lon = place.geometry.location.lng();
+          }, self);
+      });  
 
       // centralize it at the Netherlands
       geocoder.geocode({ address: `Netherlands` }, (results, status) => {
@@ -234,6 +259,7 @@ export default {
       var searchContainer = document.getElementById('searchContainer');
       map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchContainer);
 
+      // adjust the control panel
       var controlDiv = document.getElementById('floating-panel');
       map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlDiv);
 

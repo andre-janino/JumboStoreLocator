@@ -9,6 +9,7 @@
                 <div class="searchWrapper">
                     <div class="arrange-fill">
                     <v-text-field 
+                        autocomplete="off"
                         v-model="searchedAddress"
                         id="searchInput" 
                         class="searchInput"

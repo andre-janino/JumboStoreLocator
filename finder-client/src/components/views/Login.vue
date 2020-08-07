@@ -27,6 +27,6 @@ export default {
     LoginCreateAcc,
     LoginCreateBussAcc,
     LoginAdditionalInfo
-  },
+  }
 };
 </script>
