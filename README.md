@@ -106,7 +106,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### RabbitMQ
 
-- _`RabbitMQ`_ is is usually employed for asynchronous message exchange between microservices. However, in this project, is it used to establish synchronous RPC communication between _`user-service`_ and _`auth-service`_.\
+- _`RabbitMQ`_ is is usually employed for asynchronous message exchange between microservices. However, in this project, is it used to establish synchronous RPC communication between _`user-service`_ and _`auth-service`_.
 - Using message-based RPC, services have no direct dependencies on other services; a service only depends on a response to a message request it makes to that queue. What it does is send a string to a queue (the start of asynchronous communication) and waiting for a message in a different queue to send it back as an HTTP response.
 - Generally speaking, it would be better to employ CQRS + event sourcing. This way, user-service would issue events whenever a user is registered/altered/deleted, and auth-service would capture these events and store a relation of user emails/passwords/roles. However, this is a fairly small application, and it seemed overkill to implement such pattern.
 
@@ -130,7 +130,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 I initially planned to employ _`Netflix Hystrix`_ to implement _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure. My first idea was to do that within _`auth-serive`_, but automatically logging the user in as a guest if _`user-service`_ is down and unble to provide user info. However, it feels a bit cluncky from the user perspective, so I decided against it in the end. 
 
-I also wanted to have _`store-service`_ only deal with CRUDE store operations, creating a microservice dedicated to store search operations (specially favoriting) to better separate concerns. However, not having event-sourcing implemeted would lead to tight coupling between the services and make it a little pointless at this stage in the project, adding more latency and complexity with very little gain. With that in mind, when/if _`RabbitMQ`_ is employed to notify other services of changes, it will make sense to separate these services.
+I also wanted to have _`store-service`_ only deal with CRUDE operations, having a dedicated microservice to perform search operations/favoriting to better separate concerns. However, not having event-sourcing implemeted would lead to tight coupling between the services and make it a little pointless at this stage in the project, adding more latency and complexity with very little gain. With that in mind, when/if _`RabbitMQ`_ is employed to notify other services of changes, it will make sense to separate these services.
 
 ## How to run <a name="run"></a> :wrench:
 
