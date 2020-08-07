@@ -87,7 +87,9 @@ The solution is divided into the _`frontend`_ project for the user interface and
 - _`store-service`_: store entity/controller/service/etc with mongodb (atlas), returns N closest stores (by type) to a given location.
 - _`config-service`_: centralized configuration service that store properties used by other microservices.
 
-<img src="_resources/Architecture.png" title="System architecture" alt="Architecture"/>
+<p align="center">
+  <img src="_resources/Architecture.png" title="System architecture" alt="Architecture"/>
+</p>
 
 It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything that was done on this small project.
 
