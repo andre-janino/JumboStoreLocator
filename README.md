@@ -104,6 +104,17 @@ Several libraries were used to fulfill the needed business logics; the main ones
 - _`Service Discovery`_ is performed by _`Netflix Eureka`_. This allows microservices to communicate with one-another through Feign Client (which has not yet been used on this project, as RabbitMQ was employed instead). 
 - Even if _`Feign Client`_ is not used, it is useful to enable load balancing on Zuul. The latter is still not applied, as the application was only tested locally with dev settings; however, it is important to leave such things in place when the need to setup a production environment with multiple instances arises.
 
+#### H2 Database Engine
+
+- _`H2`_ was employed as the SQL database for the _`user-service`_ to store login information and on the _`config-service`_ to store application properties.
+- Although it has little place in production envrionments, it is a great tool to present an MVP as it is very easy to migrate to another solution (e.g. MySQL).
+
+#### MongoDB Atlas
+
+- _`MongoDB`_ is a NoSQL database that is very suitable for restful applications, as data is already store in a json format. _`MongoDB Atlas`_ is a cloud solution that hosts _`MongoDB`_ databases, being not only suitable for quickly testing an application (little to no setup time involved) and escalating well for production environments.
+- In this particular application, _`MongoDB`_ is used by _`store-service`_ to hold the store data. 
+- While google maps platform documentation presents a very fitting [SQL solution](https://developers.google.com/maps/solutions/store-locator/clothing-store-locator) to query the distance between an address and the stored locations, it is also feasible to implement the same functionality with [GeoJSON](https://geojson.org/). Why use one over the other? Mainly because NoSQL is a good fit for the needs of our _`store-service`_.
+
 #### RabbitMQ
 
 - _`RabbitMQ`_ is is usually employed for asynchronous message exchange between microservices. However, in this project, is it used to establish synchronous RPC communication between _`user-service`_ and _`auth-service`_.
@@ -117,7 +128,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 #### Google Maps API
 
-- _`Maps JavaScript API`_ enables the use of google maps on a javascript front-end.
+- _`Maps JavaScript API`_ enables the use of google maps on an html/javascript front-end.
 - _`Geocoding API`_ is used to convert addresses (e.g. Netherlands) into geographic coordinates.
 - _`Places API`_ helps with address auto-complete.
 
