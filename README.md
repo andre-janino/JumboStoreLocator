@@ -87,6 +87,8 @@ The solution is divided into the _`frontend`_ project for the user interface and
 - _`store-service`_: store entity/controller/service/etc with mongodb (atlas), returns N closest stores (by type) to a given location.
 - _`config-service`_: centralized configuration service that store properties used by other microservices.
 
+<img src="_resources/Architecture.png" title="System architecture" alt="Architecture"/>
+
 It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything that was done on this small project.
 
 Why have microservices for such a small application? Creating small, independent microservices allow us to integrate/replace/maintain functionality in a bigger project with minimal effort. In this particular case, what is really being asked is that a store locator API is implemented, but as I have no access to Jumbo's API Gateway, front-end, user/customer service, etc, it makes sense to create my own and keep them separate, simply acting as placeholders for an MVP demonstration.
