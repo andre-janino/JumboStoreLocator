@@ -170,7 +170,7 @@ Having downloaded the project and installed all the needed libraries, you have t
 - On _`store-service`_ folder, execute _`java -jar store-service`_.
 - On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`run serve`_ to start the Vue.js application.
 
-It is important that _`config-service`_ is the first to be initialized; the remainder of the projects can be initialized at any order. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser and either login as a guest or login with one of the following users:
+It is important that _`config-service`_ must be the first project to be initialized, followed by _`discovery-service`_; the remainder of the projects can be initialized at any order (just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser, and either login as a guest or login with one of the following users:
 
 - andre.janino@gmail.com / Password1
 - marijn.deromph@jumbo.com / Password1
