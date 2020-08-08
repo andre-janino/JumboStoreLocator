@@ -1,5 +1,6 @@
 <template>
     <v-expansion-panels
+        ref="panels"
         class="searchResults"
         :accordion=true
         :multiple=false
@@ -61,7 +62,7 @@
                       </div>
                       <div class="arrange-fit favorite-button">
                         <v-chip-group active-class="primary--text" v-model="store.favorite">
-                          <v-chip outlined>
+                          <v-chip outlined :value="true">
                             <v-icon medium class="chipFavIcon">mdi-star-circle</v-icon>
                             <strong>Favorite</strong>
                           </v-chip>
@@ -108,7 +109,7 @@ export default {
       },
       getDirections(item) {
         return `51.44164199999999,5.4697225&daddr=${item.position.lat},${item.position.lng}`;
-      }
+      },
     }
 }
 

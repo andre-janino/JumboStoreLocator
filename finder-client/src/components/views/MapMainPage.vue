@@ -9,6 +9,7 @@
         />
         <div class="storeLocator" id="map"/>
         <MapStoreSearchPanel 
+          ref="searchPanel"
           :foundStores="foundStores"
           :storeTypes="storeTypes"
           :address="address"
@@ -63,7 +64,7 @@ export default {
     google: {}, 
     gmap: {}, // the google map object
     searchParameters: {}, // the last search parameters (to avoid re-submitting the same query)
-    selectedStore: -1, // the last selected store (to prevent highlighting the same marker more than once)
+    selectedStore: 0, // the last selected store (to prevent highlighting the same marker more than once)
     markers: [], // map of markers
     address: "", // selected address
     storeFilter: 0, // search filters [all, 5 nearest and favorite]
@@ -89,7 +90,7 @@ export default {
         "sapStoreID":"3605",
         "todayClose":"20:00",
         "distance":"100m",
-        "favorite":[true]
+        "favorite":true
       },
       {
         "city":"'s-Heerenberg",
@@ -110,7 +111,7 @@ export default {
         "sapStoreID":"4670",
         "todayClose":"21:00",
         "distance":"1km",
-        "favorite":[false]
+        "favorite":false
       },
     ],
     markerIcons: {
@@ -175,12 +176,17 @@ export default {
     // add basic marker click handling
     markerClickHandler(marker) {
       // remove the highlight from the current marker
-      this.unhighlightMarker(this.markers[this.selectedStore]);
+      if(this.selectedStore > 0) {
+        this.unhighlightMarker(this.markers[this.selectedStore]);
+      }
 
       // position the map on the new marker, and highlight it
       this.selectedStore = marker.markerId;
       this.moveToPosition(marker);
       this.highlightMarker(marker);
+
+      //this.$refs["searchPanel"].$forceUpdate()
+      console.log(this.selectedStore);
     },
 
     // navigate to a position
