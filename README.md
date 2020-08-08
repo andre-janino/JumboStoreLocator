@@ -26,8 +26,6 @@ When designing a new feature, it makes sense to understand what is already in pl
 
 *Note: Either I didn't understand how the `_store type`_ filter works, or there's a bug on it. When I filter by "Pick-up point", I still get stores like [Jumbo Den Burg (Texel) Vogelenzang](https://www.jumbo.com/winkel/jumbo-den-burg-texel-vogelenzang?redirect=true), which (as far as I can see) is not a pick-up point. 
 
-It has a wide range of filters, but it lacks what is being asked here: to display only the 5 nearest stores. Therefore, it makes sense to implement that filter in a way that is easy to incorporate it among the others. From what I've observed, stores are already ordered by distance on the existing page.
-
 On the details of each found store, the user is allowed the following actions:
 - Favoriting at store.
 - [Visualize store details](https://www.jumbo.com/winkel/jumbo-heinkenszand-stenevate).
