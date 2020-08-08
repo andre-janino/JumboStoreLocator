@@ -22,9 +22,9 @@ Before discussing the architecture of a system, one must first understand what i
 
 #### State of the art
 
-When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as `_store type`_ filters*.
+When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as _`store type`_ filters*.
 
-*Note: Either I didn't understand how the `_store type`_ filter works, or there's a bug on it. When I filter by "Pick-up point", I still get stores like [Jumbo Den Burg (Texel) Vogelenzang](https://www.jumbo.com/winkel/jumbo-den-burg-texel-vogelenzang?redirect=true), which (as far as I can see) is not a pick-up point. 
+*Note: Either I didn't understand how the _`store type`_ filter works, or there's a bug on it. When I filter by "Pick-up point", I still get stores like [Jumbo Den Burg (Texel) Vogelenzang](https://www.jumbo.com/winkel/jumbo-den-burg-texel-vogelenzang?redirect=true), which (as far as I can see) is not a pick-up point. 
 
 On the details of each found store, the user is allowed the following actions:
 - Favoriting at store.
@@ -58,7 +58,7 @@ The following filters are supported:
 - All stores: query all stores, ordered by distance of the provided address.
 - Closest stores: query the 5 nearest stores, ordered by distance of the provided address.
 - Favorite stores*: query only the favorited stores, ordered by distance of the provided address.
-- Store types: in combination to the selected filter, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and `_drive-through of walk-in pick-up point`_.
+- Store types: in combination to the selected filter, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and _`drive-through of walk-in pick-up point`_ (which I renamed to simply drive-through for brevity; maybe it would be a good idea to add a tooltip to add more info to it?).
 
 *Note: the favorite store query is only enabled if the user is logged in; guest users can't favorite a store.
 
@@ -123,6 +123,17 @@ Several libraries were used to fulfill the needed business logics; the main ones
 - _`MongoDB`_ is a NoSQL database that is very suitable for restful applications, as data is already store in a json format. _`MongoDB Atlas`_ is a cloud solution that hosts _`MongoDB`_ databases, being not only suitable for quickly testing an application (little to no setup time involved) and escalating well for production environments.
 - In this particular application, _`MongoDB`_ is used by _`store-service`_ to hold the store data. 
 - While google maps platform documentation presents a very fitting [SQL solution](https://developers.google.com/maps/solutions/store-locator/clothing-store-locator) to query the distance between an address and the stored locations, it is also feasible to implement the same functionality with [GeoJSON](https://geojson.org/). Why use one over the other? Mainly because NoSQL is a good fit for the needs of our _`store-service`_.
+- As GeoJSON is being used, the fields "latitude" and "longitude" had to be put into a different structure:
+  ```json
+  "position": {
+      "type": "Point",
+      "coordinates": [125.6, 10.1]
+   }
+  ```
+  In order to achieve that, I've performed the following search and replace operations on _`stores.json`_, before inserting it at the stores MongoDB document:
+  - "longitude":" => "position": { "type": "Point", "coordinates": [
+  - ","latitude":" => ,
+  - ","complexNumber" => ]},"complexNumber"
 
 #### RabbitMQ
 
@@ -170,7 +181,7 @@ Having downloaded the project and installed all the needed libraries, you have t
 - On _`store-service`_ folder, execute _`java -jar store-service`_.
 - On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`run serve`_ to start the Vue.js application.
 
-It is important that _`config-service`_ is the first to be initialized; the remainder of the projects can be initialized at any order. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser and either login as a guest or login with one of the following users:
+It is important that _`config-service`_ must be the first project to be initialized, followed by _`discovery-service`_; the remainder of the projects can be initialized at any order (just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser, and either login as a guest or login with one of the following users:
 
 - andre.janino@gmail.com / Password1
 - marijn.deromph@jumbo.com / Password1
