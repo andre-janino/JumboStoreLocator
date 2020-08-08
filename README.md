@@ -220,4 +220,5 @@ TODO: Add screenshots and general instructions.
 - With the previous point implemented, separate the "favorite stores" functionality into its own microservice and refactor auth-service to have its own user db.
 - Add security for _`Spring Cloud Config`_ and move the config to a github repo (JDBC-based Spring Cloud Config is interesting, but harder to configure).
 - Improve logging (ELK Stack).
+- Improve the search panel responsiveness for mobile (need to add some @media breakpoint behaviors to displaty it differently for phones).
 - Add selenium tests (that is, don't rely on JUnit and Postman alone).
