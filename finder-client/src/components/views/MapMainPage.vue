@@ -70,6 +70,7 @@ export default {
     markers: [], // map of markers
     address: "", // selected address
     location: {},
+    viewport: {},
     storeFilter: 0, // search filters [all, 5 nearest and favorite]
     storeTypes: [0, 1, 2], // store types [store, pick-up point and drive through]
     foundStores: [], // list of queried stores, hardcoded for now
@@ -132,20 +133,31 @@ export default {
             this.location = results[0].geometry.location;
             newSearchParameters.lat = this.location.lat();
             newSearchParameters.lng = this.location.lng();
-          }   
-          this.foundStores = this.executeQuery(newSearchParameters);
-          this.setupStores();
+            this.viewport = results[0].geometry.viewport;
+          } 
+          this.updateMap(newSearchParameters);
         });
       } else {
         // in case we already have the lat/lng, add it to the search parameters
         newSearchParameters.lat = this.location.lat();
         newSearchParameters.lng = this.location.lng();
-        this.foundStores = this.executeQuery(newSearchParameters);
-        this.setupStores();
+        
+        // centralize the map at the new location
+        this.updateMap(newSearchParameters); 
       }
 
       // update the search parameters
       this.searchParameters = newSearchParameters;
+    },
+
+    updateMap(searchParameters) {
+      // centralize the map at the new location
+      this.gmap.panTo(this.location);
+      this.gmap.fitBounds(this.viewport);
+
+      // query the stores and setup the markers
+      this.foundStores = this.executeQuery(searchParameters);
+      this.setupStores();
     },
 
     // TODO: call the backend for the data
@@ -320,6 +332,7 @@ export default {
         if(place.formatted_address) {
           this.address = place.formatted_address;
           this.location = place.geometry.location;
+          this.viewport = place.geometry.viewport;
           this.queryStores(true);
         }
       });
@@ -349,17 +362,19 @@ export default {
           this.location = results[0].geometry.location;
           this.defaultLat = this.location.lat();
           this.defaultLng = this.location.lng();
+          this.viewport = results[0].geometry.viewport;
 
-          // center the map at the found location
-          map.setCenter(this.location);
-          map.fitBounds(results[0].geometry.viewport);
-          map.setZoom(8);
-          this.queryStores(true);
+          // query the data
+          this.queryStores();
         } else {
           // if no location is found, query the stores based on the default lat/lng
-          map.setZoom(8);
           this.queryStores();
         }
+      });
+
+      // set the default zoom after loading
+      google.maps.event.addListenerOnce(map, 'zoom_changed', function() {
+          map.setZoom(8);
       });
 
       // add a method that allows clearing the markers
