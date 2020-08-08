@@ -48,9 +48,9 @@
               <div class="searchWrapper">
                 <div class="arrange-fit left-panel">
                   <v-icon class="jumbo-store-time" large>mdi-clock-outline</v-icon>
-                  <v-icon class="jumbo-store-warning" large color="rgb(38, 38, 38)">mdi-information-outline</v-icon>
+                  <v-icon v-if="showWarningSign(store)" class="jumbo-store-warning" large color="rgb(38, 38, 38)">mdi-information-outline</v-icon>
                 </div>
-                <div v-if="showWarningSign(store)" class="arrange-fill">
+                <div class="arrange-fill">
                   <div class="jumbo-details">
                     <span class="jumbo-details-time">Mon - Sat</span>
                     <span class="ml-5">08:00 - 22:00</span>
@@ -70,8 +70,10 @@
                         </v-chip-group>
                       </div>
                     </div>
-                    <p class="jumbo-details-attention">Pay attention!</p>
-                    If you select a different Pick Up Point, prices may change. 
+                    <div v-if="showWarningSign(store)">
+                      <p class="jumbo-details-attention">Pay attention!</p>
+                      If you select a different Pick Up Point, prices may change. 
+                    </div>
                   </div>
                 </div>
               </div>
