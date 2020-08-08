@@ -209,7 +209,7 @@ export default {
           if(this.location.lat) {
             store.directions = `https://maps.apple.com/?saddr=${this.location.lat()},${this.location.lng()}&daddr=${store.position.lat},${store.position.lng}`;
           } else {
-            store.directions = `https://maps.apple.com/?saddr=52.370216,4.895168&daddr=${store.position.lat},${store.position.lng}`;
+            store.directions = `https://maps.apple.com/?saddr=${this.defaultLat},${this.defaultLng}&daddr=${store.position.lat},${store.position.lng}`;
           }
 
           // create a marker based on the store object
@@ -345,14 +345,21 @@ export default {
       // query the base location
       geocoder.geocode({ address: this.defaultAddress }, (results, status) => {
         if (status == `OK` && results[0]) {
+          // get the location and update the default lat/lng as a baseline
           this.location = results[0].geometry.location;
+          this.defaultLat = this.location.lat();
+          this.defaultLng = this.location.lng();
+
+          // center the map at the found location
           map.setCenter(this.location);
           map.fitBounds(results[0].geometry.viewport);
+          map.setZoom(8);
           this.queryStores(true);
         } else {
+          // if no location is found, query the stores based on the default lat/lng
+          map.setZoom(8);
           this.queryStores();
         }
-        map.setZoom(8);
       });
 
       // add a method that allows clearing the markers
