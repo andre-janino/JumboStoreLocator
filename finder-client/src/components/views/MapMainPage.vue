@@ -113,6 +113,90 @@ export default {
         "distance":"1km",
         "favorite":false
       },
+      {
+        "city":"'s-Heerenberg",
+        "postalCode":"7041 JE",
+        "street":"Stadsplein",
+        "street2":"71",
+        "street3":"",
+        "addressName":"Jumboooooo",
+        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
+        "position": {
+          "lat": 51.923993,
+          "lng": 5.576066,
+        },
+        "complexNumber":"30170",
+        "showWarningMessage":true,
+        "todayOpen":"08:00",
+        "locationType":"Supermarkt",
+        "sapStoreID":"46370",
+        "todayClose":"21:00",
+        "distance":"1km",
+        "favorite":false
+      },
+      {
+        "city":"'s-Heerenberg",
+        "postalCode":"7041 JE",
+        "street":"Stadsplein",
+        "street2":"71",
+        "street3":"",
+        "addressName":"Jumboooooooooooooooooooooooooooo",
+        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
+        "position": {
+          "lat": 52.123993,
+          "lng": 6.576066,
+        },
+        "complexNumber":"30170",
+        "showWarningMessage":true,
+        "todayOpen":"08:00",
+        "locationType":"Supermarkt",
+        "sapStoreID":"462270",
+        "todayClose":"21:00",
+        "distance":"1km",
+        "favorite":false
+      },
+      {
+        "city":"'s-Heerenberg",
+        "postalCode":"7041 JE",
+        "street":"Stadsplein",
+        "street2":"71",
+        "street3":"",
+        "addressName":"Hype train!",
+        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
+        "position": {
+          "lat": 51.923993,
+          "lng": 4.876066,
+        },
+        "complexNumber":"30170",
+        "showWarningMessage":true,
+        "todayOpen":"08:00",
+        "locationType":"Supermarkt",
+        "sapStoreID":"4670",
+        "todayClose":"21:00",
+        "distance":"1km",
+        "favorite":false
+      },
+      {
+        "city":"'s-Heerenberg",
+        "postalCode":"7041 JE",
+        "street":"Stadsplein",
+        "street2":"71",
+        "street3":"",
+        "addressName":"Is this even safe?",
+        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
+        "position": {
+          "lat": 51.923993,
+          "lng": 5.176066,
+        },
+        "complexNumber":"30170",
+        "showWarningMessage":true,
+        "todayOpen":"08:00",
+        "locationType":"Supermarkt",
+        "sapStoreID":"42370",
+        "todayClose":"21:00",
+        "distance":"1km",
+        "favorite":false
+      },
     ],
     markerIcons: {
       Supermarkt: require("../../assets/img/store.webp"),
@@ -169,12 +253,12 @@ export default {
     setSelectedStore(id) {
       if(id != undefined && id != this.selectedStore) {
         const marker = this.markers[id];
-        this.markerClickHandler(marker);
+        this.markerClickHandler(marker, true);
       }
     },
 
     // add basic marker click handling
-    markerClickHandler(marker) {
+    markerClickHandler(marker, panelClick) {
       // remove the highlight from the current marker
       if(this.selectedStore > 0) {
         this.unhighlightMarker(this.markers[this.selectedStore]);
@@ -185,8 +269,10 @@ export default {
       this.moveToPosition(marker);
       this.highlightMarker(marker);
 
-      //this.$refs["searchPanel"].$forceUpdate()
-      console.log(this.selectedStore);
+      // scroll the search panel to the selected store if the event came from the map
+      if(!panelClick) {
+        this.scrollToSearchResult(marker.sapStoreID);
+      }
     },
 
     // navigate to a position
@@ -219,6 +305,32 @@ export default {
       } else {
           marker.setAnimation(this.google.maps.Animation.BOUNCE);
       }
+    },
+
+    // scroll to the search result (on the search panel)
+    // it is not perfect, but it works ok for most cases
+    scrollToSearchResult(id) {
+      var target = document.getElementById(id);
+      var scrollContainer = target;
+      do { //find scroll container
+          scrollContainer = scrollContainer.parentNode;
+          if (!scrollContainer) return;
+          scrollContainer.scrollTop += 1;
+      } while ((scrollContainer.scrollTop == 0));
+
+      var targetY = 0;
+      do { 
+          if (target == scrollContainer) break;
+          targetY += target.offsetTop;
+      } while ((target = target.offsetParent));
+
+      const scroll = function(c, a, b, i) {
+          i++; if (i > 30) return;
+          c.scrollTop = a + (b - a) / 30 * i;
+          setTimeout(function(){ scroll(c, a, b, i); }, 20);
+      }
+      // start scrolling
+      scroll(scrollContainer, scrollContainer.scrollTop, targetY, 0);
     },
 
     // loading autocomplete only when the user focus on the input to ensure everything is loaded up nicely and to avoid initializing it if left unused

@@ -8,7 +8,7 @@
         :hover=false
         v-model="currentStore">
         <v-expansion-panel v-for="store in foundStores" :key="store.markerId">
-          <v-expansion-panel-header>
+          <v-expansion-panel-header :id="store.sapStoreID">
             <template>
               <div class="searchWrapper">
                   <div class="arrange-fill">

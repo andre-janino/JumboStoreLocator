@@ -123,8 +123,20 @@ html {
 }
 
 .searchResults {
-    max-height: 500px;
+    max-height: 460px !important;
     overflow-y: auto;
+}
+
+.searchResults::-webkit-scrollbar {
+    width: 8px;
+}
+.searchResults::-webkit-scrollbar-track {
+    background: #cccccc; 
+    XXborder-radius: 10px;
+}
+.searchResults::-webkit-scrollbar-thumb {
+    XXborder-radius: 10px;
+    background: gray;
 }
 
 button.v-btn[disabled] {
