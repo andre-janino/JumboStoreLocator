@@ -29,9 +29,10 @@
 
  /* 
   * Main page of the store finder application. It loads up all the other needed components, dealing with the business logic in a centralized manner. 
-  * Although it is a good way to decoupling front-end components and making them re-usable, I believe something should be done about the size of the
-  * MapStoreSearchPanel, as it requires too many objects/methods to be passed forward which is an indication that it could have been broken up better.
-  * Having said that, keeping it as a unit makes it easier to move it around if necessary.
+  * Although creating reusable components that only call $emit (so that the page that uses it can decide how to act on it) is a good way to decouple the front-end, 
+  * I believe something should be done about the size of the MapStoreSearchPanel as it has too many objects, which is an indication that it could have been broken up better.
+  * Having said that, keeping it as a unit makes it easier to move it around if necessary and I don't see much of a point of breaking it up, 
+  * unless we plan to allow different combinations of headers and bodies.
   * 
   * Anyway here's an elephant:
   *   _    _
@@ -63,10 +64,12 @@ export default {
   data: () => ({
     google: {}, 
     gmap: {}, // the google map object
+    geocoder: {},
     searchParameters: {}, // the last search parameters (to avoid re-submitting the same query)
     selectedStore: 0, // the last selected store (to prevent highlighting the same marker more than once)
     markers: [], // map of markers
     address: "", // selected address
+    location: {},
     storeFilter: 0, // search filters [all, 5 nearest and favorite]
     storeTypes: [0, 1, 2], // store types [store, pick-up point and drive through]
     foundStores: [ // list of queried stores, hardcoded for now
@@ -109,90 +112,6 @@ export default {
         "todayOpen":"08:00",
         "locationType":"Supermarkt",
         "sapStoreID":"4670",
-        "todayClose":"21:00",
-        "distance":"1km",
-        "favorite":false
-      },
-      {
-        "city":"'s-Heerenberg",
-        "postalCode":"7041 JE",
-        "street":"Stadsplein",
-        "street2":"71",
-        "street3":"",
-        "addressName":"Jumboooooo",
-        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
-        "position": {
-          "lat": 51.923993,
-          "lng": 5.576066,
-        },
-        "complexNumber":"30170",
-        "showWarningMessage":true,
-        "todayOpen":"08:00",
-        "locationType":"Supermarkt",
-        "sapStoreID":"46370",
-        "todayClose":"21:00",
-        "distance":"1km",
-        "favorite":false
-      },
-      {
-        "city":"'s-Heerenberg",
-        "postalCode":"7041 JE",
-        "street":"Stadsplein",
-        "street2":"71",
-        "street3":"",
-        "addressName":"Jumboooooooooooooooooooooooooooo",
-        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
-        "position": {
-          "lat": 52.123993,
-          "lng": 6.576066,
-        },
-        "complexNumber":"30170",
-        "showWarningMessage":true,
-        "todayOpen":"08:00",
-        "locationType":"Supermarkt",
-        "sapStoreID":"462270",
-        "todayClose":"21:00",
-        "distance":"1km",
-        "favorite":false
-      },
-      {
-        "city":"'s-Heerenberg",
-        "postalCode":"7041 JE",
-        "street":"Stadsplein",
-        "street2":"71",
-        "street3":"",
-        "addressName":"Hype train!",
-        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
-        "position": {
-          "lat": 51.923993,
-          "lng": 4.876066,
-        },
-        "complexNumber":"30170",
-        "showWarningMessage":true,
-        "todayOpen":"08:00",
-        "locationType":"Supermarkt",
-        "sapStoreID":"4670",
-        "todayClose":"21:00",
-        "distance":"1km",
-        "favorite":false
-      },
-      {
-        "city":"'s-Heerenberg",
-        "postalCode":"7041 JE",
-        "street":"Stadsplein",
-        "street2":"71",
-        "street3":"",
-        "addressName":"Is this even safe?",
-        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
-        "position": {
-          "lat": 51.923993,
-          "lng": 5.176066,
-        },
-        "complexNumber":"30170",
-        "showWarningMessage":true,
-        "todayOpen":"08:00",
-        "locationType":"Supermarkt",
-        "sapStoreID":"42370",
         "todayClose":"21:00",
         "distance":"1km",
         "favorite":false
@@ -242,8 +161,17 @@ export default {
         return;
       }
 
-      // TODO query the stores
-      console.log('Query for: ' + this.address);
+      // get the coordinates of the searched address
+      this.geocoder.geocode({ address: this.address }, (results, status) => {
+        if (status !== `OK` || !results[0]) {
+          throw new Error(status);
+        }
+        this.location = results[0].geometry.location;
+        // store.directions = `https://www.google.com/maps?saddr='${this.location.lat()},${this.location.lng()}=${store.position.lat},${store.position.lng}`;
+        // TODO query the stores
+        console.log('Query for: ' + this.address);
+        console.log(`${this.location.lat()},${this.location.lng()}`);
+      });
 
       // update the search parameters
       this.searchParameters = newSearchParameters;
@@ -310,14 +238,13 @@ export default {
     // scroll to the search result (on the search panel)
     // it is not perfect, but it works ok for most cases
     scrollToSearchResult(id) {
+      // only scroll if the container is scrollable
+      var scrollContainer = document.getElementById("searchResults");
+      if(scrollContainer.scrollHeight > scrollContainer.clientHeight) {
+        return;
+      }
+      
       var target = document.getElementById(id);
-      var scrollContainer = target;
-      do { //find scroll container
-          scrollContainer = scrollContainer.parentNode;
-          if (!scrollContainer) return;
-          scrollContainer.scrollTop += 1;
-      } while ((scrollContainer.scrollTop == 0));
-
       var targetY = 0;
       do { 
           if (target == scrollContainer) break;
@@ -388,7 +315,8 @@ export default {
         if (status !== `OK` || !results[0]) {
           throw new Error(status);
         }
-        map.setCenter(results[0].geometry.location);
+        this.location = results[0].geometry.location;
+        map.setCenter(this.location);
         map.fitBounds(results[0].geometry.viewport);
       });
 
@@ -403,14 +331,17 @@ export default {
       // plot existing markers
       var index = 0;
       this.foundStores.map((store) => {
+          // set the needed properties
           store.icon = this.markerIcons[store.locationType];
           store.markerId = index++;
+           
           const marker = new google.maps.Marker({ ...store, map });
           this.markers[marker.markerId] = marker;
           marker.addListener(`click`, () => this.markerClickHandler(marker));
           return marker;
         });
 
+      this.geocoder = geocoder;
       this.gmap = map;
       this.google = google;
     } catch (error) {

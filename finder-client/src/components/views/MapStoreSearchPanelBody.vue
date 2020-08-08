@@ -2,6 +2,7 @@
     <v-expansion-panels
         ref="panels"
         class="searchResults"
+        id="searchResults"
         :accordion=true
         :multiple=false
         :focusable=false
@@ -31,7 +32,7 @@
                         <img src="../../assets/img/store.webp">
                       </span>
                       <span>
-                        <a class="jumbo-details-link" :href="'https://www.google.com/maps?saddr=' + getDirections(store)" target="_blank" onclick="event.stopPropagation();">
+                        <a class="jumbo-details-link" :href="store.directions" target="_blank" onclick="event.stopPropagation();">
                           <v-icon large color="black">mdi-call-split</v-icon>
                           <span>{{store.distance}}</span>
                         </a>
@@ -92,7 +93,7 @@ export default {
             set(newVal) {
                 this.$emit("setSelectedStore", newVal);
             } 
-        }
+        },
     },
     methods: {
       isCollectionPoint(item) {
@@ -106,9 +107,6 @@ export default {
       },
       getStoreIcon(store) {
         return this.storeIcon[store.locationType];
-      },
-      getDirections(item) {
-        return `51.44164199999999,5.4697225&daddr=${item.position.lat},${item.position.lng}`;
       },
     }
 }
