@@ -132,8 +132,8 @@ Several libraries were used to fulfill the needed business logics; the main ones
   ```
   In order to achieve that, I've performed the following search and replace operations on _`stores.json`_, before inserting it at the stores MongoDB document:
   - "longitude":" => "position": { "type": "Point", "coordinates": [
-  - ","latitude":" => (empty)
-  - ","complexNumber" => ]}
+  - ","latitude":" => ,
+  - ","complexNumber" => ]},"complexNumber"
 
 #### RabbitMQ
 
