@@ -66,14 +66,92 @@ export default {
     gmap: {}, // the google map object
     geocoder: {},
     searchParameters: {}, // the last search parameters (to avoid re-submitting the same query)
-    selectedStore: 0, // the last selected store (to prevent highlighting the same marker more than once)
+    selectedStore: -1, // the last selected store (to prevent highlighting the same marker more than once)
     markers: [], // map of markers
     address: "", // selected address
     location: {},
     storeFilter: 0, // search filters [all, 5 nearest and favorite]
     storeTypes: [0, 1, 2], // store types [store, pick-up point and drive through]
-    foundStores: [ // list of queried stores, hardcoded for now
-      {
+    foundStores: [], // list of queried stores, hardcoded for now
+    markerIcons: {
+      Supermarkt: require("../../assets/img/store.webp"),
+      SupermarktPuP: require("../../assets/img/pup-store.webp"),
+      PuP: require("../../assets/img/pup.webp"),
+    }, 
+    highlightedMarkerIcons: {
+      Supermarkt: require("../../assets/img/pin-store.webp"),
+      SupermarktPuP: require("../../assets/img/pin-pup-store.webp"),
+      PuP: require("../../assets/img/pin-pup.webp"),
+    },
+    defaultLat: 52.370216, // in case it all goes sour, use the center of the Netherlands as a fallback base location
+    defaultLng: 4.895168,
+    defaultAddress: "Netherlands",
+  }),
+  methods: {
+    // handle the MapStoreTypes click events
+    setStoreTypes(types) {
+      this.storeTypes = types;
+      this.queryStores();
+    },
+
+    // handle the MapStoreFilters click events
+    setFilters(filter) {
+      this.storeFilter = filter;
+      this.queryStores();
+    },
+
+    // synch changes on the address text-field, but do not submit a new search
+    setAddress(address) {
+      this.address = address;
+    },
+
+    // update the foundStores list
+    queryStores(hasLatLng) {
+      let newSearchParameters = {
+        "address": this.address,
+        "storeFilter": this.storeFilter,
+        "store": this.storeTypes.includes(0),
+        "pickUp": this.storeTypes.includes(1),
+        "driveThrough": this.storeTypes.includes(2)
+      };
+
+      // if the search parameters didn't change, prevent a request
+      if(Object.entries(this.searchParameters).toString() === Object.entries(newSearchParameters).toString()) {
+        return;
+      }
+
+      // set lat/lng defaults
+      newSearchParameters.lat = this.defaultLat;
+      newSearchParameters.lat = this.defaultLng;
+
+      // if we do not have the most up to date location, query the lat/lng from the address string
+      if(!hasLatLng) {
+        this.geocoder.geocode({ address: this.address }, (results, status) => {
+          // if the provided address is valid, setup the lat/lng on the search parameters
+          if (status == `OK` && results[0]) {
+            this.location = results[0].geometry.location;
+            newSearchParameters.lat = this.location.lat();
+            newSearchParameters.lng = this.location.lng();
+          }   
+          this.foundStores = this.executeQuery(newSearchParameters);
+          this.setupStores();
+        });
+      } else {
+        // in case we already have the lat/lng, add it to the search parameters
+        newSearchParameters.lat = this.location.lat();
+        newSearchParameters.lng = this.location.lng();
+        this.foundStores = this.executeQuery(newSearchParameters);
+        this.setupStores();
+      }
+
+      // update the search parameters
+      this.searchParameters = newSearchParameters;
+    },
+
+    // TODO: call the backend for the data
+    executeQuery(searchParameters) {
+      console.log(searchParameters);
+      return [{
         "city":"'s Gravendeel",
         "postalCode":"3295 BD",
         "street":"Kerkstraat",
@@ -115,66 +193,32 @@ export default {
         "todayClose":"21:00",
         "distance":"1km",
         "favorite":false
-      },
-    ],
-    markerIcons: {
-      Supermarkt: require("../../assets/img/store.webp"),
-      SupermarktPuP: require("../../assets/img/pup-store.webp"),
-      PuP: require("../../assets/img/pup.webp"),
-    }, 
-    highlightedMarkerIcons: {
-      Supermarkt: require("../../assets/img/pin-store.webp"),
-      SupermarktPuP: require("../../assets/img/pin-pup-store.webp"),
-      PuP: require("../../assets/img/pin-pup.webp"),
-    },
-  }),
-  methods: {
-    // handle the MapStoreTypes click events
-    setStoreTypes(types) {
-      this.storeTypes = types;
-      this.queryStores();
+      }];
     },
 
-    // handle the MapStoreFilters click events
-    setFilters(filter) {
-      this.storeFilter = filter;
-      this.queryStores();
-    },
+    // process the found stores, adding needed properties and creating markers
+    setupStores() {
+      this.gmap.clearOverlays();
+      var index = 0;
+      this.foundStores.map((store) => {
+          // set the base properties
+          store.icon = this.markerIcons[store.locationType];
+          store.markerId = index++;
+           
+          // build the store directions url. if no location was provided, use the default Netherlands lat/lng as the "from" location
+          if(this.location.lat) {
+            store.directions = `https://maps.apple.com/?saddr=${this.location.lat()},${this.location.lng()}&daddr=${store.position.lat},${store.position.lng}`;
+          } else {
+            store.directions = `https://maps.apple.com/?saddr=52.370216,4.895168&daddr=${store.position.lat},${store.position.lng}`;
+          }
 
-    // synch changes on the address text-field, but do not submit a new search
-    setAddress(address) {
-      this.address = address;
-    },
-
-    // update the foundStores list
-    queryStores() {
-      let newSearchParameters = {
-        "address": this.address,
-        "storeFilter": this.storeFilter,
-        "store": this.storeTypes.includes(0),
-        "pickUp": this.storeTypes.includes(1),
-        "driveThrough": this.storeTypes.includes(2)
-      };
-
-      // if the search parameters didn't change, prevent a request
-      if(Object.entries(this.searchParameters).toString() === Object.entries(newSearchParameters).toString()) {
-        return;
-      }
-
-      // get the coordinates of the searched address
-      this.geocoder.geocode({ address: this.address }, (results, status) => {
-        if (status !== `OK` || !results[0]) {
-          throw new Error(status);
-        }
-        this.location = results[0].geometry.location;
-        // store.directions = `https://www.google.com/maps?saddr='${this.location.lat()},${this.location.lng()}=${store.position.lat},${store.position.lng}`;
-        // TODO query the stores
-        console.log('Query for: ' + this.address);
-        console.log(`${this.location.lat()},${this.location.lng()}`);
+          // create a marker based on the store object
+          const map = this.gmap;
+          const marker = new this.google.maps.Marker({ ...store, map });
+          this.markers[marker.markerId] = marker;
+          marker.addListener(`click`, () => this.markerClickHandler(marker));
+          return marker;
       });
-
-      // update the search parameters
-      this.searchParameters = newSearchParameters;
     },
 
     // handle store selection on the search panel
@@ -244,6 +288,7 @@ export default {
         return;
       }
       
+      // calculate the position
       var target = document.getElementById(id);
       var targetY = 0;
       do { 
@@ -251,6 +296,7 @@ export default {
           targetY += target.offsetTop;
       } while ((target = target.offsetParent));
 
+      // define a "smooth" scroll function
       const scroll = function(c, a, b, i) {
           i++; if (i > 30) return;
           c.scrollTop = a + (b - a) / 30 * i;
@@ -273,7 +319,8 @@ export default {
         let place = autocomplete.getPlace();
         if(place.formatted_address) {
           this.address = place.formatted_address;
-          this.queryStores();
+          this.location = place.geometry.location;
+          this.queryStores(true);
         }
       });
     },
@@ -291,34 +338,35 @@ export default {
         fullscreenControl: false
       });
 
-      // set the initial zoom to a minum of 8
-      google.maps.event.addListener(map, 'zoom_changed', function() {
-          var zoomChangeBoundsListener = 
-              google.maps.event.addListener(map, 'bounds_changed', function() {
-                  if (this.getZoom() < 8 && this.initialZoom == true) {
-                      // Change max/min zoom here
-                      this.setZoom(8);
-                      this.initialZoom = false;
-                  }
-              google.maps.event.removeListener(zoomChangeBoundsListener);
-          });
+      this.geocoder = geocoder;
+      this.gmap = map;
+      this.google = google;
+
+      // query the base location
+      geocoder.geocode({ address: this.defaultAddress }, (results, status) => {
+        if (status == `OK` && results[0]) {
+          this.location = results[0].geometry.location;
+          map.setCenter(this.location);
+          map.fitBounds(results[0].geometry.viewport);
+          this.queryStores(true);
+        } else {
+          this.queryStores();
+        }
+        map.setZoom(8);
       });
-      map.initialZoom = true;
+
+      // add a method that allows clearing the markers
+      google.maps.Map.prototype.clearOverlays = () => {
+        for (var i = 0; i < this.markers.length; i++ ) {
+          this.markers[i].setMap(null);
+        }
+        this.markers.length = 0;
+      }
 
       //  enables the visibility of the search panel upon loading
       google.maps.event.addDomListener(window, 'load', function(){
-          document.getElementById('searchContainer').style.visibility = 'show';
+        document.getElementById('searchContainer').style.visibility = 'show';
       });  
-
-      // centralize it at the Netherlands
-      geocoder.geocode({ address: `Netherlands` }, (results, status) => {
-        if (status !== `OK` || !results[0]) {
-          throw new Error(status);
-        }
-        this.location = results[0].geometry.location;
-        map.setCenter(this.location);
-        map.fitBounds(results[0].geometry.viewport);
-      });
 
       // move the search bar within the map
       var searchContainer = document.getElementById('searchContainer');
@@ -327,23 +375,6 @@ export default {
       // adjust the control panel
       var controlDiv = document.getElementById('floating-panel');
       map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlDiv);
-
-      // plot existing markers
-      var index = 0;
-      this.foundStores.map((store) => {
-          // set the needed properties
-          store.icon = this.markerIcons[store.locationType];
-          store.markerId = index++;
-           
-          const marker = new google.maps.Marker({ ...store, map });
-          this.markers[marker.markerId] = marker;
-          marker.addListener(`click`, () => this.markerClickHandler(marker));
-          return marker;
-        });
-
-      this.geocoder = geocoder;
-      this.gmap = map;
-      this.google = google;
     } catch (error) {
       console.error(error);
     }
