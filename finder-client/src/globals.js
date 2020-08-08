@@ -10,12 +10,5 @@ Vue.use(VueGlobalVar, {
             done: "success",
             error: "error"
         },
-        icons: {
-            valid: "mdi-check",
-            idle: "mdi-clock-outline",
-            running: "mdi-loading",
-            done: "mdi-marker-check",
-            error: "mdi-alert-circle-outline"
-        },
     },
 });

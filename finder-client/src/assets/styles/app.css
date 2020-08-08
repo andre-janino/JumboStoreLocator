@@ -100,6 +100,11 @@ html {
     margin-right: 10px
 }
 
+.chipFavIcon {
+    width: 20px;
+    margin-right: 10px
+}
+
 .searchStoresButton {
     margin-left: 20px !important;
     margin-top: 20px !important;
@@ -154,8 +159,12 @@ button.v-btn[disabled] {
 }
 
 .v-expansion-panel--active {
-    border: 2px solid black;
+    border: 1px solid black !important;
     border-radius: 4px;
+}
+
+.v-expansion-panel {
+    border: 1px solid white;
 }
 
 .mapToolbar {
@@ -326,6 +335,114 @@ button.v-btn[disabled] {
     font-size: 16px;
     text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
     -webkit-font-smoothing: antialiased;
+}
+
+.jumbo-black-city {
+    font-weight: 600;
+    color: rgb(38, 38, 38)  !important;
+    font-size: 15px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    -webkit-font-smoothing: antialiased;
+    margin-bottom: 10px !important;
+}
+
+.jumbo-details {
+    color: rgb(38, 38, 38)  !important;
+    font-size: 13px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    margin-bottom: 5px !important;
+    margin-top: 5px !important;
+}
+
+.jumbo-details-time {
+    font-weight: 500;
+    color: rgb(38, 38, 38)  !important;
+    font-size: 13px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    margin-bottom: 5px !important;
+    margin-top: 5px !important;
+    white-space: pre !important;
+}
+
+.jumbo-details-links {
+    display: flex;
+    margin-top: 20px;
+}
+
+.jumbo-details-store {
+    margin-right: 27px;
+    margin-top: 3px;
+}
+
+.jumbo-details-pup {
+    margin-right: 15px;
+}
+
+.jumbo-details-link {
+    text-decoration: none;
+}
+
+.jumbo-details-link > .jumbo-details-img-pup {
+    margin-top: 3px;
+    margin-left: 9px;
+}
+
+.jumbo-details-link > .jumbo-details-img-store {
+    margin-top: -1px;
+    margin-left: 9px;
+}
+
+.jumbo-details-link > span {
+    text-align: center;
+    text-decoration: underline;
+    color: black;
+    white-space: nowrap
+}
+
+.jumbo-store-time {
+    margin-top: 5px;
+    color: rgb(68 67 67)  !important
+}
+
+.jumbo-store-warning {
+    margin-top: 18px;
+    color: rgb(68 67 67)  !important
+}
+
+.jumbo-details-attention {
+    font-weight: 600;
+    color: rgb(38, 38, 38)  !important;
+    font-size: 13px;
+    text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
+    margin-bottom: 5px !important;
+    margin-top: 20px;
+}
+
+.favorite-button {
+    margin-top: -40px;
+    margin-right: -10px;
+    float: right;
+}
+
+.info-panel {
+    margin-left: -10px;
+}
+
+.left-panel {
+    padding-right: 10px;
+}
+
+.jumbo-open {
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #FDC23C;
+    background-color: #FDC23C;
+    line-height: 12px;
+    font-size: 9px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 1px 2px;
+    font-weight: 800;
 }
 
 .navbar-nav {

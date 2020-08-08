@@ -8,6 +8,7 @@
         @setStoreTypes="setStoreTypes"
         @setAddress="setAddress"
         @queryStores="queryStores"
+        @initAutoComplete="initAutoComplete"
         />
       
       <!-- Title of the store list area -->
@@ -50,6 +51,9 @@ export default {
         setSelectedStore(item) {
           this.$emit("setSelectedStore", item);
         },
+        initAutoComplete() {
+          this.$emit("initAutoComplete");
+        }
     }
 }
 

@@ -17,6 +17,7 @@
           @setAddress="setAddress"
           @queryStores="queryStores"
           @setSelectedStore="setSelectedStore"
+          @initAutoComplete="initAutoComplete"
         />
       </v-card-text>
     </v-card>
@@ -24,6 +25,23 @@
 </template>
 
 <script>
+
+ /* 
+  * Main page of the store finder application. It loads up all the other needed components, dealing with the business logic in a centralized manner. 
+  * Although it is a good way to decoupling front-end components and making them re-usable, I believe something should be done about the size of the
+  * MapStoreSearchPanel, as it requires too many objects/methods to be passed forward which is an indication that it could have been broken up better.
+  * Having said that, keeping it as a unit makes it easier to move it around if necessary.
+  * 
+  * Anyway here's an elephant:
+  *   _    _
+  *  /=\""/=\
+  * (=(0_0 |=)__
+  *  \_\ _/_/   )
+  *    /_/   _  /\
+  *   |/ |\ || |
+  *      ~ ~  ~
+  */
+
 import * as axios from "axios";
 import config from "../../config";
 import gmapsInit from '../../utils/map';
@@ -70,6 +88,8 @@ export default {
         "collectionPoint":true,
         "sapStoreID":"3605",
         "todayClose":"20:00",
+        "distance":"100m",
+        "favorite":[true]
       },
       {
         "city":"'s-Heerenberg",
@@ -89,6 +109,8 @@ export default {
         "locationType":"Supermarkt",
         "sapStoreID":"4670",
         "todayClose":"21:00",
+        "distance":"1km",
+        "favorite":[false]
       },
     ],
     markerIcons: {
@@ -184,13 +206,32 @@ export default {
       }
     },
 
+    // toggles on/off the bounce animation on a marker
     toggleBounce (marker) {
       if (marker.getAnimation() != null) {
           marker.setAnimation(null);
       } else {
           marker.setAnimation(this.google.maps.Animation.BOUNCE);
       }
-    }
+    },
+
+    // loading autocomplete only when the user focus on the input to ensure everything is loaded up nicely and to avoid initializing it if left unused
+    initAutoComplete() {
+      var input = document.getElementById('searchInput');
+      var options = {
+          componentRestrictions: {country: 'nl'}
+      };
+      const autocomplete = new this.google.maps.places.Autocomplete(input, options);
+
+      // listen for changes on the autocomplete control, capturing the address and fetching a new list of stores
+      autocomplete.addListener('place_changed', () => {
+        let place = autocomplete.getPlace();
+        if(place.formatted_address) {
+          this.address = place.formatted_address;
+          this.queryStores();
+        }
+      });
+    },
   },
 
   // google maps definitions
@@ -219,31 +260,9 @@ export default {
       });
       map.initialZoom = true;
 
-      //  enables the visibility of the search panel upon loading and add autocomplete to the search input
-      const self = this;
+      //  enables the visibility of the search panel upon loading
       google.maps.event.addDomListener(window, 'load', function(){
-          // display the search panel
           document.getElementById('searchContainer').style.visibility = 'show';
-
-          // enable the autocomplete operation
-          var input = document.getElementById('searchInput');
-          var options = {
-              componentRestrictions: {country: 'nl'}
-          };
-          const autocomplete = new google.maps.places.Autocomplete(input, options);
-
-          // listen for changes on the autocomplete control, capturing the address and fetching a new list of stores
-          autocomplete.addListener('place_changed', () => {
-            let place = autocomplete.getPlace();
-            if(place.formatted_address) {
-              self.address = place.formatted_address;
-              self.queryStores();
-            }
-
-            // coordinates, in case we decide to use them directly
-            // let lat = place.geometry.location.lat();
-            // let lon = place.geometry.location.lng();
-          }, self);
       });  
 
       // centralize it at the Netherlands
