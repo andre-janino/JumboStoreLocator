@@ -43,8 +43,8 @@
   *   |/ |\ || |
   *      ~ ~  ~
   */
-
 import * as axios from "axios";
+import http from "../../utils/http";
 import config from "../../config";
 import gmapsInit from '../../utils/map';
 
@@ -121,9 +121,10 @@ export default {
         return;
       }
 
-      // set lat/lng defaults
+      // set lat/lng defaults and reset the selected store
       newSearchParameters.lat = this.defaultLat;
       newSearchParameters.lat = this.defaultLng;
+      this.selectedStore = -1;
 
       // if we do not have the most up to date location, query the lat/lng from the address string
       if(!hasLatLng) {
@@ -156,56 +157,20 @@ export default {
       this.gmap.fitBounds(this.viewport);
 
       // query the stores and setup the markers
-      this.foundStores = this.executeQuery(searchParameters);
-      this.setupStores();
+      this.executeQuery(searchParameters);
     },
 
-    // TODO: call the backend for the data
+    // Query all stores based on the user-provided parameters (address, store types, filter type, etc)
+    // Querying data does not require the JWT token to be passed. However, if for some reason we want to lock it behind the token, simply modify it to:
+    // const token = this.$store.state.auth.user.token;
+    // http.get("store/stores", { headers: {"Authorization" : `${token}`} }).then(({ data }) => {
     executeQuery(searchParameters) {
       console.log(searchParameters);
-      return [{
-        "city":"'s Gravendeel",
-        "postalCode":"3295 BD",
-        "street":"Kerkstraat",
-        "street2":"37",
-        "street3":"",
-        "addressName":"Jumbo 's Gravendeel Gravendeel Centrum",
-        "uuid":"EOgKYx4XFiQAAAFJa_YYZ4At",
-        "position": {
-          "lat": 51.778461,
-          "lng": 4.615551,
-        },
-        "complexNumber":"33249",
-        "showWarningMessage":true,
-        "todayOpen":"08:00",
-        "locationType":"SupermarktPuP",
-        "collectionPoint":true,
-        "sapStoreID":"3605",
-        "todayClose":"20:00",
-        "distance":"100m",
-        "favorite":true
-      },
-      {
-        "city":"'s-Heerenberg",
-        "postalCode":"7041 JE",
-        "street":"Stadsplein",
-        "street2":"71",
-        "street3":"",
-        "addressName":"Jumbo 's-Heerenberg Stadsplein",
-        "uuid":"7ewKYx4Xqp0AAAFIHigYwKrH",
-        "position": {
-          "lat": 51.923993,
-          "lng": 6.576066,
-        },
-        "complexNumber":"30170",
-        "showWarningMessage":true,
-        "todayOpen":"08:00",
-        "locationType":"Supermarkt",
-        "sapStoreID":"4670",
-        "todayClose":"21:00",
-        "distance":"1km",
-        "favorite":false
-      }];
+
+      http.get("store/stores").then(({ data }) => {
+        this.foundStores = data;
+        this.setupStores();
+      });
     },
 
     // process the found stores, adding needed properties and creating markers

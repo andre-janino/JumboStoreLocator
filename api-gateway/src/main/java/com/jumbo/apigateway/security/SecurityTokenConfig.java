@@ -43,10 +43,16 @@ public class SecurityTokenConfig extends WebSecurityConfigurerAdapter {
 				.addFilterAfter(new JwtTokenAuthFilter(header, prefix, secretKey), UsernamePasswordAuthenticationFilter.class)
 			.authorizeRequests()
 			   .antMatchers(HttpMethod.POST, "/auth/**").permitAll() // everyone is allowed to authenticate
+			   
 			   .antMatchers(HttpMethod.GET, "/user/users/**").hasAnyRole("ADMIN","USER") // allow admin and users to get their info (guests not allowed)
 			   .antMatchers(HttpMethod.POST, "/user/users/**").hasRole("ADMIN") // manual creation of users is only allowed by admins
 			   .antMatchers(HttpMethod.PUT, "/user/users/**").hasRole("ADMIN") // manual update of users is only allowed by admins
 			   .antMatchers(HttpMethod.DELETE, "/user/users/**").hasRole("ADMIN") // manual deletion of users is only allowed by admins
+			   
+			   .antMatchers(HttpMethod.GET, "/store/stores/**").permitAll() // everyone is able to list stores
+			   .antMatchers(HttpMethod.POST, "/store/stores/**").hasRole("ADMIN") // manual creation of stores is only allowed by admins (and not currently supported by the UI)
+			   .antMatchers(HttpMethod.PUT, "/store/stores/**").hasAnyRole("ADMIN","USER") // guests are not allowed to favorite (or make any other change)
+			   .antMatchers(HttpMethod.DELETE, "/store/stores/**").hasRole("ADMIN") // manual deletion of a store is only allowed by admins (and not currently supported by the UI)
 			   .anyRequest().authenticated(); 
 	}
 }

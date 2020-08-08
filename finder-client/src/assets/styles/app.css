@@ -216,6 +216,10 @@ button.v-btn[disabled] {
     .tabText {
         display: none;
     }
+
+    .mapCard {
+        padding: 0px !important;
+    }
 }
 
 .searchContainer {

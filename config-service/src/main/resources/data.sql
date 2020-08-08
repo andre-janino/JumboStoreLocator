@@ -11,7 +11,8 @@
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'header', 'Authorization');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'prefix', 'Bearer');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'secretKey', 'SuperSecretJumboKey');
-INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'jwtExpiration', '3600');
+/** token hardcoded to last a year, as this is a dev environment. */
+INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'jwtExpiration', '2592000');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'header', 'Authorization');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'prefix', 'Bearer');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'secretKey', 'SuperSecretJumboKey');
@@ -39,6 +40,14 @@ INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.host.co
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'server.port', '4000');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
+
+/** store-service application properties */
+INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
+INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'server.port', '5555');
+INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
+/** mongodb atlas connection info */
+INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'spring.data.mongodb.uri', 'mongodb+srv://jumbo:jumbodb@storescluster.ssuzl.mongodb.net/storeData?retryWrites=true&w=majority');
+INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'spring.data.mongodb.database', 'storeData');
 
 /** user-service application properties */
 INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
