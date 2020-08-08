@@ -22,13 +22,14 @@ Before discussing the architecture of a system, one must first understand what i
 
 #### State of the art
 
-When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_.
+When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as `_store type`_ filters*.
 
-It has a wide range of filters, but it lacks what is being asked here: to display only the 5 nearest stores. Therefore, it makes sense to implement that filter in a way that is easy to incorporate it among the others. From what I've observed, stores are already ordered by distance on the existing page.
+*Note: Either I didn't understand how the `_store type`_ filter works, or there's a bug on it. When I filter by "Pick-up point", I still get stores like [Jumbo Den Burg (Texel) Vogelenzang](https://www.jumbo.com/winkel/jumbo-den-burg-texel-vogelenzang?redirect=true), which (as far as I can see) is not a pick-up point. 
 
-On the details of each found store, the page also allows the user to navigate to 2 other pages:
-- [Store details](https://www.jumbo.com/winkel/jumbo-heinkenszand-stenevate)
-- [Reserve pick-up time](https://www.jumbo.com/INTERSHOP/web/WFS/Jumbo-Grocery-Site/nl_NL/-/EUR/ViewDeliveryOptions-Start?storeUUID=8E0KYx4XCQQAAAFoMTtWMVlg)
+On the details of each found store, the user is allowed the following actions:
+- Favoriting at store.
+- [Visualize store details](https://www.jumbo.com/winkel/jumbo-heinkenszand-stenevate).
+- [Reserve pick-up time](https://www.jumbo.com/INTERSHOP/web/WFS/Jumbo-Grocery-Site/nl_NL/-/EUR/ViewDeliveryOptions-Start?storeUUID=8E0KYx4XCQQAAAFoMTtWMVlg) (if applicable).
 
 The store information I can work with is provided in a json format, and contains the following fields: _`city`_, _`postalCode`_, _`street`_, _`street2`_, _`street3`_, _`addressName`_, _`uuid`_, _`longitude`_, _`latitude`_, _`complexNumber`_, _`showWarningMessage`_, _`todayOpen`_, _`locationType`_, _`collectionPoint`_, _`sapStoreID`_ and _`todayClose`_. 
 
@@ -38,7 +39,7 @@ I also compared Jumbo's store finder with the one provided by Walmart. The UI is
 
 #### Proposed design
 
-In terms of functionality, the original system offers much more than the scope of this project. The filters are very specific and seem to convey that it was something that was built over time, by listening to customer feedback. It also makes sense to have the search bar within the map, as mobile users do not have much screen real-state and need to have a compact and responsive UI. Therefore, a simpler but functional version of the existing Jumbo store finder was designed for this project.
+In terms of functionality, the original system offers much more than the scope of this project. The filters are very specific and seem to convey that it was something that was built over time, by listening to customer feedback. As for the UI: it makes sense to have the search bar within the map, as mobile users do not have much screen real-state and need to have a compact and responsive UI. Therefore, a simpler but functional version of the existing Jumbo store finder was designed for this project.
 
 <p align="center">
   <img src="_resources/Jumbo Store Locator.png" title="Proposed design" alt="Proposed design"/>
@@ -49,10 +50,13 @@ Geneal premisses:
 - After logging in, the user is presented with a map centered at the Netherlands, displaying all available stores on a map. 
 - The map displays a list of found stores (all by default), contains a search panel and allows filtering. 
 - The search panel does not display any stores until the user makes his first query. 
+- When the user clicks on a store on the panel, the map pans and zooms to the location, and the marker icon changes to help the user identify the selected store.
+- When the user clicks on a marker, the search panel scrolls to the selected store to display its detailed information.
+- Users are able to favorite a store.
 
 The following filters are supported:
 - All stores: query all stores, ordered by distance of the provided address.
-- Closes stores: query the 5 nearest stores, ordered by distance of the provided address.
+- Closest stores: query the 5 nearest stores, ordered by distance of the provided address.
 - Favorite stores*: query only the favorited stores, ordered by distance of the provided address.
 - Store types: in combination to the selected filter, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and `_drive-through of walk-in pick-up point`_.
 
@@ -63,12 +67,13 @@ The "collapsed" details of a store displays the following info:
 - Line 1: _`street`_ +  _`street2`_.
 - Line 2: _`city`_.
 - Line 3: Open today: _`todayOpen`_ - _`todayClose`_.
-- Side info: distance from current location.
+- Side info: store type indicator (icon) with a link to pick-up reservation (if applicable)
+- Side info: distance with a google maps link to display the route.
 
 When expanded, additional info is displayed:
-- Store type.
-- Button: route from current location to the store (opens google maps on a new tab).
-- Button: favorite/unfavorite the store (for non-guest users).
+- Hardcoded open/close times (since we have no data for it)
+- Warning about pick-up prices (if applicable)
+- Side info: favorite/unfavorite the store (for non-guest users).
 
 The "nearest stores" logic is managed by the back-end.
 
@@ -106,7 +111,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 #### Netflix Eureka
 
 - _`Service Discovery`_ is performed by _`Netflix Eureka`_. This allows microservices to communicate with one-another through Feign Client (which has not yet been used on this project, as RabbitMQ was employed instead). 
-- Even if _`Feign Client`_ is not used, it is useful to enable load balancing on Zuul. The latter is still not applied, as the application was only tested locally with dev settings; however, it is important to leave such things in place when the need to setup a production environment with multiple instances arises.
+- Even if _`Feign Client`_ is not used, it is useful to enable load balancing on Zuul. The latter is still not applied, as the application was only tested locally with dev settings; however, it is important to leave such things in place when the need to setup a production environment with multiple instances arises. Why not outright removing it for now, then? Because as any project that is worth something, you *have* to think of an eventual production environment when things are ready to ship, and having it already setup is a good thing.
 
 #### H2 Database Engine
 
