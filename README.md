@@ -58,7 +58,7 @@ The following filters are supported:
 - All stores: query all stores, ordered by distance of the provided address.
 - Closest stores: query the 5 nearest stores, ordered by distance of the provided address.
 - Favorite stores*: query only the favorited stores, ordered by distance of the provided address.
-- Store types: in combination to the selected filter, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and `_drive-through of walk-in pick-up point`_.
+- Store types: in combination to the selected filter, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and _`drive-through of walk-in pick-up point`_ (which I renamed to simply drive-through for brevity; maybe it would be a good idea to add a tooltip to add more info to it?).
 
 *Note: the favorite store query is only enabled if the user is logged in; guest users can't favorite a store.
 
