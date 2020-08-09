@@ -122,7 +122,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 - _`MongoDB`_ is a NoSQL database that is very suitable for restful applications, as data is already store in a json format. _`MongoDB Atlas`_ is a cloud solution that hosts _`MongoDB`_ databases, being not only suitable for quickly testing an application (little to no setup time involved) and escalating well for production environments.
 - In this particular application, _`MongoDB`_ is used by _`store-service`_ to hold the store data. 
-- While google maps platform documentation presents a very fitting [SQL solution](https://developers.google.com/maps/solutions/store-locator/clothing-store-locator) to query the distance between an address and the stored locations, it is also feasible to implement the same functionality with [GeoJSON](https://geojson.org/). Why use one over the other? Mainly because NoSQL is a good fit for the needs of our _`store-service`_.
+- While google maps platform documentation presents a very fitting [SQL solution](https://developers.google.com/maps/solutions/store-locator/clothing-store-locator) to query the distance between an address and the stored locations, it is also feasible to implement the same functionality with [GeoJSON](https://geojson.org/). The needed _`2dsphere`_ index was created directly on the database, but it should also have been created on a configuration class.
 - As GeoJSON is being used, the fields "latitude" and "longitude" had to be put into a different structure:
   ```json
   "position": {
@@ -134,6 +134,7 @@ Several libraries were used to fulfill the needed business logics; the main ones
   - "longitude":" => "position": { "type": "Point", "coordinates": [
   - ","latitude":" => ,
   - ","complexNumber" => ]},"complexNumber"
+  
 
 #### RabbitMQ
 
