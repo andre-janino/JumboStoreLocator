@@ -18,12 +18,12 @@
                             persistent-hint 
                             clearable 
                             type="text"
-                            @keyup.enter="queryStores"
+                            @keyup.enter="searchAddress"
                             />
                     </div>
                     <div class="arrange-fit">
                         <v-btn 
-                            @click="queryStores"
+                            @click="searchAddress"
                             small 
                             class="searchStoresButton" 
                             fab 
@@ -65,8 +65,8 @@ export default {
         setStoreTypes(item) {
           this.$emit("setStoreTypes", item);
         },
-        queryStores() {
-            this.$emit("queryStores");
+        searchAddress() {
+            this.$emit("searchAddress");
         },
         // I was too busy wondering whether I could do it, to wonder if I should.
         initAutoComplete() {

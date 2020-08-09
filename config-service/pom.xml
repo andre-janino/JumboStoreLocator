@@ -12,6 +12,7 @@
 	<artifactId>config-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>config-service</name>
+	<packaging>jar</packaging>
 	<description>Config service for the Jumbo store locator</description>
 
 	<properties>

@@ -386,12 +386,12 @@ button.v-btn[disabled] {
 }
 
 .jumbo-details-store {
-    margin-right: 27px;
+    margin-right: 30px;
     margin-top: 3px;
 }
 
 .jumbo-details-pup {
-    margin-right: 15px;
+    margin-right: 25px;
 }
 
 .jumbo-details-link {
@@ -405,16 +405,21 @@ button.v-btn[disabled] {
 
 .jumbo-details-link > .jumbo-details-img-store {
     margin-top: -1px;
-    margin-left: 9px;
+    margin-left: 5px;
+}
+
+.jumbo-details-link > .jumbo-details-img-dist {
+    display: flex !important;
+    width: 45px !important;
 }
 
 .jumbo-details-link > span {
     text-align: center;
     text-decoration: underline;
     color: black;
-    white-space: nowrap
+    white-space: nowrap;
+    font-size: 12px;
 }
-
 .jumbo-store-time {
     margin-top: 5px;
     color: rgb(68 67 67)  !important

@@ -16,7 +16,7 @@
           :selectedStore="selectedStore"
           @setStoreTypes="setStoreTypes"
           @setAddress="setAddress"
-          @queryStores="queryStores"
+          @searchAddress="searchAddress"
           @setSelectedStore="setSelectedStore"
           @initAutoComplete="initAutoComplete"
         />
@@ -84,11 +84,17 @@ export default {
       SupermarktPuP: require("../../assets/img/pin-pup-store.webp"),
       PuP: require("../../assets/img/pin-pup.webp"),
     },
+    hasFiltered: false, 
     defaultLat: 52.370216, // in case it all goes sour, use the center of the Netherlands as a fallback base location
     defaultLng: 4.895168,
     defaultAddress: "Netherlands",
   }),
   methods: {
+    // synch changes on the address text-field, but do not submit a new search
+    setAddress(address) {
+      this.address = address;
+    },
+
     // handle the MapStoreTypes click events
     setStoreTypes(types) {
       this.storeTypes = types;
@@ -101,14 +107,28 @@ export default {
       this.queryStores();
     },
 
-    // synch changes on the address text-field, but do not submit a new search
-    setAddress(address) {
-      this.address = address;
+    // handle manual address search (enter key or pressing the button)
+    searchAddress() {
+      this.geocoder.geocode({ address: this.address }, (results, status) => {
+          // if the provided address is valid, get the lat/lng and search
+          if (status == `OK` && results[0]) {
+            this.location = results[0].geometry.location;
+            this.viewport = results[0].geometry.viewport; 
+           
+          }
+          this.queryStores();
+      });
     },
 
     // update the foundStores list
-    queryStores(hasLatLng) {
-      let newSearchParameters = {
+    queryStores() {
+      if(!this.hasFiltered) {
+        document.getElementById("searchBodyWrapper").style.display = "";
+        this.hasFiltered = true;
+      }
+
+      // wrap the search parameters
+      const newSearchParameters = {
         "address": this.address,
         "storeFilter": this.storeFilter,
         "store": this.storeTypes.includes(0),
@@ -120,37 +140,22 @@ export default {
       if(Object.entries(this.searchParameters).toString() === Object.entries(newSearchParameters).toString()) {
         return;
       }
+      // update the search parameters to avoid duplicate requests
+      this.searchParameters = newSearchParameters;
 
-      // set lat/lng defaults and reset the selected store
-      newSearchParameters.lat = this.defaultLat;
-      newSearchParameters.lat = this.defaultLng;
-      this.selectedStore = -1;
-
-      // if we do not have the most up to date location, query the lat/lng from the address string
-      if(!hasLatLng) {
-        this.geocoder.geocode({ address: this.address }, (results, status) => {
-          // if the provided address is valid, setup the lat/lng on the search parameters
-          if (status == `OK` && results[0]) {
-            this.location = results[0].geometry.location;
-            newSearchParameters.lat = this.location.lat();
-            newSearchParameters.lng = this.location.lng();
-            this.viewport = results[0].geometry.viewport;
-          } 
-          this.updateMap(newSearchParameters);
-        });
-      } else {
-        // in case we already have the lat/lng, add it to the search parameters
-        newSearchParameters.lat = this.location.lat();
-        newSearchParameters.lng = this.location.lng();
-        
-        // centralize the map at the new location
+      // if no address is provided, query all stores (with filters)
+      if(!this.address) {
+        this.executeQuery(newSearchParameters);
+      // otherwise, fit the map to the location and query based on lat/lng (with filters)
+      } else {  
         this.updateMap(newSearchParameters); 
       }
-
-      // update the search parameters
-      this.searchParameters = newSearchParameters;
     },
 
+    // update the map by:
+    // 1. Centralizing it at the provided location
+    // 2. Querying stores based on the provided location and other filters
+    // 3. Updating the markers
     updateMap(searchParameters) {
       // centralize the map at the new location
       this.gmap.panTo(this.location);
@@ -161,13 +166,18 @@ export default {
     },
 
     // Query all stores based on the user-provided parameters (address, store types, filter type, etc)
-    // Querying data does not require the JWT token to be passed. However, if for some reason we want to lock it behind the token, simply modify it to:
-    // const token = this.$store.state.auth.user.token;
-    // http.get("store/stores", { headers: {"Authorization" : `${token}`} }).then(({ data }) => {
+    // Querying data does not require the JWT token to be passed.
     executeQuery(searchParameters) {
       console.log(searchParameters);
 
-      http.get("store/stores").then(({ data }) => {
+      // build the url based on the provided parameters
+      let url = "store/stores/";
+      if(this.location.lat) {
+        url += "nearest/?lng=" + this.location.lng() + '&lat=' + this.location.lat();
+      }
+
+      // query data and update the markers
+      http.get(url).then(({ data }) => {
         this.foundStores = data;
         this.setupStores();
       });
@@ -181,12 +191,13 @@ export default {
           // set the base properties
           store.icon = this.markerIcons[store.locationType];
           store.markerId = index++;
-           
+          this.formatDistance(store);
+
           // build the store directions url. if no location was provided, use the default Netherlands lat/lng as the "from" location
           if(this.location.lat) {
             store.directions = `https://maps.apple.com/?saddr=${this.location.lat()},${this.location.lng()}&daddr=${store.position.lat},${store.position.lng}`;
           } else {
-            store.directions = `https://maps.apple.com/?saddr=${this.defaultLat},${this.defaultLng}&daddr=${store.position.lat},${store.position.lng}`;
+            store.directions = `https://maps.apple.com/?&daddr=${store.position.lat},${store.position.lng}`;
           }
 
           // create a marker based on the store object
@@ -256,6 +267,19 @@ export default {
       }
     },
 
+    // Format the distance (km and meters)
+    // For values below 1km and above 100km, format with no decimal cases; for everything in-between, allow 1 decimal case.
+    // Example: 10.32 => 10m, 100000.32 => 100km, 35000.23123 => 35.2km. 
+    // When things are nearby or too far, decimal cases makes little difference, even more so when we're considering unobstructed distance.
+    formatDistance(store) {
+      if(store.distance < 1000) {
+        store.distance = Number(store.distance).toFixed(0) + ' m';
+      } else {
+        const dist = (store.distance / 1000);
+        store.distance = (dist > 100 ? (dist).toFixed(0) : (dist).toFixed(1)) + ' km';
+      }
+    },
+
     // scroll to the search result (on the search panel)
     // it is not perfect, but it works ok for most cases
     scrollToSearchResult(id) {
@@ -298,7 +322,7 @@ export default {
           this.address = place.formatted_address;
           this.location = place.geometry.location;
           this.viewport = place.geometry.viewport;
-          this.queryStores(true);
+          this.queryStores();
         }
       });
     },
@@ -316,31 +340,17 @@ export default {
         fullscreenControl: false
       });
 
+      // store google map properties
       this.geocoder = geocoder;
       this.gmap = map;
       this.google = google;
 
-      // query the base location
-      geocoder.geocode({ address: this.defaultAddress }, (results, status) => {
-        if (status == `OK` && results[0]) {
-          // get the location and update the default lat/lng as a baseline
-          this.location = results[0].geometry.location;
-          this.defaultLat = this.location.lat();
-          this.defaultLng = this.location.lng();
-          this.viewport = results[0].geometry.viewport;
+      // query the initial stores, irespective to their location
+      this.executeQuery();
 
-          // query the data
-          this.queryStores();
-        } else {
-          // if no location is found, query the stores based on the default lat/lng
-          this.queryStores();
-        }
-      });
-
-      // set the default zoom after loading
-      google.maps.event.addListenerOnce(map, 'zoom_changed', function() {
-          map.setZoom(8);
-      });
+      // centralize the map at the center of the netherlands
+      this.gmap.panTo(new google.maps.LatLng(this.defaultLat, this.defaultLng));
+      map.setZoom(8);
 
       // add a method that allows clearing the markers
       google.maps.Map.prototype.clearOverlays = () => {

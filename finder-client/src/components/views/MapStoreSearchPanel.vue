@@ -7,18 +7,14 @@
         :storeTypes="storeTypes"
         @setStoreTypes="setStoreTypes"
         @setAddress="setAddress"
-        @queryStores="queryStores"
+        @searchAddress="searchAddress"
         @initAutoComplete="initAutoComplete"
         />
-      
-      <!-- Title of the store list area -->
-      <v-card-text class="text--primary">
-        <p class="searchLabelTextBold">Nearby stores</p>
-      </v-card-text>
-      <v-divider></v-divider>
-
+        
       <!-- Expandable panels with the found stores -->
        <MapStoreSearchPanelBody
+        id="searchBodyWrapper"
+        style="display: none"
         :foundStores="foundStores"
         :selectedStore="selectedStore"
         @setSelectedStore="setSelectedStore"
@@ -42,8 +38,8 @@ export default {
         setAddress(address) {
             this.$emit("setAddress", address);
         },
-        queryStores() {
-            this.$emit("queryStores");
+        searchAddress() {
+            this.$emit("searchAddress");
         },
         setStoreTypes(item) {
           this.$emit("setStoreTypes", item);

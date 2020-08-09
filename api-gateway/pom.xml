@@ -12,6 +12,7 @@
 	<artifactId>api-gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>api-gateway</name>
+	<packaging>jar</packaging>
 	<description>API Gateway for the Jumbo store locator</description>
 
 	<properties>

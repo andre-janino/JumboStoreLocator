@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jumbo.storeservice.entity.Store;
@@ -27,33 +28,34 @@ public class StoreController {
 	}
 	
 	/**
-	 * This method reaches out to the user service and return a json object containing a list of all stores.
+	 * Return a list containing all stores, irrespective to the current position
+	 */
+	@GetMapping("/stores/")
+	public List<Store> findAllStores() {
+		return service.findAllStores();
+	}
+	
+	
+	/**
+	 * Returns list of N nearest stores in respect to a lat/lng for every store type.
 	 * 
+	 * If no limit is provided, return by default a maximum of 1000 results (more than enough for this example)
+	 *
 	 * @return a list of all stores
 	 */
-	@GetMapping("/stores")
-	public List<Store> retrieveAllUsers(){
-		return service.findAll();
-	}
-	
-	/**
-	 * This method reaches out to the user service and return a json object containing 5 stores
-	 * 
-	 * @return a list of the 5 nearest stores
-	 */
 	@GetMapping("/stores/nearest")
-	public List<Store> retrieveUser() {
-		return service.findNearestStores();
+	public List<Store> findNearestStores(@RequestParam Double lng, @RequestParam Double lat, @RequestParam(defaultValue = "1000") Integer limit) {
+		return service.findNearestStores(lng, lat, limit);
 	}
 	
 	/**
-	 * This method reaches out to the store service and creates a new store.
+	 * Temp method to create all stores.
 	 * 
 	 * @param store object to be created
 	 * @return the created store object, or an error response
 	 */
 	@PostMapping("/stores")
-	public Store createUser(@RequestBody Store store) {
-		return service.create(store);
+	public List<Store> createStores(@RequestBody Iterable<Store> stores) {
+		return service.create(stores);
 	}
 }

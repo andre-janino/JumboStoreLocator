@@ -12,6 +12,7 @@
 	<artifactId>auth-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>auth-service</name>
+	<packaging>jar</packaging>
 	<description>Auth service for the Jumbo store locator</description>
 
 	<properties>
