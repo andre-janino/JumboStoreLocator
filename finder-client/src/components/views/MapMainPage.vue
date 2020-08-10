@@ -2,7 +2,6 @@
   <div class="mapPage">
      <v-card flat class="mx-auto" color="white" width="1800px" height="800px">
       <v-card-text class="mapCard">
-        <v-divider></v-divider>
         <MapStoreFilters
           :storeFilter="storeFilter"
           :location="location"
@@ -20,6 +19,7 @@
           @setAddress="setAddress"
           @searchAddress="searchAddress"
           @setSelectedStore="setSelectedStore"
+          @toggleFavorite="toggleFavorite"
           @initAutoComplete="initAutoComplete"
         />
       </v-card-text>
@@ -70,18 +70,21 @@ export default {
     searchParameters: {}, // the last search parameters (to avoid re-submitting the same query)
     selectedStore: -1, // the last selected store (to prevent highlighting the same marker more than once)
     markers: [], // map of markers
+    searchMarker: {},
     address: "", // selected address
     location: {},
     viewport: {},
     storeFilter: 0, // search filters [all, 5 nearest and favorite]
     storeTypes: [0, 1, 2], // store types [store, pick-up point and drive through]
-    foundStores: [], // list of queried stores, hardcoded for now
+    foundStores: [], // list of queried stores
+    favoriteStores: new Set(), // set of favorite stores
     loading: false, // indicates whether there's an active query
     markerIcons: {
       Supermarkt: require("../../assets/img/store.webp"),
       SupermarktPuP: require("../../assets/img/pup-store.webp"),
       PuP: require("../../assets/img/pup.webp"),
     }, 
+    searchIcon: require("../../assets/img/pin-center.png"),
     highlightedMarkerIcons: {
       Supermarkt: require("../../assets/img/pin-store.webp"),
       SupermarktPuP: require("../../assets/img/pin-pup-store.webp"),
@@ -157,14 +160,35 @@ export default {
     // Query all stores based on the user-provided parameters (address, store types, filter type, etc)
     // Querying data does not require the JWT token to be passed.
     executeQuery(searchParameters) {
-      // build the url based on the provided parameters
-      let url = "store/stores/";
+      // if the user wants to check his favorites, but none exists, cut the process short
+      const favorites = searchParameters && searchParameters.storeFilter == 2;
+      if(favorites && this.favoriteStores.size == 0) {
+        this.foundStores = [];
+        this.resetSelection()
+        this.setupStores();
+        this.loading = false;
+        return;
+      }
+
+      // build the base url
+      let url = "store/stores/"
+      if(searchParameters && searchParameters.storeFilter == 2) {
+        url += "favorite/";
+      }
+
+      // add the location, if applicable
       url += (this.location.lat) ? "nearest/?lng=" + this.location.lng() + '&lat=' + this.location.lat() : "?";
 
-      // if search parameters are supplied, add them to the url
+      // if additional search parameters are supplied, add them to the url
       if(searchParameters) {
         if(searchParameters.storeFilter == 1) {
           url += "&limit=5";
+        }
+        if(favorites) {
+          if(this.favoriteStores && this.favoriteStores.size > 0) {
+            this.favoriteStores.forEach((id) => url += `&storeIds=${id}`);
+            url.slice(0, -1);
+          } 
         }
         if(searchParameters.Supermarkt) {
           url += "&storeTypes=Supermarkt";
@@ -186,15 +210,26 @@ export default {
       });
     },
 
-    // process the found stores, adding needed properties and creating markers
+    // Process the found stores, adding needed properties and creating markers
+    // TODO: instead of removing all markers and adding them again, consider hiding/showing markers as queries are made
     setupStores() {
-      this.gmap.clearOverlays();
+      const map = this.gmap;
+      map.clearOverlays();
+      if(this.location.lat) {
+        this.searchMarker = new this.google.maps.Marker({ icon: this.searchIcon, animation: this.google.maps.Animation.DROP, position: this.location, map});
+      }
+
       var index = 0;
       this.foundStores.map((store) => {
           // set the base properties
           store.icon = this.markerIcons[store.locationType];
           store.markerId = index++;
           this.formatDistance(store);
+
+          // check if the store is favorited
+          if(this.favoriteStores.has(store.sapStoreID)) {
+            store.favorite = true;
+          }
 
           // build the store directions url. if no location was provided, use the default Netherlands lat/lng as the "from" location
           if(this.location.lat) {
@@ -204,11 +239,10 @@ export default {
           }
 
           // create a marker based on the store object
-          const map = this.gmap;
+          
           const marker = new this.google.maps.Marker({ ...store, map });
           this.markers[marker.markerId] = marker;
           marker.addListener(`click`, () => this.markerClickHandler(marker));
-          return marker;
       });
     },
 
@@ -312,6 +346,17 @@ export default {
       this.hasFiltered = true;
     },
 
+    // favorite/unfavorite a store
+    toggleFavorite(storeId) {
+      if(this.favoriteStores.has(storeId)) {
+        this.favoriteStores.delete(storeId)
+        http.delete(`store/favorites/?&userName=${this.$store.state.auth.user.email}&storeId=${storeId}`);
+      } else {
+        this.favoriteStores.add(storeId);
+        http.post(`store/favorites/?&userName=${this.$store.state.auth.user.email}&storeId=${storeId}`);
+      }
+    },
+
     // loading autocomplete only when the user focus on the input to ensure everything is loaded up nicely and to avoid initializing it if left unused
     initAutoComplete() {
       var input = document.getElementById('searchInput');
@@ -350,6 +395,25 @@ export default {
         fullscreenControl: false
       });
 
+      // add a method that allows clearing the markers
+      google.maps.Map.prototype.clearOverlays = () => {
+        if(this.searchMarker.setMap) this.searchMarker.setMap(null);
+        for (var i = 0; i < this.markers.length; i++ ) {
+          this.markers[i].setMap(null);
+        }
+        this.markers.length = 0;
+      }
+
+      // get the favorites for the current user
+      http.get(`store/favorites/?&userName=${this.$store.state.auth.user.email}`).then(({ data }) => {
+        this.favoriteStores = new Set(data.map(fav => fav.storeId));
+        // query the initial stores, irrespective to their location, but do not display them yet
+        http.get("store/stores/").then(({ data }) => {
+          this.foundStores = data;
+          this.setupStores();
+        });
+      });
+
       // store google map properties
       this.geocoder = geocoder;
       this.gmap = map;
@@ -369,24 +433,10 @@ export default {
       });
       map.initialZoom = true;
 
-      // add a method that allows clearing the markers
-      google.maps.Map.prototype.clearOverlays = () => {
-        for (var i = 0; i < this.markers.length; i++ ) {
-          this.markers[i].setMap(null);
-        }
-        this.markers.length = 0;
-      }
-
       // enables the visibility of the search panel upon loading
       google.maps.event.addDomListener(window, 'load', function(){
           document.getElementById('searchContainer').style.visibility = 'show';
       });  
-
-       // query the initial stores, irrespective to their location, but do not display them yet
-      http.get("store/stores/").then(({ data }) => {
-        this.foundStores = data;
-        this.setupStores();
-      });
 
       // centralize it at the Netherlands
       geocoder.geocode({ address: `Netherlands` }, (results, status) => {

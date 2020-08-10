@@ -3,6 +3,8 @@ package com.jumbo.storeservice.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 /**
@@ -15,8 +17,10 @@ import lombok.Data;
 public class Favorite {
 	
 	@Id
+	@JsonIgnore
     private String id;
 	
+	@JsonIgnore
 	private String userName;
 	
 	private String storeId;

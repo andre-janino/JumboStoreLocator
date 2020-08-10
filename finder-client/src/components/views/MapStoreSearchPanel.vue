@@ -1,6 +1,6 @@
 <template>
   <section id="searchContainer" class="searchContainer" style="visibility: hidden">
-    <v-card class="mx-auto searchCard" max-width="470" width="470">
+    <v-card class="mx-auto searchCard" elevation="5" max-width="470" width="470">
       <!-- Search area -->
       <MapStoreSearchPanelHeader
         :address="address"
@@ -18,6 +18,7 @@
         :foundStores="foundStores"
         :selectedStore="selectedStore"
         :loading="loading"
+        @toggleFavorite="toggleFavorite"
         @setSelectedStore="setSelectedStore"
         />
     </v-card>
@@ -47,6 +48,9 @@ export default {
         },
         setSelectedStore(item) {
           this.$emit("setSelectedStore", item);
+        },
+        toggleFavorite(storeId) {
+          this.$emit("toggleFavorite", storeId);
         },
         initAutoComplete() {
           this.$emit("initAutoComplete");

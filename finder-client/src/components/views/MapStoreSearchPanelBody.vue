@@ -33,7 +33,7 @@
                   <div class="jumbo-details-links">
                     <span v-if="isCollectionPoint(store)" class="jumbo-details-pup">
                       <a class="jumbo-details-link" :href="'https://www.jumbo.com/INTERSHOP/web/WFS/Jumbo-Grocery-Site/nl_NL/-/EUR/ViewDeliveryOptions-Start?storeUUID='+ store.uuid" target="_blank" onclick="event.stopPropagation();">
-                        <img v-if="isSupermarktPuP" class="jumbo-details-img-store" src="../../assets/img/pup-store.webp">
+                        <img v-if="isSupermarktPuP(store)" class="jumbo-details-img-store" src="../../assets/img/pup-store.webp">
                         <img v-else class="jumbo-details-img-pup" src="../../assets/img/pup.webp">
                         <span>Pick-up</span>
                       </a>
@@ -73,7 +73,7 @@
                     </div>
                     <div v-if="isLoggedUser" class="arrange-fit favorite-button">
                       <v-chip-group active-class="primary--text" v-model="store.favorite">
-                        <v-chip outlined :value="true">
+                        <v-chip @click="toggleFavorite(store.sapStoreID)" outlined :value="true">
                           <v-icon medium class="chipFavIcon">mdi-star-circle</v-icon>
                           <strong>Favorite</strong>
                         </v-chip>
@@ -98,7 +98,7 @@
 import ProgressBar from ".././utilities/ProgressBar.vue";
 
 export default {
-    props: ["foundStores", "selectedStore","loading"],
+    props: ["foundStores", "selectedStore","loading","favoriteStores"],
     name: "MapStoreSearchPanelBody",
     components: {
       ProgressBar
@@ -128,6 +128,9 @@ export default {
       },
       getStoreIcon(store) {
         return this.storeIcon[store.locationType];
+      },
+      toggleFavorite(storeId) {
+        this.$emit("toggleFavorite", storeId);
       },
     }
 }

@@ -12,7 +12,9 @@ import com.jumbo.storeservice.entity.Favorite;
 import com.jumbo.storeservice.service.FavoriteService;
 
 /**
- * Controller for the favorite service
+ * Controller for the favorite service.
+ * 
+ * Contrary to StoreController, favorite resources are no cached, as they may change constantly.
  * 
  * @author André Janino
  */

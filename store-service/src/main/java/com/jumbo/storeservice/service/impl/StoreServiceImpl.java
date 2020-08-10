@@ -29,6 +29,9 @@ public class StoreServiceImpl implements StoreService {
 	
 	/**
 	 * Return all stores, filtered by store types.
+	 * 
+	 * @param storeTypes A list of store types
+	 * @return a list of all stores
 	 */
 	@Override
 	public List<Store> findAllStores(List<String> storeTypes) {
@@ -41,11 +44,56 @@ public class StoreServiceImpl implements StoreService {
 	
 	/**
 	 * Return nearest N stores to the provided lat/lng, filtered by store types.
+	 * 
+	 * @param lng
+	 * @param lat
+	 * @param storeTypes A list of store types
+	 * @param limit The max number of stores to be queried
+	 * @return a list all nearest stores
 	 */
 	@Override
 	public List<Store> findNearestStores(Double lng, Double lat, List<String> storeTypes, int limit) {
 		log.info("Find all stores called.");		
 		List<Store> result = repository.findNearestStores(lng, lat, storeTypes, PageRequest.of(0, limit));
+		log.info("Found " + result.size() + " store(s), returning.");
+		return result;
+	}
+	
+	/**
+	 * Return a list of stores irrespective of location, filtered by store IDs and store types.
+	 * 
+	 * @param storeIds A list of store ids
+	 * @param storeTypes A list of store types
+	 * @return a filtered list of stores stores
+	 */
+	@Override
+	public List<Store> findFavoriteStores(List<String> storeIds, List<String> storeTypes) {
+		log.info("Find favorite stores called.");	
+		List<Store> result = repository.findByLocationTypeInAndSapStoreIDIn(storeTypes, storeIds);
+		log.info("Found " + result.size() + " store(s), returning.");
+		return result;
+	}
+
+	/**
+	 * Return nearest N stores to the provided lat/lng, filtered by store IDs and store types.
+	 * 
+	 * @param lng Optional longitude
+	 * @param lat Optional latitude
+	 * @param storeIds A list of store ids
+	 * @param storeTypes A list of store types
+	 * @return a list of filtered nearest stores
+	 */
+	@Override
+	public List<Store> findNearestFavoriteStores(Double lng, Double lat, List<String> storeIds, List<String> storeTypes) {
+		log.info("Find nearest favorite stores called.");		
+		
+		for( String s: storeTypes ){
+
+			System.out.println(s);
+
+			}
+		
+		List<Store> result = repository.findNearestStoresById(lng, lat, storeTypes, storeIds);
 		log.info("Found " + result.size() + " store(s), returning.");
 		return result;
 	}

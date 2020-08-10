@@ -49,9 +49,14 @@ public class SecurityTokenConfig extends WebSecurityConfigurerAdapter {
 			   .antMatchers(HttpMethod.PUT, "/user/users/**").hasRole("ADMIN") // manual update of users is only allowed by admins
 			   .antMatchers(HttpMethod.DELETE, "/user/users/**").hasRole("ADMIN") // manual deletion of users is only allowed by admins
 			   
-			   .antMatchers(HttpMethod.GET, "/store/stores/**").permitAll() // everyone is able to list stores
+			   .antMatchers(HttpMethod.GET, "/store/**").permitAll() // everyone is able to list stores/favorites
+			   .antMatchers(HttpMethod.POST, "/store/favorites/**").permitAll() // allowing everyone to call favorite/unfavoriting on this dev env. TODO: remove the permitAlls and uncomment the two lines below.
+			   .antMatchers(HttpMethod.DELETE, "/store/favorites/**").permitAll() 
+			   //.antMatchers(HttpMethod.POST, "/store/favorites/**").hasAnyRole("ADMIN","USER") // guests are not allowed to favorite 
+			   //.antMatchers(HttpMethod.DELETE, "/store/favorites/**").hasAnyRole("ADMIN","USER") // guests are not allowed to unfavorite
+			   
 			   .antMatchers(HttpMethod.POST, "/store/stores/**").hasRole("ADMIN") // manual creation of stores is only allowed by admins (and not currently supported by the UI)
-			   .antMatchers(HttpMethod.PUT, "/store/stores/**").hasAnyRole("ADMIN","USER") // guests are not allowed to favorite (or make any other change)
+			   .antMatchers(HttpMethod.PUT, "/store/stores/**").hasRole("ADMIN") // manual update of stores is only allowed by admins (and not currently supported by the UI)
 			   .antMatchers(HttpMethod.DELETE, "/store/stores/**").hasRole("ADMIN") // manual deletion of a store is only allowed by admins (and not currently supported by the UI)
 			   .anyRequest().authenticated(); 
 	}

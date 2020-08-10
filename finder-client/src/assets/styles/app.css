@@ -118,25 +118,13 @@ html {
     display: none !important;
 }
 
-.searchCard {
-    border-bottom: 2px solid black !important;
-}
-
 .searchResults {
     max-height: 460px !important;
     overflow-y: auto;
 }
 
-.searchResults::-webkit-scrollbar {
-    width: 8px;
-}
-.searchResults::-webkit-scrollbar-track {
-    background: #cccccc; 
-    XXborder-radius: 10px;
-}
-.searchResults::-webkit-scrollbar-thumb {
-    XXborder-radius: 10px;
-    background: gray;
+.searchBoxTitle {
+    padding-bottom: 8px !important;
 }
 
 button.v-btn[disabled] {
@@ -180,7 +168,8 @@ button.v-btn[disabled] {
 }
 
 .mapToolbar {
-    margin-bottom: 5px;
+    margin-bottom: 3px;
+    margin-top: -10px;
     margin-left: 16px;
     height: 45px !important;
 }
@@ -212,7 +201,7 @@ button.v-btn[disabled] {
     height: 4px !important;
 }
 
-@media only screen and (max-width: 650px) {
+@media only screen and (max-width: 580px) {
     .tabText {
         display: none;
     }
@@ -226,6 +215,7 @@ button.v-btn[disabled] {
     display: block;
     position: absolute !important;
     overflow: hidden;
+    box-shadow: 3px 3px 10px rgba(0,0,0,.25);
     top: 30px !important;
     left: 30px !important;
 }
@@ -400,7 +390,7 @@ button.v-btn[disabled] {
 
 .jumbo-details-link > .jumbo-details-img-pup {
     margin-top: 3px;
-    margin-left: 9px;
+    margin-left: 5px;
 }
 
 .jumbo-details-link > .jumbo-details-img-store {

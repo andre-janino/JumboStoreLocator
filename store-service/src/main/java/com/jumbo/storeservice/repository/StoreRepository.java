@@ -25,11 +25,20 @@ public interface StoreRepository extends MongoRepository <Store, String> {
 	 * @return A list of stores that match the provided location type
 	 */
     List<Store> findByLocationTypeIn(List<String> locationType);
-	
+    
+    /**
+	 * Query all stores by locationType and sapStoreId, useful if the user has not yet provided a location but wants to query his favorite stores (and filter them by type, possibly)
+	 * 
+	 * @param locationType SupermarktPuP, PuP or Supermarkt.
+	 * @param sapStoreId A list of sapStoreIds  
+	 * @return A list of stores that match the provided location type and sapStoreIds
+	 */
+    List<Store> findByLocationTypeInAndSapStoreIDIn(List<String> locationType, List<String> sapStoreId);
+    
 	/**
 	 * Performs a geospatial query based on provided longitude/latitudes: https://docs.mongodb.com/manual/reference/operator/aggregation/geoNear/
 	 * 
-	 * Hardcoding max distance to 156000m (as the Netherlands extends 312km from north to south, so we have 1000 * 312/2 = 156000)
+	 * Hardcoding max distance to 312000m (as the Netherlands extends 312km from north to south)
 	 * The maxDistance parameter is optional though, and could be easily removed if we want to allow for a wider search range.
 	 * 
 	 * That being said, in a multi-country company it would be a good idea to store the max distance of each country and work with that,
@@ -50,11 +59,38 @@ public interface StoreRepository extends MongoRepository <Store, String> {
 			"         type : \"Point\" ,\n" +
 			"         coordinates : [ ?0, ?1] " +
 			"      },\n" +
+			"      maxDistance: 312000," +
 			"      key: position," +
 			"      distanceField: distance," + // distance is calculated in meters
 			"      query: { \"locationType\": {$in: ?2} }" +
 			"   }\n" +
 			"}")
-    List<Store> findNearestStores(double longitude, double latitude, List<String> locationType, Pageable pageable);
+    List<Store> findNearestStores(Double longitude, Double latitude, List<String> locationType, Pageable pageable);
+	
+	/**
+	 * Similar to findNearestStores, but also takes into account a list of store IDs. 
+	 * Although this query is flexible, it is currently employed to retrieve a list of favorited stores in this implementation.
+	 * 
+	 * Returns a list of stores 
+	 * @param longitude
+	 * @param latitude
+	 * @param locationType
+	 * @param pageable
+	 * @return A list of stores, filtered by id and ordered by their distance to the provided location
+	 */
+	@Aggregation(value =
+			"{" +
+			"  \"$geoNear\": {" +
+			"     \"near\": { " +
+			"         type : \"Point\" ,\n" +
+			"         coordinates : [ ?0, ?1] " +
+			"      },\n" +
+			"      maxDistance: 312000," +
+			"      key: position," +
+			"      distanceField: distance," + // distance is calculated in meters
+			"      query: { \"locationType\": {$in: ?2}, \"sapStoreID\": {$in: ?3} }" +
+			"   }\n" +
+			"}")
+    List<Store> findNearestStoresById(Double longitude, Double latitude, List<String> locationType, List<String> sapStoreId);
 }
 
