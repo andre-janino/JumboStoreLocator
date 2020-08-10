@@ -180,6 +180,7 @@ export default {
       // query data and update the markers
       http.get(url).then(({ data }) => {
         this.foundStores = data;
+        this.resetSelection()
         this.setupStores();
         this.loading = false;
       });
@@ -221,6 +222,11 @@ export default {
 
     // add basic marker click handling
     markerClickHandler(marker, panelClick) {
+      // display the search results after the user selects a marker for the first time
+      if(!this.hasFiltered) {
+        this.displaySearchResults();
+      }
+
       // remove the highlight from the current marker
       if(this.selectedStore > 0) {
         this.unhighlightMarker(this.markers[this.selectedStore]);
@@ -274,11 +280,13 @@ export default {
     // Example: 10.32 => 10m, 100000.32 => 100km, 35000.23123 => 35.2km. 
     // When things are nearby or too far, decimal cases makes little difference, even more so when we're considering unobstructed distance.
     formatDistance(store) {
-      if(store.distance < 1000) {
-        store.distance = Number(store.distance).toFixed(0) + ' m';
-      } else {
-        const dist = (store.distance / 1000);
-        store.distance = (dist > 100 ? (dist).toFixed(0) : (dist).toFixed(1)) + ' km';
+      if(store.distance) {
+        if(store.distance < 1000) {
+          store.distance = Number(store.distance).toFixed(0) + ' m';
+        } else {
+          const dist = (store.distance / 1000);
+          store.distance = (dist > 100 ? (dist).toFixed(0) : (dist).toFixed(1)) + ' km';
+        }
       }
     },
 
@@ -287,26 +295,15 @@ export default {
     scrollToSearchResult(id) {
       // only scroll if the container is scrollable
       var scrollContainer = document.getElementById("searchResults");
-      if(scrollContainer.scrollHeight > scrollContainer.clientHeight) {
-        return;
-      }
-      
-      // calculate the position
-      var target = document.getElementById(id);
-      var targetY = 0;
-      do { 
-          if (target == scrollContainer) break;
-          targetY += target.offsetTop;
-      } while ((target = target.offsetParent));
+      var store = document.getElementById(id).parentNode;
+      scrollContainer.scrollTop = store.offsetTop;
+    },
 
-      // define a "smooth" scroll function
-      const scroll = function(c, a, b, i) {
-          i++; if (i > 30) return;
-          c.scrollTop = a + (b - a) / 30 * i;
-          setTimeout(function(){ scroll(c, a, b, i); }, 20);
-      }
-      // start scrolling
-      scroll(scrollContainer, scrollContainer.scrollTop, targetY, 0);
+    // reset the selection and search results scroll after a new set of results is queried
+    resetSelection() {
+      this.selectedStore = -1;
+      var scrollContainer = document.getElementById("searchResults");
+      scrollContainer.scrollTop = 0;
     },
 
     // display the search results expandable panel
@@ -344,12 +341,6 @@ export default {
   // google maps definitions
   async mounted() {
     try {
-      // query the initial stores, irrespective to their location
-      /**http.get("store/stores/").then(({ data }) => {
-        this.foundStores = data;
-        this.setupStores();
-      });*/
-  
       // initialize the map
       const google = await gmapsInit();
       const geocoder = new google.maps.Geocoder();
@@ -364,6 +355,20 @@ export default {
       this.gmap = map;
       this.google = google;
 
+      // set the initial zoom to a minum of 8
+      google.maps.event.addListener(map, 'zoom_changed', function() {
+          var zoomChangeBoundsListener = 
+              google.maps.event.addListener(map, 'bounds_changed', function() {
+                  if (this.getZoom() < 8 && this.initialZoom == true) {
+                      // Change max/min zoom here
+                      this.setZoom(8);
+                      this.initialZoom = false;
+                  }
+              google.maps.event.removeListener(zoomChangeBoundsListener);
+          });
+      });
+      map.initialZoom = true;
+
       // add a method that allows clearing the markers
       google.maps.Map.prototype.clearOverlays = () => {
         for (var i = 0; i < this.markers.length; i++ ) {
@@ -372,19 +377,31 @@ export default {
         this.markers.length = 0;
       }
 
-      // centralize the map at the center of the netherlands
-      this.gmap.panTo(new google.maps.LatLng(this.defaultLat, this.defaultLng));
-      map.setZoom(8);
+      // query the initial stores based on the default Netherlands lat/lng, but do not display them yet
+      http.get("store/stores/nearest/?lng=" + this.defaultLng + '&lat=' + this.defaultLat).then(({ data }) => {
+        this.foundStores = data;
+        this.setupStores();
+      });
 
       //  enables the visibility of the search panel upon loading
       google.maps.event.addDomListener(window, 'load', function(){
-        document.getElementById('searchContainer').style.visibility = 'show';
+          document.getElementById('searchContainer').style.visibility = 'show';
       });  
+
+      // centralize it at the Netherlands
+      geocoder.geocode({ address: `Netherlands` }, (results, status) => {
+        if (status !== `OK` || !results[0]) {
+          throw new Error(status);
+        }
+
+        map.setCenter(results[0].geometry.location);
+        map.fitBounds(results[0].geometry.viewport);
+      });
 
       // move the search bar within the map
       var searchContainer = document.getElementById('searchContainer');
       map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchContainer);
-
+      
       // adjust the control panel
       var controlDiv = document.getElementById('floating-panel');
       map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlDiv);

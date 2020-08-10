@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -23,16 +24,19 @@ import lombok.Data;
 public class Store {
 
 	@Id
+	@JsonIgnore
     private String id;
 	
 	private String city;
 	
+	@JsonIgnore
 	private String postalCode;
 	
 	private String street;
 	
 	private String street2;
 	
+	@JsonIgnore
 	private String street3;
 	
 	private String addressName;
@@ -42,6 +46,7 @@ public class Store {
 	@JsonSerialize(using = GeoJSONPositionSerializer.class)
 	private GeoJsonPoint position;
 	
+	@JsonIgnore
 	private String complexNumber;
 	
 	private boolean showWarningMessage;
@@ -58,8 +63,6 @@ public class Store {
 	
 	private String distance;
 	
-	private boolean favorite;
-
 	public String getCity() {
 		return city;
 	}
@@ -186,14 +189,6 @@ public class Store {
 
 	public void setDistance(String distance) {
 		this.distance = distance;
-	}
-
-	public boolean isFavorite() {
-		return favorite;
-	}
-
-	public void setFavorite(boolean favorite) {
-		this.favorite = favorite;
 	}
 
 	/**

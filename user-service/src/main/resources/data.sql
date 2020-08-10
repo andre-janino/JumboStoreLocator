@@ -18,10 +18,7 @@ insert into users (id, email, first_name, last_name, password, role_id)
 values(1002, 'marijn.deromph@jumbo.com', 'Marijn', 'de Römph', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 3);
 
 insert into users (id, email, first_name, last_name, password, role_id)
-values(1003, 'marijn.deromph@jumbo.com', 'Marijn', 'de Römph', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 3);
+values(1003, 'tamara.duric@jumbo.com', 'Tamara', 'Duric', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 3);
 
 insert into users (id, email, first_name, last_name, password, role_id)
-values(1004, 'tamara.duric@jumbo.com', 'Tamara', 'Duric', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 3);
-
-insert into users (id, email, first_name, last_name, password, role_id)
-values(1005, 'gustavo.henriquesmartins@jumbo.com', 'Gustavo', 'Henrique Martins', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 3);
+values(1004, 'gustavo.henriquesmartins@jumbo.com', 'Gustavo', 'Henrique Martins', '$2a$10$heirHA89ULwxENiWxaj25O1S9oRafpyvLQw21shSNWhV7i/VuZNJ6', 3);

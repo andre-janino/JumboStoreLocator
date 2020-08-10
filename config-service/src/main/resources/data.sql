@@ -19,7 +19,7 @@ INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'secretKey', 
 
 /** discovery-service application properties */
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
-INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'server.port', '9000');
+INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'server.port', '9999');
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka.client.register-with-eureka', 'false');
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka.client.fetch-registry', 'false');
 INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka.instance.hostname', 'localhost');
@@ -28,23 +28,24 @@ INSERT INTO PROPERTIES VALUES ('discovery-service', 'default', 'master', 'eureka
 /** api-gateway application properties */
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'server.port', '3000');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9999/eureka/');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.registerWithEureka', 'false');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.fetchRegistry', 'true');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.sensitiveHeaders', 'Cookie,Set-Cookie');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ConnectTimeout', '1500');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ReadTimeout', '3000');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.host.connect-timeout-millis', '3000');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ConnectTimeout', '6000');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ReadTimeout', '8000');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.host.connect-timeout-millis', '8000');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.ignored-headers','cache-control');
 
 /** auth-service application properties */
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'server.port', '4000');
-INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
+INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9999/eureka/');
 
 /** store-service application properties */
 INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
 INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'server.port', '5555');
-INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
+INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9999/eureka/');
 /** mongodb atlas connection info */
 INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'spring.data.mongodb.uri', 'mongodb+srv://jumbo:jumbodb@storescluster.ssuzl.mongodb.net/storeData?retryWrites=true&w=majority');
 INSERT INTO PROPERTIES VALUES ('store-service', 'default', 'master', 'spring.data.mongodb.database', 'storeData');
@@ -56,7 +57,7 @@ INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.data
 INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.datasource.username', 'sa');
 INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.datasource.password', '');
 INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
-INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9000/eureka/');
+INSERT INTO PROPERTIES VALUES ('user-service', 'default', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://localhost:9999/eureka/');
 
 /** 
  * TODO: production profile
