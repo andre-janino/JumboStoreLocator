@@ -85,14 +85,7 @@ public class StoreServiceImpl implements StoreService {
 	 */
 	@Override
 	public List<Store> findNearestFavoriteStores(Double lng, Double lat, List<String> storeIds, List<String> storeTypes) {
-		log.info("Find nearest favorite stores called.");		
-		
-		for( String s: storeTypes ){
-
-			System.out.println(s);
-
-			}
-		
+		log.info("Find nearest favorite stores called.");				
 		List<Store> result = repository.findNearestStoresById(lng, lat, storeTypes, storeIds);
 		log.info("Found " + result.size() + " store(s), returning.");
 		return result;

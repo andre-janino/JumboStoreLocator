@@ -2,7 +2,7 @@
     <!-- Differently from MapStoreTypes, I've set-up a hard-coded list of filtering options -->
     <v-toolbar flat class="mapToolbar">
         <template v-slot:extension>
-        <v-tabs v-model="stores" color="black" fixed-tabs>
+        <v-tabs v-model="stores" color="black">
             <v-tabs-slider></v-tabs-slider>
             <v-tab>
                 <v-icon class="mr-2">mdi-map-marker-multiple</v-icon>
