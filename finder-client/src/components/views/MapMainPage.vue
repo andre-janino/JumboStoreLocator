@@ -377,16 +377,16 @@ export default {
         this.markers.length = 0;
       }
 
-      // query the initial stores based on the default Netherlands lat/lng, but do not display them yet
-      http.get("store/stores/nearest/?lng=" + this.defaultLng + '&lat=' + this.defaultLat).then(({ data }) => {
-        this.foundStores = data;
-        this.setupStores();
-      });
-
-      //  enables the visibility of the search panel upon loading
+      // enables the visibility of the search panel upon loading
       google.maps.event.addDomListener(window, 'load', function(){
           document.getElementById('searchContainer').style.visibility = 'show';
       });  
+
+       // query the initial stores, irrespective to their location, but do not display them yet
+      http.get("store/stores/").then(({ data }) => {
+        this.foundStores = data;
+        this.setupStores();
+      });
 
       // centralize it at the Netherlands
       geocoder.geocode({ address: `Netherlands` }, (results, status) => {
@@ -404,7 +404,7 @@ export default {
       
       // adjust the control panel
       var controlDiv = document.getElementById('floating-panel');
-      map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlDiv);
+      map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlDiv); 
     } catch (error) {
       console.error(error);
     }

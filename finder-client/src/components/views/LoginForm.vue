@@ -58,6 +58,15 @@
 import User from '../../models/user';
 import Snackbar from ".././utilities/Snackbar";
 
+import * as axios from "axios";
+import http from "../../utils/http";
+import config from "../../config";
+import gmapsInit from '../../utils/map';
+
+// default properties for requests
+axios.defaults.headers.common = { "X-Requested-With": "XMLHttpRequest" };
+axios.defaults.baseURL = `${config.baseUrl}/`;
+
 export default {
   name: 'LoginForm',
   components: {
@@ -133,6 +142,12 @@ export default {
         this.loginRequested = false;
       }, 2000);
     },
-  }
+  }, 
+
+  // preloads google maps and load stores in the browser's cache
+  async mounted() {
+    await gmapsInit();
+    http.get("store/stores/");
+  },
 };
 </script>

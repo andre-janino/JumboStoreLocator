@@ -32,10 +32,10 @@ INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.clien
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.registerWithEureka', 'false');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'eureka.client.fetchRegistry', 'true');
 INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.sensitiveHeaders', 'Cookie,Set-Cookie');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ConnectTimeout', '6000');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ReadTimeout', '8000');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.host.connect-timeout-millis', '8000');
-INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.ignored-headers','cache-control');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ConnectTimeout', '5000');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'ribbon.ReadTimeout', '10000');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.host.connect-timeout-millis', '10000');
+INSERT INTO PROPERTIES VALUES ('api-gateway', 'default', 'master', 'zuul.ignored-headers','X-Content-Type-Options,Strict-Transport-Security,X-Frame-Options,X-XSS-Protection');
 
 /** auth-service application properties */
 INSERT INTO PROPERTIES VALUES ('auth-service', 'default', 'master', 'spring.cloud.config.fail-fast', 'true');
