@@ -27,7 +27,7 @@ public interface StoreRepository extends MongoRepository <Store, String> {
     List<Store> findByLocationTypeIn(List<String> locationType);
 	
 	/**
-	 * Performs a geospatial query based on provided longitude/latitudes.
+	 * Performs a geospatial query based on provided longitude/latitudes: https://docs.mongodb.com/manual/reference/operator/aggregation/geoNear/
 	 * 
 	 * Hardcoding max distance to 156000m (as the Netherlands extends 312km from north to south, so we have 1000 * 312/2 = 156000)
 	 * The maxDistance parameter is optional though, and could be easily removed if we want to allow for a wider search range.

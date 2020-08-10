@@ -71,7 +71,7 @@
                       <span class="jumbo-details-time">Suday</span>
                       <span class="ml-10">10:00 - 20:00</span>
                     </div>
-                    <div class="arrange-fit favorite-button">
+                    <div v-if="isLoggedUser" class="arrange-fit favorite-button">
                       <v-chip-group active-class="primary--text" v-model="store.favorite">
                         <v-chip outlined :value="true">
                           <v-icon medium class="chipFavIcon">mdi-star-circle</v-icon>
@@ -111,6 +111,9 @@ export default {
             set(newVal) {
                 this.$emit("setSelectedStore", newVal);
             } 
+        },
+        isLoggedUser() {
+            return this.$store.state.auth.user.role != "ROLE_GUEST";
         },
     },
     methods: {

@@ -126,9 +126,9 @@ export default {
     },
 
     // update the foundStores list
-    queryStores(init) {
+    queryStores() {
       // display the search results after the user filters for the first time
-      if(!init && !this.hasFiltered) {
+      if(!this.hasFiltered) {
         this.displaySearchResults();
       }
 
@@ -344,6 +344,12 @@ export default {
   // google maps definitions
   async mounted() {
     try {
+      // query the initial stores, irrespective to their location
+      /**http.get("store/stores/").then(({ data }) => {
+        this.foundStores = data;
+        this.setupStores();
+      });*/
+  
       // initialize the map
       const google = await gmapsInit();
       const geocoder = new google.maps.Geocoder();
@@ -358,10 +364,6 @@ export default {
       this.gmap = map;
       this.google = google;
 
-      // centralize the map at the center of the netherlands
-      this.gmap.panTo(new google.maps.LatLng(this.defaultLat, this.defaultLng));
-      map.setZoom(8);
-
       // add a method that allows clearing the markers
       google.maps.Map.prototype.clearOverlays = () => {
         for (var i = 0; i < this.markers.length; i++ ) {
@@ -369,6 +371,10 @@ export default {
         }
         this.markers.length = 0;
       }
+
+      // centralize the map at the center of the netherlands
+      this.gmap.panTo(new google.maps.LatLng(this.defaultLat, this.defaultLng));
+      map.setZoom(8);
 
       //  enables the visibility of the search panel upon loading
       google.maps.event.addDomListener(window, 'load', function(){
@@ -382,9 +388,6 @@ export default {
       // adjust the control panel
       var controlDiv = document.getElementById('floating-panel');
       map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlDiv);
-
-      // query the initial stores, irrespective to their location
-      this.queryStores(true);
     } catch (error) {
       console.error(error);
     }

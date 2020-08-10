@@ -31,7 +31,7 @@ public class StoreController {
 	 * If no limit is provided, return by default a maximum of 1000 results.
 	 */
 	@GetMapping("/stores/")
-	public List<Store> findAllStores(@RequestParam List<String> storeTypes) {
+	public List<Store> findAllStores(@RequestParam(defaultValue = "SupermarktPuP,PuP,Supermarkt") List<String> storeTypes) {
 		return service.findAllStores(storeTypes);
 	}
 	
