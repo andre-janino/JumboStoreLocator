@@ -400,7 +400,7 @@ button.v-btn[disabled] {
 
 .jumbo-details-link > .jumbo-details-img-dist {
     display: flex !important;
-    width: 45px !important;
+    width: 40px !important;
 }
 
 .jumbo-details-link > span {
