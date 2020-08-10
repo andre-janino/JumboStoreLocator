@@ -10,9 +10,7 @@ import com.jumbo.storeservice.entity.Store;
 import com.jumbo.storeservice.service.StoreService;
 
 /**
- * Request controller for the store controller.
- * 
- * Bad requests (BadRequest) and resources not found (ResourceNotFound) errors are handled on UserService.
+ * Request controller for the store service.
  * 
  * @author André Janino
  */
