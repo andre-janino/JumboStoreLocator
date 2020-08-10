@@ -4,10 +4,8 @@
 
 # Jumbo Store Locator
 
-A private repository for Jumbo coding assessment: Create an application that shows the 5 closest Jumbo stores to a given position.
+A private repository for Jumbo coding assessment: "Create an application that shows the 5 closest Jumbo stores to a given position".
 Powered by Spring Boot + Vue.js.
-
-TODO: improve the readme as the project starts to take shape, adding missing microservices, tech stacks and any other relevant information.
 
 ## Index :pushpin:
 - [Design](#design)
@@ -18,49 +16,50 @@ TODO: improve the readme as the project starts to take shape, adding missing mic
 
 ## Design <a name="design"></a> :memo:
 
-Before discussing the architecture of a system, one must first understand what it is going to be built. When presented with a requirement which only states the general purpose of an application without exploring the intricate details and complementing functionalities, it makes sense to first explore how it is currently solved and then evalute what improvements can be made, if any.
+Before drafting the architecture of a system, one must first understand what is being asked to be built and define a scope. When presented with a requirement which only states the general purpose of an application without exploring the intricate details and complementing functionalities, it makes sense to understand what is already in place, both in your business and elsewhere, and then evalute what improvements can be made, if any.
 
 #### State of the art
 
-When designing a new feature, it makes sense to understand what is already in place, both in your business and elsewhere. For Jumbo, such feature is already available, as seen here: https://www.jumbo.com/winkels (powered by google maps). Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as _`store type`_ filters*.
+A store finder application is already available at Jumbo's website, as seen here: https://www.jumbo.com/winkels. Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as _`store type`_ filters*.
 
-*Note: Either I didn't understand how the _`store type`_ filter works, or there's a bug on it. When I filter by "Pick-up point", I still get stores like [Jumbo Den Burg (Texel) Vogelenzang](https://www.jumbo.com/winkel/jumbo-den-burg-texel-vogelenzang?redirect=true), which (as far as I can see) is not a pick-up point. 
+**Note: Either I didn't understand how the _`store type`_ filter works, or there's a bug on it. When I filter by "Pick-up point", I still get stores like [Jumbo Den Burg (Texel) Vogelenzang](https://www.jumbo.com/winkel/jumbo-den-burg-texel-vogelenzang?redirect=true), which (as far as I can see) is not a pick-up point.* 
 
-On the details of each found store, the user is allowed the following actions:
+On the details pane of each store, the user is allowed the following actions:
 - Favoriting at store.
 - [Visualize store details](https://www.jumbo.com/winkel/jumbo-heinkenszand-stenevate).
 - [Reserve pick-up time](https://www.jumbo.com/INTERSHOP/web/WFS/Jumbo-Grocery-Site/nl_NL/-/EUR/ViewDeliveryOptions-Start?storeUUID=8E0KYx4XCQQAAAFoMTtWMVlg) (if applicable).
 
-The store information I can work with is provided in a json format, and contains the following fields: _`city`_, _`postalCode`_, _`street`_, _`street2`_, _`street3`_, _`addressName`_, _`uuid`_, _`longitude`_, _`latitude`_, _`complexNumber`_, _`showWarningMessage`_, _`todayOpen`_, _`locationType`_, _`collectionPoint`_, _`sapStoreID`_ and _`todayClose`_. 
+The store information we can work with is provided in a json format, and contains the following fields: _`city`_, _`postalCode`_, _`street`_, _`street2`_, _`street3`_, _`addressName`_, _`uuid`_, _`longitude`_, _`latitude`_, _`complexNumber`_, _`showWarningMessage`_, _`todayOpen`_, _`locationType`_, _`collectionPoint`_, _`sapStoreID`_ and _`todayClose`_. 
 
-It seems to have most of the fields necessary to replicate a similar list to the one provided at Jumbo's website, except by the open/close times on other days of the week. The _`uuid`_ field would also allow the _`reserve pick-up time`_ button to be implemented. The _`store details button`_ seems to require some logic to be applied, for example: when the same _`addressName`_ field is used twice (e.g. Jumbo Hulst Stationsplein *22H* and *30*), the _`street2`_ field is embedded on the url: https://www.jumbo.com/winkel/jumbo-hulst-stationsplein-30. This is problematic with the provided test data because *Jumbo Hulst Stationsplein 22H* is missing, so there is no good way to know if the `_street2_` field should be appended or not on the url.
+It seems to have most of the fields necessary to replicate a similar list to the one provided at Jumbo's website, except by the open/close times on other days of the week and new filtering by new stores. The _`uuid`_ field allows for the _`reserve pick-up time`_ button to be implemented, while the _`store details button`_ seems to requires information we not have; for example: when the same _`addressName`_ field is used twice (e.g. Jumbo Hulst Stationsplein *22H* and *30*), the _`street2`_ field is embedded on the url: https://www.jumbo.com/winkel/jumbo-hulst-stationsplein-30. This is problematic with the provided test data because *Jumbo Hulst Stationsplein 22H* is missing, so there is no good way to know if the `_street2_` field should be appended or not on the url.
 
-I also compared Jumbo's store finder with the one provided by Walmart. The UI is very similar, having a search-box within the map that displays an expandable list of stores; the main difference being that Walmart's does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the amount of stores). The UI also has different quirks in terms of how details of a shop are displayed.
+I also compared Jumbo's store finder with the one provided by Walmart. The UI is very similar, having a search-box within the map that displays an expandable list of stores; the main difference being that Walmart's store finder does not have such a wide range of filters and does not display any store until the user provides a location (probably due to the amount of stores). The UI also has different quirks in terms of how the details of a shop are displayed.
 
 #### Proposed design
 
-In terms of functionality, the original system offers much more than the scope of this project. The filters are very specific and seem to convey that it was something that was built over time, by listening to customer feedback. As for the UI: it makes sense to have the search bar within the map, as mobile users do not have much screen real-state and need to have a compact and responsive UI. Therefore, a simpler but functional version of the existing Jumbo store finder was designed for this project.
+In terms of functionality, the original system offers much more than the scope of this project. The filters are very specific and seem to convey that it was something that was built over time, by listening to customer feedback. As for the UI: it makes sense to keep the search bar within the map, as mobile users do not have much screen real-state and need to have a compact and responsive UI (although, on a mobile, the search pane should ideally fully replace the map, depending on the screen size). Therefore, a simpler but functional version of the existing Jumbo store finder was designed for this project.
 
 <p align="center">
   <img src="_resources/Jumbo Store Locator.png" title="Proposed design" alt="Proposed design"/>
 </p>
 
 Geneal premisses:
-- Users are able to log-in through email/password or with a guest user, but for this MVP no registration page is provided (hardcoded users). 
-- After logging in, the user is presented with a map centered at the Netherlands, displaying all available stores on a map. 
-- The map displays a list of found stores (all by default), contains a search panel and allows filtering. 
-- The search panel does not display any stores until the user makes his first query. 
+- Users are able to log-in through email/password or with a guest user (for this MVP, no registration page is provided). 
+- After logging in, the user is presented with a map centered at the Netherlands (52.370216,4.895168), displaying all available stores on the map. 
+- The map displays a list of found stores (unfiltered by default), and contains a search panel and allows filtering. 
+- The search panel does not display any stores until the user makes his first interaction (filter, change tabs or click on a marker). 
 - When the user clicks on a store on the panel, the map pans and zooms to the location, and the marker icon changes to help the user identify the selected store.
 - When the user clicks on a marker, the search panel scrolls to the selected store to display its detailed information.
+- A selected store has a different marker to make it easier to see the user selection.
 - Users are able to favorite a store.
 
 The following filters are supported:
 - All stores: query all stores, ordered by distance of the provided address.
 - Closest stores: query the 5 nearest stores, ordered by distance of the provided address.
-- Favorite stores*: query only the favorited stores, ordered by distance of the provided address.
-- Store types: in combination to the selected filter, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and _`drive-through of walk-in pick-up point`_ (which I renamed to simply drive-through for brevity; maybe it would be a good idea to add a tooltip to add more info to it?).
+- Favorite stores*: query the favorited stores, ordered by distance of the provided address.
+- Store types: in combination to the aforementioned filters, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and _`drive-through of walk-in pick-up point`_ (which I renamed to simply drive-through for brevity; maybe it would be a good idea to add a tooltip to add more info to it?).
 
-*Note: the favorite store query is only enabled if the user is logged in; guest users can't favorite a store.
+**Note: the favorite store query is only enabled if the user is logged in; guest users can't favorite a store.*
 
 The "collapsed" details of a store displays the following info:
 - Title: _`addressName`_.
@@ -71,19 +70,17 @@ The "collapsed" details of a store displays the following info:
 - Side info: distance with a google maps link to display the route.
 
 When expanded, additional info is displayed:
-- Hardcoded open/close times (since we have no data for it)
-- Warning about pick-up prices (if applicable)
+- Hardcoded open/close times (since we have no data for it).
+- Warning about pick-up prices (if applicable).
 - Side info: favorite/unfavorite the store (for non-guest users).
 
-The "nearest stores" logic is managed by the back-end.
+The "nearest stores" logic is managed by the back-end, while the front-end concerns itself with translating addresses into geolocation (google maps API).
 
-Disclaimer: several icons, styling and text were obtained from Jumbo's website and are not to be utilized outside of this private repository.
+Disclaimer: several icons, styling and texts were obtained from Jumbo's website and are not to be utilized outside of this private repository.
 
 ## Architecture <a name="about"></a> :scroll:
 
-This project was developed using _`Spring Boot (2.3.2.RELEASE)`_ for the back-end microservices and _`Vue.js 2.6.11`_ for the front-end components. The back-end modules were implemented with a microservice architecture in mind.
-
-The solution is divided into the _`frontend`_ project for the user interface and several microservices for the back-end:
+This project was developed using _`Spring Boot (2.3.2.RELEASE)`_ for the back-end microservices and _`Vue.js 2.6.11`_ for the front-end components. The back-end modules were implemented with a microservice architecture in mind, distributed in the following projects:
 - _`finder-client`_: Vue.js project with a _`login`_ form and _`find store`_ page. Communicates directly with the _`api-gateway`_.
 - _`discovery-service`_: eureka discovery service that all other services subscribe to.
 - _`api-gateway`_: deals with token validation and redirects requests to other microservices.
@@ -96,9 +93,9 @@ The solution is divided into the _`frontend`_ project for the user interface and
   <img src="_resources/Architecture.png" title="System architecture" alt="Architecture"/>
 </p>
 
-It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything that was done on this small project.
+It is important to note that, in a production environment, each of these projects would be located in separate repositories, allowing teams to work on modules independently and isolating all the moving parts of the product's architecture. However, they were kept together for this project to make it easier for a reviewer to analyze everything what was done on this small project.
 
-Why have microservices for such a small application? Creating small, independent microservices allow us to integrate/replace/maintain functionality in a bigger project with minimal effort. In this particular case, what is really being asked is that a store locator API is implemented, but as I have no access to Jumbo's API Gateway, front-end, user/customer service, etc, it makes sense to create my own and keep them separate, simply acting as placeholders for an MVP demonstration.
+Why have microservices for such a small application? Creating small, independent microservices allow us to integrate/replace/maintain functionality in a bigger project with minimal effort. In this particular case, what is really being asked is that a store locator API is implemented, but as I have no access to Jumbo's API Gateway, front-end, user/customer service, etc., it makes sense to create my own and keep them separate, simply acting as placeholders for an MVP demonstration.
 
 Several libraries were used to fulfill the needed business logics; the main ones are listed below:
 
@@ -135,6 +132,8 @@ Several libraries were used to fulfill the needed business logics; the main ones
   - ","latitude":" => ,
   - ","complexNumber" => ]},"complexNumber"
   
+  Alternatively, a conversion service could have been created to import "legacy" data, convert it to the new model and save it all on the database, but it felt unecessary due to the one-shot nature of this process.
+- Indexes were created for the _`position`_ and _`locationType`_ attributes for the _`stores`_ collection, and on the _`userName`_ attribute for the _`favorites`_ collection.
 
 #### RabbitMQ
 
@@ -158,11 +157,12 @@ Several libraries were used to fulfill the needed business logics; the main ones
 - _`Sleuth`_ is a logging solution that allows tracing actions across multiple services through unique trace IDs (done automatically), which makes it a perfect solution for a microservice architecture. 
 - Logs can be visualized in a dashboard through [zipkin](https://zipkin.io/), if so desired.
 
-#### Libraries/Design patterns that were considered initially, but dropped
+#### Other honorable mentions
 
-I initially planned to employ _`Netflix Hystrix`_ to implement _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure. My first idea was to do that within _`auth-serive`_, but automatically logging the user in as a guest if _`user-service`_ is down and unble to provide user info. However, it feels a bit cluncky from the user perspective, so I decided against it in the end. 
-
-I also wanted to have _`store-service`_ only deal with CRUDE operations, having a dedicated microservice to perform search operations/favoriting to better separate concerns. However, not having event-sourcing implemeted would lead to tight coupling between the services and make it a little pointless at this stage in the project, adding more latency and complexity with very little gain. With that in mind, when/if _`RabbitMQ`_ is employed to notify other services of changes, it will make sense to separate these services.
+- _`Circuit breaker`_: I initially planned to employ _`Netflix Hystrix`_ to implement _`Circuit Breaker`_ design pattern, that is, if a microservice is unavailable, a _`fallback`_ method is called to prevent a systematic failure. My first idea was to do that within _`auth-service`_, but automatically logging the user in as a guest if _`user-service`_ is down and unble to provide user info. However, it feels a bit cluncky from the user perspective, so I decided against it in the end. 
+- _`Caching`_: Returning over 500 stores takes a while, and users can be lose interest really quickly if the page is not responsive. With that in mind, store listing (both filtered and unfiltered) is cached with _`Cache-Control`_ _`max-age=3600`_ (1 hour), which prevents the user from reaching the server for the same queries, over and over. One hour seems like a reasonable cache duration (perhaps it could even be expanded), unless store information changes more often than that. That being said, favorited stores are not cached due to its dynamic nature.
+- _`Zuul`_, by default, ignores a few headers from the services it routes to, _`cache-control`_ being one of them. To solve this issue, it is necessary to set zuul.ignoreHeaders property to _`"X-Content-Type-Options,Strict-Transport-Security,X-Frame-Options,X-XSS-Protection"`_, leaving _`cache-control`_ out of it.
+- _`Foreign keys`_: Using _`NoSQL`_ for the _`store-service`_ makes the "favorite store" functionality a little bit harder to implement; in an SQL database, a simple n-to-n (users with stores) relationship should do the trick, but it cannot be accomplished in the same way for _`MongoDB`_. With that in mind, to avoid having complex aggregates, the _`favorites`_ collection is loaded when the user opens the page; changes are notified to the server and a local copy is kept on the client-side. Moreover, when the user wants to see a list of favorite stores, the IDs are passed as parameters and used to filter the _`stores collection`_. However, having these data objects completely separate have its own benefits, as we can cache lists of stores without worrying about providing the user with an outdated outlook on favorite stores.
 
 ## How to run <a name="run"></a> :wrench:
 
@@ -180,9 +180,9 @@ Having downloaded the project and installed all the needed libraries, you have t
 - On _`auth-service`_ folder, execute _`java -jar auth-service`_.
 - On _`user-service`_ folder, execute _`java -jar user-service`_.
 - On _`store-service`_ folder, execute _`java -jar store-service`_.
-- On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`run serve`_ to start the Vue.js application.
+- On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`npm run serve`_ to start the Vue.js application.
 
-It is important that _`config-service`_ must be the first project to be initialized, followed by _`discovery-service`_; the remainder of the projects can be initialized at any order (just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser, and either login as a guest or login with one of the following users:
+It is important that _`config-service`_ and _`discovery-service`_ are fully initialized before starting the other services, the latter also having dependencies on the former. The remainder of the projects can be initialized at any order, just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser, and either login as a guest or login with one of the following users:
 
 - andre.janino@gmail.com / Password1
 - marijn.deromph@jumbo.com / Password1
@@ -194,11 +194,11 @@ It is important that _`config-service`_ must be the first project to be initiali
 This project was tested in three ways:
 - Controllers, Services and Repositories were tested with JUnit.
 - API calls were tested with [Postman](https://www.postman.com/).
-- And last but not least, the UI was tested manually (TODO: add selenium for this project).
+- And last but not least, the UI was tested manually.
 
 #### JUnit
 
-_`JUnit`_ was used alongside _`Mockito`_ for the _`Services`_, _`Controllers`_ and _`Repositories`_ unit/integration tests. _`MockMvc`_ was used to test _`Controllers`_ response, while _`TestEntityManager`_ was used to simulate _`Repositories`_.
+_`JUnit`_ was used alongside _`Mockito`_ for the _`Services`_, _`Controllers`_ and _`Repositories`_ unit/integration tests. _`MockMvc`_ was used to test _`Controllers`_ response. _`TestEntityManager`_ was used to simulate _`SQL repositories`_, while _`flapdoodle`_ was used to simulate _`MongoDB repositories`_.
 
 #### Postman
 
@@ -212,14 +212,47 @@ This tool facilitates API testing by allowing the creation of get/post/put/delet
 
 With the application [up and running](#run), head towards http://localhost:8081 on your favorite browser and you will be greeted with the store locator landing page.
 
-TODO: Add screenshots and general instructions.
+<p align="center">
+  <img src="_resources/Test-Login.png" title="Login page" alt="Login page"/>
+</p>
+
+You can choose to login with your user/pass, or to proceed as a guest (in which case, favoriting a store won't be allowed, but everything else works the same). After logging in, you should be greeted by a map filled with all Jumbo stores, as shown below:
+
+<p align="center">
+  <img src="_resources/Test-MainPage.png" title="Main page" alt="Main page"/>
+</p>
+
+The user is able to search addresses (with auto-complete functionality), to see _`all/nearest/favorite`_ stores and to filter by location type:
+
+<p align="center">
+  <img src="_resources/Test-Filters-AddressSearch.png" title="Searching for an address" alt="Searching"/>
+</p>
+
+Finally, the feature that was asked to be implemented on this coding challenge is available on the second tab, under _`Closest stores`_:
+
+<p align="center">
+  <img src="_resources/Test-Filters-Nearest.png" title="Nearest stores" alt="Nearest stores"/>
+</p>
+
+As for the other functionalities: upon clicking on a store (either on a search panel or on a marker), the search panel focus on and expands the selected store, displaying its details. The open hours fields (over the week) are hardcoded, but the favorite toggle button works and enables favorited stores to be seen on the third tab, under _`Favorite stores`_.  
+
+Clicking on the _`directions`_ and _`pick-up`_ buttons opens a new tab, displaying a google maps page and a Jumbo's pick-up reservation page, respectively; both are dynamic and respond correctly to the provided data. When pick-up reservation is not available, the former simply displays a "supermarket" icon, so that the user knows the location type.
 
 ## Future enhancements <a name="future"></a> :clock130:
 
-- Migrate the h2 database into another database for _`user-service`_. PostgreeSQL and MySQL are valid options in terms of SQL.
-- Add admin-specific pages for managing users and stores. When this is done, also implement _`event-sourcing`_ to synchronize services which rely on this data (eliminate querying across services as much as possible).
-- With the previous point implemented, separate the "favorite stores" functionality into its own microservice and refactor auth-service to have its own user db.
-- Add security for _`Spring Cloud Config`_ and move the config to a github repo (JDBC-based Spring Cloud Config is interesting, but harder to configure).
+- Migrate the h2 database into MySQL/PostgreeSQL/etc, as h2 is only suitable for simple tests.
+- Add admin-specific pages for managing users and stores. When this is done, also implement _`event-sourcing`_ to synchronize services which rely on this data (eliminate querying across services as much as possible and allowing better decoupling).
+- Add security for _`Spring Cloud Config`_, and move the config to a github repo (JDBC-based Spring Cloud Config is interesting, but harder to configure).
 - Improve logging (ELK Stack).
 - Improve the search panel responsiveness for mobile (need to add some @media breakpoint behaviors to displaty it differently for phones).
 - Add selenium tests (that is, don't rely on JUnit and Postman alone).
+
+## Closing notes
+
+It has been a fun journey! When I started, I knew nothing about how to query the closest geographical points (nor that it could/should be done in a database), so it was very interesting to learn the trade-offs of each approach and, ultimately, implement a working solution that perfoms well and feels nice to use. 
+
+Every module was developed from scratch, and although I did not get to apply all the patterns I wanted (looking at you, _`Circuit breaker`_!), the system is well decoupled, documented and organized. While it is not a one-to-one representation of what my production code looks like (e.g. the lack of security on _`Spring Cloud Config`_ and an overly simple authentication method), it demonstrates how I think about a problem, design a solution, communicate my thoughts, implement and document it.
+
+The system is not perfect and could undergo several performance improvements (e.g. filtering by store-type could be fully done on the front-end with some tweaking), as well as UI improvements (the search panel does not fit a phone screen with the current design), but I'm mostly happy with how it turned out given the ammount of time I had to implement it.
+
+Lastly, I would like to thank everyone from Jumbo for this opportunity! If you have any questions (or improvement suggestions), feel free to contact me.
