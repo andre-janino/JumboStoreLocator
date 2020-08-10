@@ -5,6 +5,7 @@
         <v-divider></v-divider>
         <MapStoreFilters
           :storeFilter="storeFilter"
+          :location="location"
           @setFilters="setFilters"
         />
         <div class="storeLocator" id="map"/>
@@ -14,6 +15,7 @@
           :storeTypes="storeTypes"
           :address="address"
           :selectedStore="selectedStore"
+          :loading="loading"
           @setStoreTypes="setStoreTypes"
           @setAddress="setAddress"
           @searchAddress="searchAddress"
@@ -74,6 +76,7 @@ export default {
     storeFilter: 0, // search filters [all, 5 nearest and favorite]
     storeTypes: [0, 1, 2], // store types [store, pick-up point and drive through]
     foundStores: [], // list of queried stores, hardcoded for now
+    loading: false, // indicates whether there's an active query
     markerIcons: {
       Supermarkt: require("../../assets/img/store.webp"),
       SupermarktPuP: require("../../assets/img/pup-store.webp"),
@@ -117,69 +120,68 @@ export default {
            
           }
           this.queryStores();
+          this.gmap.panTo(this.location);
+          this.gmap.fitBounds(this.viewport);
       });
     },
 
     // update the foundStores list
-    queryStores() {
-      if(!this.hasFiltered) {
-        document.getElementById("searchBodyWrapper").style.display = "";
-        this.hasFiltered = true;
+    queryStores(init) {
+      // display the search results after the user filters for the first time
+      if(!init && !this.hasFiltered) {
+        this.displaySearchResults();
       }
 
       // wrap the search parameters
       const newSearchParameters = {
         "address": this.address,
         "storeFilter": this.storeFilter,
-        "store": this.storeTypes.includes(0),
-        "pickUp": this.storeTypes.includes(1),
-        "driveThrough": this.storeTypes.includes(2)
+        "Supermarkt": this.storeTypes.includes(0),
+        "PuP": this.storeTypes.includes(1),
+        "SupermarktPuP": this.storeTypes.includes(2)
       };
 
       // if the search parameters didn't change, prevent a request
       if(Object.entries(this.searchParameters).toString() === Object.entries(newSearchParameters).toString()) {
         return;
       }
+
       // update the search parameters to avoid duplicate requests
+      this.loading = true;
       this.searchParameters = newSearchParameters;
 
-      // if no address is provided, query all stores (with filters)
-      if(!this.address) {
-        this.executeQuery(newSearchParameters);
-      // otherwise, fit the map to the location and query based on lat/lng (with filters)
-      } else {  
-        this.updateMap(newSearchParameters); 
-      }
-    },
-
-    // update the map by:
-    // 1. Centralizing it at the provided location
-    // 2. Querying stores based on the provided location and other filters
-    // 3. Updating the markers
-    updateMap(searchParameters) {
-      // centralize the map at the new location
-      this.gmap.panTo(this.location);
-      this.gmap.fitBounds(this.viewport);
-
-      // query the stores and setup the markers
-      this.executeQuery(searchParameters);
+      // query all stores (with filters)
+      this.executeQuery(newSearchParameters);
     },
 
     // Query all stores based on the user-provided parameters (address, store types, filter type, etc)
     // Querying data does not require the JWT token to be passed.
     executeQuery(searchParameters) {
-      console.log(searchParameters);
-
       // build the url based on the provided parameters
       let url = "store/stores/";
-      if(this.location.lat) {
-        url += "nearest/?lng=" + this.location.lng() + '&lat=' + this.location.lat();
+      url += (this.location.lat) ? "nearest/?lng=" + this.location.lng() + '&lat=' + this.location.lat() : "?";
+
+      // if search parameters are supplied, add them to the url
+      if(searchParameters) {
+        if(searchParameters.storeFilter == 1) {
+          url += "&limit=5";
+        }
+        if(searchParameters.Supermarkt) {
+          url += "&storeTypes=Supermarkt";
+        }
+        if(searchParameters.PuP) {
+          url += "&storeTypes=PuP";
+        }
+        if(searchParameters.SupermarktPuP) {
+          url += "&storeTypes=SupermarktPuP";
+        }
       }
 
       // query data and update the markers
       http.get(url).then(({ data }) => {
         this.foundStores = data;
         this.setupStores();
+        this.loading = false;
       });
     },
 
@@ -307,6 +309,12 @@ export default {
       scroll(scrollContainer, scrollContainer.scrollTop, targetY, 0);
     },
 
+    // display the search results expandable panel
+    displaySearchResults() {
+      document.getElementById("searchBodyWrapper").style.display = "";
+      this.hasFiltered = true;
+    },
+
     // loading autocomplete only when the user focus on the input to ensure everything is loaded up nicely and to avoid initializing it if left unused
     initAutoComplete() {
       var input = document.getElementById('searchInput');
@@ -317,12 +325,17 @@ export default {
 
       // listen for changes on the autocomplete control, capturing the address and fetching a new list of stores
       autocomplete.addListener('place_changed', () => {
+        this.loading = true;
         let place = autocomplete.getPlace();
         if(place.formatted_address) {
           this.address = place.formatted_address;
           this.location = place.geometry.location;
           this.viewport = place.geometry.viewport;
+
+          // query and adjust the map
           this.queryStores();
+          this.gmap.panTo(this.location);
+          this.gmap.fitBounds(this.viewport);
         }
       });
     },
@@ -344,9 +357,6 @@ export default {
       this.geocoder = geocoder;
       this.gmap = map;
       this.google = google;
-
-      // query the initial stores, irespective to their location
-      this.executeQuery();
 
       // centralize the map at the center of the netherlands
       this.gmap.panTo(new google.maps.LatLng(this.defaultLat, this.defaultLng));
@@ -372,6 +382,9 @@ export default {
       // adjust the control panel
       var controlDiv = document.getElementById('floating-panel');
       map.controls[google.maps.ControlPosition.TOP_CENTER].push(controlDiv);
+
+      // query the initial stores, irrespective to their location
+      this.queryStores(true);
     } catch (error) {
       console.error(error);
     }

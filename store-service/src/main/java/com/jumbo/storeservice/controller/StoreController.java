@@ -3,8 +3,6 @@ package com.jumbo.storeservice.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,34 +26,24 @@ public class StoreController {
 	}
 	
 	/**
-	 * Return a list containing all stores, irrespective to the current position
+	 * Return a list containing all stores by type, irrespective to the current position
+	 * 
+	 * If no limit is provided, return by default a maximum of 1000 results.
 	 */
 	@GetMapping("/stores/")
-	public List<Store> findAllStores() {
-		return service.findAllStores();
+	public List<Store> findAllStores(@RequestParam List<String> storeTypes) {
+		return service.findAllStores(storeTypes);
 	}
 	
-	
 	/**
-	 * Returns list of N nearest stores in respect to a lat/lng for every store type.
+	 * Returns list of N nearest stores by type, in respect to a lat/lng for every store type.
 	 * 
-	 * If no limit is provided, return by default a maximum of 1000 results (more than enough for this example)
+	 * If no limit is provided, return by default a maximum of 1000 results.
 	 *
 	 * @return a list of all stores
 	 */
 	@GetMapping("/stores/nearest")
-	public List<Store> findNearestStores(@RequestParam Double lng, @RequestParam Double lat, @RequestParam(defaultValue = "1000") Integer limit) {
-		return service.findNearestStores(lng, lat, limit);
-	}
-	
-	/**
-	 * Temp method to create all stores.
-	 * 
-	 * @param store object to be created
-	 * @return the created store object, or an error response
-	 */
-	@PostMapping("/stores")
-	public List<Store> createStores(@RequestBody Iterable<Store> stores) {
-		return service.create(stores);
+	public List<Store> findNearestStores(@RequestParam Double lng, @RequestParam Double lat, @RequestParam List<String> storeTypes, @RequestParam(defaultValue = "1000") Integer limit) {
+		return service.findNearestStores(lng, lat, storeTypes, limit);
 	}
 }

@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
 import com.jumbo.storeservice.entity.Store;
 
@@ -17,18 +16,15 @@ import com.jumbo.storeservice.entity.Store;
  */
 public interface StoreRepository extends MongoRepository <Store, String> {
 
-	List<Store> findAll();
-	
 	Page<Store> findAll(Pageable pageable);
 
 	/**
-	 * Queries by locationType. Probably has little use as is for this particular application, needs to be used in conjunction with $near
+	 * Query all stores by locationType, useful if the user has not yet provided a location but wants to checkout only pick-up points, for example.
 	 * 
-	 * @param locationType SupermarktPuP, PuP or Supermarkt
+	 * @param locationType SupermarktPuP, PuP or Supermarkt. 
 	 * @return A list of stores that match the provided location type
 	 */
-	@Query("{locationType:'?0'}")
-    List<Store> findByLocationType(String locationType);
+    List<Store> findByLocationTypeIn(List<String> locationType);
 	
 	/**
 	 * Performs a geospatial query based on provided longitude/latitudes.
@@ -56,8 +52,9 @@ public interface StoreRepository extends MongoRepository <Store, String> {
 			"      },\n" +
 			"      key: position," +
 			"      distanceField: distance," + // distance is calculated in meters
+			"      query: { \"locationType\": {$in: ?2} }" +
 			"   }\n" +
 			"}")
-    public List<Store> findNearestStores(double longitude, double latitude, Pageable pageable);
+    List<Store> findNearestStores(double longitude, double latitude, List<String> locationType, Pageable pageable);
 }
 

@@ -8,11 +8,11 @@
                 <v-icon class="mr-2">mdi-map-marker-multiple</v-icon>
                 <div class="tabText">All stores</div>
             </v-tab>
-            <v-tab>
+            <v-tab :disabled="invalidLocation">
                 <v-icon class="mr-2">mdi-walk</v-icon>
                 <div class="tabText">Closest stores</div>
             </v-tab>
-            <v-tab>
+            <v-tab :disabled="isGuestUser">
                 <v-icon class="mr-2">mdi-star</v-icon>
                 <div class="tabText">Favorite stores</div>
             </v-tab>
@@ -24,7 +24,7 @@
 <script>
 
 export default {
-    props: ["storeFilter"],
+    props: ["storeFilter", "location"],
     name: "MapStoreFilters",
     computed: {
         stores: {
@@ -34,8 +34,14 @@ export default {
             set(newVal) {
                 this.$emit("setFilters", newVal);
             } 
-        }
-    }
+        },
+        invalidLocation() {
+            return !this.location.lat;
+        },
+        isGuestUser() {
+            return this.$store.state.auth.user.role == "ROLE_GUEST";
+        },
+    },
 }
 
 </script>

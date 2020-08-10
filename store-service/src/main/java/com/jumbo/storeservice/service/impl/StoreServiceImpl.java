@@ -15,9 +15,7 @@ import com.jumbo.storeservice.repository.StoreRepository;
 import com.jumbo.storeservice.service.StoreService;
 
 /**
- * Service implementation for the Store document.
- * 
- * Returns errors (BadRequest and ResourceNotFound) in case the rest command was malformed or no user was found, respectively.
+ * Service implementation for the Store document. Managing stores (CRUDE) is not supported in this service.
  * 
  * @author André Janino
  */
@@ -30,41 +28,25 @@ public class StoreServiceImpl implements StoreService {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	/**
-	 * Return all stores
+	 * Return all stores, filtered by store types.
 	 */
 	@Override
-	public List<Store> findAllStores() {
+	public List<Store> findAllStores(List<String> storeTypes) {
 		log.info("Find all stores called.");
-		List<Store> stores = repository.findAll();
+		List<Store> stores = repository.findByLocationTypeIn(storeTypes);
 		ArrayList<Store> result = Lists.newArrayList(stores);
 		log.info("Found " + result.size() + " store(s), returning.");
 		return result;
 	}
 	
 	/**
-	 * Return nearest N stores.
+	 * Return nearest N stores to the provided lat/lng, filtered by store types.
 	 */
 	@Override
-	public List<Store> findNearestStores(Double lng, Double lat, int limit) {
-		log.info("Find all stores called.");
-		log.info(lng + " - " + lat + " | " + limit);
-		
-		List<Store> result = repository.findNearestStores(lng, lat, PageRequest.of(0, limit));
+	public List<Store> findNearestStores(Double lng, Double lat, List<String> storeTypes, int limit) {
+		log.info("Find all stores called.");		
+		List<Store> result = repository.findNearestStores(lng, lat, storeTypes, PageRequest.of(0, limit));
 		log.info("Found " + result.size() + " store(s), returning.");
 		return result;
-	}
-	
-	/**
-	 * Create a store.
-	 * 
-	 * @param store A store object that was serialized from a json object.
-	 * @return the created store object
-	 */
-	@Override
-	public List<Store> create(Iterable<Store> stores) {
-		log.info("Create store called.");
-		Iterable<Store> createdStores = repository.saveAll(stores);
-		log.info("Stores created successfully");
-		return  Lists.newArrayList(createdStores);
 	}
 }

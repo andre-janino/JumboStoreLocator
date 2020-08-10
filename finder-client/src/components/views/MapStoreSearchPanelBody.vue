@@ -5,6 +5,10 @@
         <p class="searchLabelTextBold">Nearby stores</p>
     </v-card-text>
     <v-divider></v-divider>
+    <ProgressBar 
+        :loading="loading"
+        color="#353535"
+        slot="extension"/>
     <v-expansion-panels
         ref="panels"
         class="searchResults"
@@ -91,9 +95,14 @@
 </template>
 
 <script>
+import ProgressBar from ".././utilities/ProgressBar.vue";
+
 export default {
-    props: ["foundStores", "selectedStore"],
+    props: ["foundStores", "selectedStore","loading"],
     name: "MapStoreSearchPanelBody",
+    components: {
+      ProgressBar
+    },
     computed: {
         currentStore: {
             get() {

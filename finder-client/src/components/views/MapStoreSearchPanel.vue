@@ -17,6 +17,7 @@
         style="display: none"
         :foundStores="foundStores"
         :selectedStore="selectedStore"
+        :loading="loading"
         @setSelectedStore="setSelectedStore"
         />
     </v-card>
@@ -28,7 +29,7 @@ import MapStoreSearchPanelHeader from "./MapStoreSearchPanelHeader";
 import MapStoreSearchPanelBody from "./MapStoreSearchPanelBody";
 
 export default {
-    props: ["address","foundStores","selectedStore","storeTypes"],
+    props: ["address","foundStores","selectedStore","storeTypes","loading"],
     name: "MapStoreSearchPanel",
     components: {
       MapStoreSearchPanelHeader,
