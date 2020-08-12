@@ -173,15 +173,13 @@ In order to run this project locally (without a docker image*), make sure you ha
 - [RabbitMQ](https://www.rabbitmq.com/download.html) and [Erlang](https://www.rabbitmq.com/which-erlang.html).
 - [npm](https://www.npmjs.com/get-npm) for the Vue.js front-end application.
 
-Optional:
-- [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable. Only needed if you want to build the jars yourself, instead of using the pre-built release.
-
-Having the pre-requisites fulfilled, [download release v1.0](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0) (which already contains the compiled jars) and run the modules on separate terminals:
-- Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on the installation folder.
+Having the pre-requisites fulfilled, [download release.rar](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0) from Jumbo Store Locator v1.0 release, running the modules on separate terminals:
+- Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on its installation folder (it usually already self-starts after installing).
+- Extract the release zip on a folder of your choice.
 - Execute _`java -jar config-service`_, wait for it to initialize.
 - Execute_`java -jar discovery-service`_, wait for it to initialize.
 - With config and discovery services initialized, execute _`java -jar`_ on the remainder of jars: _`auth-service.jar`_, _`user-service.jar`_, _`store-service.jar`_ and _`api-gateway.jar`_.
-- Extract _`finder-client.7z`_ and execute _`npm run serve`_ to start the Vue.js application. Alternatively, download finder-client project from the repo and run _`npm i`_ to install the node modules before initializing it.
+- Go into _`finder-client`_ folder and execute _`npm run serve`_ to start the Vue.js application.
 
 It is important that _`config-service`_ and _`discovery-service`_ are fully initialized before starting the other services, the latter also having dependencies on the former. The remainder of the projects can be initialized at any order, just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser*, and either login as a guest or login with one of the following users:
 
@@ -189,6 +187,11 @@ It is important that _`config-service`_ and _`discovery-service`_ are fully init
 - marijn.deromph@jumbo.com / Password1
 - tamara.duric@jumbo.com / Password1
 - gustavo.henriquesmartins@jumbo.com / Password1
+
+As a side note, if you don't download the release and want to build the project yourself, you'll also need:
+- [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable.
+- Run _`mvn clean package`_ on each of the micro-services to build the jars.
+- Run _`npm i`_ on the filder-client folder to download the dependencies.
 
 **Note about docker image: it will be made available soon.*
 
