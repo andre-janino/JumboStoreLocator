@@ -181,7 +181,7 @@ Having the pre-requisites fulfilled, [download release v1.0](https://github.com/
 - Execute _`java -jar config-service`_, wait for it to initialize.
 - Execute_`java -jar discovery-service`_, wait for it to initialize.
 - With config and discovery services initialized, execute _`java -jar`_ on the remainder of jars: _`auth-service.jar`_, _`user-service.jar`_, _`store-service.jar`_ and _`api-gateway.jar`_.
-- Extract _`finder-client.7z`_ and execute _`npm run serve`_ to start the Vue.js application.
+- Extract _`finder-client.7z`_ and execute _`npm run serve`_ to start the Vue.js application. Alternatively, download finder-client project from the repo and run _`npm i`_ to install the node modules before initializing it.
 
 It is important that _`config-service`_ and _`discovery-service`_ are fully initialized before starting the other services, the latter also having dependencies on the former. The remainder of the projects can be initialized at any order, just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser*, and either login as a guest or login with one of the following users:
 
@@ -215,7 +215,7 @@ This tool facilitates API testing by allowing the creation of get/post/put/delet
 
 #### Manual tests <a name="manual"></a>
 
-With the application [up and running](#run), head towards http://localhost:8081 on your favorite browser and you will be greeted with the store locator landing page.
+With the application [up and running](#run), head towards http://localhost:8081 on your favorite browser and you will be greeted with the store locator login page.
 
 <p align="center">
   <img src="_resources/Test-Login.png" title="Login page" alt="Login page"/>
@@ -251,15 +251,15 @@ Clicking on the _`directions`_ and _`pick-up`_ buttons opens a new tab, displayi
 
 ## Future enhancements <a name="future"></a> :clock130:
 
-- Migrate the h2 database into MySQL/PostgreeSQL/etc, as h2 is only suitable for simple tests.
+- Migrate the _`h2 database`_ into _`MySQL/PostgreeSQL/etc`_, as h2 is only suitable for simple tests.
 - Add admin-specific pages for managing users and stores. When this is done, also implement _`event-sourcing`_ to synchronize services which rely on this data (eliminate querying across services as much as possible and allowing better decoupling).
 - Add security for _`Spring Cloud Config`_, and move the config to a github repo (JDBC-based Spring Cloud Config is interesting, but harder to configure).
-- Improve logging (ELK Stack).
+- Improve logging (_`ELK Stack`_).
 - Improve the search panel responsiveness for mobile (need to add some @media breakpoint behaviors to displaty it differently for phones).
-- Add selenium tests (that is, don't rely on JUnit and Postman alone).
+- Add _`selenium`_ tests (that is, don't rely on JUnit and Postman alone).
 - Fix the bug with webp icons on Edge.
 
-## Closing notes
+## Closing notes (Hallo Jumbo!)
 
 It has been a fun journey! When I started, I knew nothing about how to query the closest geographical points (nor that it could/should be done in a database), so it was very interesting to learn the trade-offs of each approach and, ultimately, implement a working solution that perfoms well and feels nice to use. 
 
