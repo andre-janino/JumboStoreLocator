@@ -187,9 +187,9 @@ It is important that _`config-service`_ and _`discovery-service`_ are fully init
 - tamara.duric@jumbo.com / Password1
 - gustavo.henriquesmartins@jumbo.com / Password1
 
-** Note about docker image: it will be made available soon.*
+**Note about docker image: it will be made available soon.*
 
-*** Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website. Searching a little bit, there seems to be a few workaround that could be tried, so that goes into the TODO list.*
+***Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website. Searching a little bit, there seems to be a few workaround that could be tried, so that goes into the TODO list.*
 
 ## Testing <a name="testing"></a> :beetle:
 
