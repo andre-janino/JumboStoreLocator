@@ -200,7 +200,7 @@ This project was tested in three ways:
 
 #### JUnit
 
-_`JUnit`_ was used alongside _`Mockito`_ for the _`Services`_, _`Controllers`_ and _`Repositories`_ unit/integration tests. _`MockMvc`_ was used to test _`Controllers`_ response. _`TestEntityManager`_ was used to simulate _`SQL repositories`_, while _`flapdoodle`_ was used to simulate _`MongoDB repositories`_.
+_`JUnit`_ was used alongside _`Mockito`_ for the _`Services`_, _`Controllers`_ and _`Repositories`_ unit/integration tests. _`MockMvc`_ was used to test _`Controllers`_ response. _`TestEntityManager`_ was used to simulate _`SQL repositories`_.
 
 #### Postman
 

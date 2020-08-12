@@ -33,7 +33,7 @@ import com.jumbo.userservice.exception.ResourceNotFound;
 import com.jumbo.userservice.service.UserService;
 
 /**
- * JUnit tests for the user service controller. 
+ * JUnit tests for the user-service controller. 
  * 
  * Tests good and bad requests for retrieveAllUsers, retrieveUser, createUser, updateUser and deleteUser
  * 

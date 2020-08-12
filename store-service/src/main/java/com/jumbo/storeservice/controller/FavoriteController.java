@@ -34,7 +34,7 @@ public class FavoriteController {
 	 * @return the created user object, or an error response
 	 */
 	@GetMapping("/favorites/")
-	public List<Favorite> addFavorite(@RequestParam String userName) {
+	public List<Favorite> getFavorites(@RequestParam String userName) {
 		return service.findAllFavorites(userName);
 	}
 	

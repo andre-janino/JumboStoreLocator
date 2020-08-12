@@ -14,7 +14,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jumbo.userservice.entity.User;
-import com.jumbo.userservice.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest

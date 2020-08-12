@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jumbo.storeservice.entity.Favorite;
+import com.jumbo.storeservice.exception.BadRequest;
 import com.jumbo.storeservice.repository.FavoriteRepository;
 import com.jumbo.storeservice.service.FavoriteService;
 
@@ -48,6 +49,8 @@ public class FavoriteServiceImpl implements FavoriteService {
 	@Override
 	public Favorite addFavorite(String userName, String storeId) {
 		log.info("Add favorites called.");
+		if(isFavorited(userName, storeId)) throw new BadRequest("Favorite '" + storeId + "' is already registered for user " + userName + ".");
+		
 		Favorite favorite = new Favorite(userName, storeId);
 		repository.save(favorite);
 		log.info("Favorite added.");
@@ -67,5 +70,16 @@ public class FavoriteServiceImpl implements FavoriteService {
 		repository.deleteByUserNameAndStoreId(userName, storeId);
 		log.info("Favorite removed.");
 		return true;
+	}
+	
+	/**
+	 * Verify if the given user has already favorited a store
+	 * 
+	 * @param userName The evaluated user
+	 * @param storeId The id of the store which is being checked
+	 * @return true if an email is present, false otherwise
+	 */
+	private boolean isFavorited(String userName, String storeId) {
+		return repository.findByUserNameAndId(userName, storeId) != null;
 	}
 }

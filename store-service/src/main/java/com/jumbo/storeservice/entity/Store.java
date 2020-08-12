@@ -63,6 +63,15 @@ public class Store {
 	
 	private String distance;
 	
+	public Store() {}
+	
+	public Store(String id, GeoJsonPoint position, String locationType, String sapStoreID) {
+		this.id = id;
+		this.position = position;
+		this.locationType = locationType;
+		this.sapStoreID = sapStoreID;
+	}
+	
 	public String getCity() {
 		return city;
 	}

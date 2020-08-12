@@ -22,6 +22,15 @@ public interface FavoriteRepository extends MongoRepository <Favorite, String> {
 	List<Favorite> findByUserName(String user);
 	
 	/**
+	 * Find a favorite by userName and storeId.
+	 * 
+	 * @param userName
+	 * @param storeId
+	 * @return A favorite object.
+	 */
+	Favorite findByUserNameAndId(String userName, String storeId);
+	
+	/**
 	 * Delete a store by userName and storeId
 	 * 
 	 * @param userName
