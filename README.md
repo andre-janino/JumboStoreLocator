@@ -170,6 +170,7 @@ In order to run this project locally (without a docker image*), make sure you ha
 - [Java 8 SDK](https://www.oracle.com/br/java/technologies/javase/javase-jdk8-downloads.html) installed and properly configured on JAVA_HOME.
 - [RabbitMQ](https://www.rabbitmq.com/download.html) and [Erlang](https://www.rabbitmq.com/which-erlang.html).
 - [npm](https://www.npmjs.com/get-npm) for the Vue.js front-end application.
+
 Optional:
 - [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable. Only needed if you want to build the jars yourself, instead of using the pre-built release.
 
