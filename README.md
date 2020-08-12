@@ -5,7 +5,9 @@
 # Jumbo Store Locator
 
 A private repository for Jumbo coding assessment: "Create an application that shows the 5 closest Jumbo stores to a given position".
-Powered by Spring Boot + Vue.js.
+Powered by Spring Boot + Vue.js. 
+
+Current release: [v1.0](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0)
 
 ## Index :pushpin:
 - [Design](#design)
@@ -174,7 +176,7 @@ In order to run this project locally (without a docker image*), make sure you ha
 Optional:
 - [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable. Only needed if you want to build the jars yourself, instead of using the pre-built release.
 
-Having the pre-requisites fulfilled, download release v1.0 (which already contains the compiled jars) and run the modules on separate terminals:
+Having the pre-requisites fulfilled, [download release v1.0](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0) (which already contains the compiled jars) and run the modules on separate terminals:
 - Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on the installation folder.
 - Execute _`java -jar config-service`_, wait for it to initialize.
 - Execute_`java -jar discovery-service`_, wait for it to initialize.
