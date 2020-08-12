@@ -125,6 +125,7 @@ html {
 
 .searchBoxTitle {
     padding-bottom: 8px !important;
+    display: flex;
 }
 
 button.v-btn[disabled] {
@@ -427,6 +428,14 @@ button.v-btn[disabled] {
     text-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px;
     margin-bottom: 5px !important;
     margin-top: 20px;
+}
+
+.nearbySelect {
+    padding: 0px !important;
+    max-width: 50px !important;
+    margin-left: 15px !important;
+    margin-top: -5px !important;
+    margin-bottom: -30px !important;
 }
 
 .favorite-button {

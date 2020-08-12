@@ -1,9 +1,17 @@
 <template>
   <div>
     <!-- Title of the store list area -->
-    <v-card-text id="searchBoxTitle" class="text--primary">
-        <p class="searchLabelTextBold">Nearby stores</p>
-    </v-card-text>
+    <v-layout row wrap>
+      <v-card-text id="searchBoxTitle" class="text--primary searchBoxTitle">
+          <p class="searchLabelTextBold">Nearby stores</p>
+          <v-select
+            class="nearbySelect"
+            v-if="isNearbyStores"
+            v-model="queryLimit"
+            :items="nearbyStores"
+          ></v-select>
+      </v-card-text>
+    </v-layout>
     <v-divider></v-divider>
     <ProgressBar 
         :loading="loading"
@@ -98,11 +106,14 @@
 import ProgressBar from ".././utilities/ProgressBar.vue";
 
 export default {
-    props: ["foundStores", "selectedStore","loading","favoriteStores"],
+    props: ["foundStores", "selectedStore","loading","favoriteStores","storeFilter","nearbyStoresLimit"],
     name: "MapStoreSearchPanelBody",
     components: {
       ProgressBar
     },
+    data: () => ({
+      nearbyStores: [5, 10, 25, 50]
+    }),
     computed: {
         currentStore: {
             get() {
@@ -112,9 +123,20 @@ export default {
                 this.$emit("setSelectedStore", newVal);
             } 
         },
+        queryLimit: {
+            get() {
+                return this.nearbyStoresLimit;
+            },
+            set(newVal) {
+                this.$emit("setStoresLimit", newVal);
+            } 
+        },
         isLoggedUser() {
             return this.$store.state.auth.user.role != "ROLE_GUEST";
         },
+        isNearbyStores() {
+          return this.storeFilter == 1;
+        }
     },
     methods: {
       isCollectionPoint(item) {

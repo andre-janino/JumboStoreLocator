@@ -37,9 +37,9 @@ public class StoreController {
 	 * @return a list of all stores
 	 */
 	@GetMapping("/stores/")
-	public List<Store> findAllStores(@RequestParam(defaultValue = "SupermarktPuP,PuP,Supermarkt") List<String> storeTypes, final HttpServletResponse response) {
+	public List<Store> findAllStores(@RequestParam(defaultValue = "SupermarktPuP,PuP,Supermarkt") List<String> storeTypes, @RequestParam(defaultValue = "1000") Integer limit, final HttpServletResponse response) {
 		response.addHeader("Cache-Control", "max-age=3600, must-revalidate, no-transform"); // cache find all store results for an hour
-		return service.findAllStores(storeTypes);
+		return service.findAllStores(storeTypes, limit);
 	}
 	
 	/**

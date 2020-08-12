@@ -4,7 +4,6 @@
       <v-card-text class="mapCard">
         <MapStoreFilters
           :storeFilter="storeFilter"
-          :location="location"
           @setFilters="setFilters"
         />
         <div class="storeLocator" id="map"/>
@@ -15,7 +14,10 @@
           :address="address"
           :selectedStore="selectedStore"
           :loading="loading"
+          :nearbyStoresLimit="nearbyStoresLimit"
+          :storeFilter="storeFilter"
           @setStoreTypes="setStoreTypes"
+          @setStoresLimit="setStoresLimit"
           @setAddress="setAddress"
           @searchAddress="searchAddress"
           @setSelectedStore="setSelectedStore"
@@ -72,8 +74,10 @@ export default {
     markers: [], // map of markers
     searchMarker: {},
     address: "", // selected address
+    prevAddress: "", // selected address
     location: {},
     viewport: {},
+    nearbyStoresLimit: 5, // default number of closest stores
     storeFilter: 0, // search filters [all, 5 nearest and favorite]
     storeTypes: [0, 1, 2], // store types [store, pick-up point and drive through]
     foundStores: [], // list of queried stores
@@ -104,6 +108,12 @@ export default {
     // handle the MapStoreTypes click events
     setStoreTypes(types) {
       this.storeTypes = types;
+      this.queryStores();
+    },
+
+    // handle limit changes on the nearby store filter
+    setStoresLimit(limit) {
+      this.nearbyStoresLimit = limit;
       this.queryStores();
     },
 
@@ -140,6 +150,7 @@ export default {
         "address": this.address,
         "storeFilter": this.storeFilter,
         "Supermarkt": this.storeTypes.includes(0),
+        "limit": this.nearbyStoresLimit,
         "PuP": this.storeTypes.includes(1),
         "SupermarktPuP": this.storeTypes.includes(2)
       };
@@ -182,7 +193,7 @@ export default {
       // if additional search parameters are supplied, add them to the url
       if(searchParameters) {
         if(searchParameters.storeFilter == 1) {
-          url += "&limit=5";
+          url += `&limit=${searchParameters.limit}`;
         }
         if(favorites) {
           if(this.favoriteStores && this.favoriteStores.size > 0) {
@@ -215,7 +226,11 @@ export default {
     setupStores() {
       const map = this.gmap;
       map.clearOverlays();
-      if(this.location.lat) {
+
+      // if the address changed, drop a new search marker
+      if(this.location.lat && this.address != this.prevAddress) {
+        if(this.searchMarker.setMap) this.searchMarker.setMap(null);
+        this.prevAddress = this.address;
         this.searchMarker = new this.google.maps.Marker({ icon: this.searchIcon, animation: this.google.maps.Animation.DROP, position: this.location, map});
       }
 
@@ -239,7 +254,6 @@ export default {
           }
 
           // create a marker based on the store object
-          
           const marker = new this.google.maps.Marker({ ...store, map });
           this.markers[marker.markerId] = marker;
           marker.addListener(`click`, () => this.markerClickHandler(marker));
@@ -397,7 +411,6 @@ export default {
 
       // add a method that allows clearing the markers
       google.maps.Map.prototype.clearOverlays = () => {
-        if(this.searchMarker.setMap) this.searchMarker.setMap(null);
         for (var i = 0; i < this.markers.length; i++ ) {
           this.markers[i].setMap(null);
         }
@@ -407,11 +420,12 @@ export default {
       // get the favorites for the current user
       http.get(`store/favorites/?&userName=${this.$store.state.auth.user.email}`).then(({ data }) => {
         this.favoriteStores = new Set(data.map(fav => fav.storeId));
-        // query the initial stores, irrespective to their location, but do not display them yet
-        http.get("store/stores/").then(({ data }) => {
-          this.foundStores = data;
-          this.setupStores();
-        });
+      });
+
+      // query the initial stores, irrespective to their location, but do not display them yet
+      http.get("store/stores/").then(({ data }) => {
+        this.foundStores = data;
+        this.setupStores();
       });
 
       // store google map properties

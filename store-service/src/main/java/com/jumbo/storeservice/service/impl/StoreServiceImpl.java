@@ -34,9 +34,9 @@ public class StoreServiceImpl implements StoreService {
 	 * @return a list of all stores
 	 */
 	@Override
-	public List<Store> findAllStores(List<String> storeTypes) {
+	public List<Store> findAllStores(List<String> storeTypes, int limit) {
 		log.info("Find all stores called.");
-		List<Store> stores = repository.findByLocationTypeIn(storeTypes);
+		List<Store> stores = repository.findByLocationTypeIn(storeTypes, PageRequest.of(0, limit));
 		ArrayList<Store> result = Lists.newArrayList(stores);
 		log.info("Found " + result.size() + " store(s), returning.");
 		return result;

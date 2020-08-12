@@ -24,7 +24,7 @@ public interface StoreRepository extends MongoRepository <Store, String> {
 	 * @param locationType SupermarktPuP, PuP or Supermarkt. 
 	 * @return A list of stores that match the provided location type
 	 */
-    List<Store> findByLocationTypeIn(List<String> locationType);
+    List<Store> findByLocationTypeIn(List<String> locationType, Pageable pageable);
     
     /**
 	 * Query all stores by locationType and sapStoreId, useful if the user has not yet provided a location but wants to query his favorite stores (and filter them by type, possibly)

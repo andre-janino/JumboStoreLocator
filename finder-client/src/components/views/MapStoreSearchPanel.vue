@@ -18,8 +18,11 @@
         :foundStores="foundStores"
         :selectedStore="selectedStore"
         :loading="loading"
+        :nearbyStoresLimit="nearbyStoresLimit"
+        :storeFilter="storeFilter"
         @toggleFavorite="toggleFavorite"
         @setSelectedStore="setSelectedStore"
+        @setStoresLimit="setStoresLimit"
         />
     </v-card>
   </section>
@@ -30,7 +33,7 @@ import MapStoreSearchPanelHeader from "./MapStoreSearchPanelHeader";
 import MapStoreSearchPanelBody from "./MapStoreSearchPanelBody";
 
 export default {
-    props: ["address","foundStores","selectedStore","storeTypes","loading"],
+    props: ["address","foundStores","selectedStore","storeTypes","loading","storeFilter","nearbyStoresLimit"],
     name: "MapStoreSearchPanel",
     components: {
       MapStoreSearchPanelHeader,
@@ -48,6 +51,9 @@ export default {
         },
         setSelectedStore(item) {
           this.$emit("setSelectedStore", item);
+        },
+        setStoresLimit(item) {
+          this.$emit("setStoresLimit", item);
         },
         toggleFavorite(storeId) {
           this.$emit("toggleFavorite", storeId);
