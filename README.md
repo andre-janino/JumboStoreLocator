@@ -166,21 +166,19 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 ## How to run <a name="run"></a> :wrench:
 
-In order to run this project locally, make sure you have:
+In order to run this project locally (without a docker image*), make sure you have:
 - [Java 8 SDK](https://www.oracle.com/br/java/technologies/javase/javase-jdk8-downloads.html) installed and properly configured on JAVA_HOME.
 - [RabbitMQ](https://www.rabbitmq.com/download.html) and [Erlang](https://www.rabbitmq.com/which-erlang.html).
-- [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable.
 - [npm](https://www.npmjs.com/get-npm) for the Vue.js front-end application.
+Optional:
+- [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable. Only needed if you want to build the jars yourself, instead of using the pre-built release.
 
-Having downloaded the project and installed all the needed libraries, you have to do the following in separate terminals:
+Having the pre-requisites fulfilled, download release v1.0 (which already contains the compiled jars) and run the modules on separate terminals:
 - Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on the installation folder.
-- On _`config-service`_ folder, execute _`java -jar config-service`_.
-- On _`discovery-service`_ folder, execute _`java -jar discovery-service`_.
-- On _`api-gateway`_ folder, execute _`java -jar api-gateway`_.
-- On _`auth-service`_ folder, execute _`java -jar auth-service`_.
-- On _`user-service`_ folder, execute _`java -jar user-service`_.
-- On _`store-service`_ folder, execute _`java -jar store-service`_.
-- On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`npm run serve`_ to start the Vue.js application.
+- Execute _`java -jar config-service`_, wait for it to initialize.
+- Execute_`java -jar discovery-service`_, wait for it to initialize.
+- With config and discovery services initialized, execute _`java -jar`_ on the remainder of jars: _`auth-service.jar`_, _`user-service.jar`_, _`store-service.jar`_ and _`api-gateway.jar`_.
+- Extract _`finder-client.7z`_ and execute _`npm run serve`_ to start the Vue.js application.
 
 It is important that _`config-service`_ and _`discovery-service`_ are fully initialized before starting the other services, the latter also having dependencies on the former. The remainder of the projects can be initialized at any order, just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser*, and either login as a guest or login with one of the following users:
 
@@ -189,7 +187,8 @@ It is important that _`config-service`_ and _`discovery-service`_ are fully init
 - tamara.duric@jumbo.com / Password1
 - gustavo.henriquesmartins@jumbo.com / Password1
 
-** Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website. Searching a little bit, there seems to be a few workaround that could be tried, so that goes into the TODO list.*
+** Note about docker image: it will be made available soon.*
+*** Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website. Searching a little bit, there seems to be a few workaround that could be tried, so that goes into the TODO list.*
 
 ## Testing <a name="testing"></a> :beetle:
 
