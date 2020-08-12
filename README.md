@@ -55,7 +55,7 @@ Geneal premisses:
 
 The following filters are supported:
 - All stores: query all stores, ordered by distance of the provided address.
-- Closest stores: query the 5 nearest stores, ordered by distance of the provided address.
+- Nearby stores: query the 5 nearest stores by default (but adjustable to other amounts), ordered by distance of the provided address.
 - Favorite stores*: query the favorited stores, ordered by distance of the provided address.
 - Store types: in combination to the aforementioned filters, the user is able to specify which store types should be fetched: _`store`_, _`pick-up point`_ and _`drive-through of walk-in pick-up point`_ (which I renamed to simply drive-through for brevity; maybe it would be a good idea to add a tooltip to add more info to it?).
 
@@ -182,12 +182,14 @@ Having downloaded the project and installed all the needed libraries, you have t
 - On _`store-service`_ folder, execute _`java -jar store-service`_.
 - On _`finder-client`_ folder, run _`npm install`_  to intall all the dependencies, and execute _`npm run serve`_ to start the Vue.js application.
 
-It is important that _`config-service`_ and _`discovery-service`_ are fully initialized before starting the other services, the latter also having dependencies on the former. The remainder of the projects can be initialized at any order, just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser, and either login as a guest or login with one of the following users:
+It is important that _`config-service`_ and _`discovery-service`_ are fully initialized before starting the other services, the latter also having dependencies on the former. The remainder of the projects can be initialized at any order, just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser*, and either login as a guest or login with one of the following users:
 
 - andre.janino@gmail.com / Password1
 - marijn.deromph@jumbo.com / Password1
 - tamara.duric@jumbo.com / Password1
 - gustavo.henriquesmartins@jumbo.com / Password1
+
+** Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website. Searching a little bit, there seems to be a few workaround that could be tried, so that goes into the TODO list.*
 
 ## Testing <a name="testing"></a> :beetle:
 
@@ -228,13 +230,19 @@ The user is able to search addresses (with auto-complete functionality), to see 
   <img src="_resources/Test-Filters-AddressSearch.png" title="Searching for an address" alt="Searching"/>
 </p>
 
-Finally, the feature that was asked to be implemented on this coding challenge is available on the second tab, under _`Closest stores`_:
+Finally, the feature that was asked to be implemented on this coding challenge is available on the second tab, under _`Nearby stores`_:
 
 <p align="center">
   <img src="_resources/Test-Filters-Nearest.png" title="Nearest stores" alt="Nearest stores"/>
 </p>
 
+It is interesting to note that the _`Nearby stores`_ may be redundant; it functions exactly as the "All stores" tab does, but it offers a limit filter (and only allows up to 50 stores). At this point I've kept both only because it showcases different ways the search panel could be setup. Eventually, if more filters are added, it would be a good idea to change the design, either moving this option to the header or creating a filter button that displays advanced options.
+
 As for the other functionalities: upon clicking on a store (either on a search panel or on a marker), the search panel focus on and expands the selected store, displaying its details. The open hours fields (over the week) are hardcoded, but the favorite toggle button works and enables favorited stores to be seen on the third tab, under _`Favorite stores`_.  
+
+<p align="center">
+  <img src="_resources/Test-Filters-Nearest-25.png" title="Nearest stores" alt="Nearest stores"/>
+</p> 
 
 Clicking on the _`directions`_ and _`pick-up`_ buttons opens a new tab, displaying a google maps page and a Jumbo's pick-up reservation page, respectively; both are dynamic and respond correctly to the provided data. When pick-up reservation is not available, the former simply displays a "supermarket" icon, so that the user knows the location type.
 
@@ -246,6 +254,7 @@ Clicking on the _`directions`_ and _`pick-up`_ buttons opens a new tab, displayi
 - Improve logging (ELK Stack).
 - Improve the search panel responsiveness for mobile (need to add some @media breakpoint behaviors to displaty it differently for phones).
 - Add selenium tests (that is, don't rely on JUnit and Postman alone).
+- Fix the bug with webp icons on Edge.
 
 ## Closing notes
 
