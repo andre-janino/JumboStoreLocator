@@ -195,7 +195,7 @@ As a side note, if you don't download the release and want to build the project 
 
 **Note about docker image: it will be made available soon.*
 
-***Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website. Searching a little bit, there seems to be a few workaround that could be tried, so that goes into the TODO list.*
+***Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website). Searching a little bit, there seems to be a few workarounds that could be tried, so that goes into the TODO list.*
 
 ## Testing <a name="testing"></a> :beetle:
 
