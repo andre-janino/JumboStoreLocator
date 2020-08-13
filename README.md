@@ -22,7 +22,7 @@ Before drafting the architecture of a system, one must first understand what is 
 
 #### State of the art
 
-A store finder application is already available at Jumbo's website, as seen here: https://www.jumbo.com/winkels. Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays"`_, _`Open until 19/20/21/22`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as _`store type`_ filters*.
+A store finder application is already available at Jumbo's website, as seen here: https://www.jumbo.com/winkels. Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays`_, _`Open until 20:00`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as _`store type`_ filters*.
 
 **Note: Either I didn't understand how the _`store type`_ filter works, or there's a bug on it. When I filter by "Pick-up point", I still get stores like [Jumbo Den Burg (Texel) Vogelenzang](https://www.jumbo.com/winkel/jumbo-den-burg-texel-vogelenzang?redirect=true), which (as far as I can see) is not a pick-up point.* 
 
