@@ -168,34 +168,30 @@ Several libraries were used to fulfill the needed business logics; the main ones
 
 ## How to run <a name="run"></a> :wrench:
 
-In order to run this project locally (without a docker image*), make sure you have:
+This project has several pre-requisites and can either be built/ruin with Docker or manually on the command line, as described on the two following sub-sections.
+
+Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081.
+
+#### The easy way :mortar_board:
+
+If you have [Docker](https://www.docker.com/products/docker-desktop) installed, you can start the project by either:
+1. Downloading [the prebuilt release](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0), extracting it and running _`docker-compose up -d`_.
+2. Running _`docker-compose up -d`_ on the root folder of this git project. 
+
+If you go with alternative (2), the start-up may be a bit slow on the first run due to maven artifacts download, but option (1) also has its own drawbacks due to the release.rar file size, as it contains all the jars and node_modules.
+
+#### The hard way :hammer:
+
+If you don't want to use docker, make sure you have:
 - [Java 8 SDK](https://www.oracle.com/br/java/technologies/javase/javase-jdk8-downloads.html) installed and properly configured on JAVA_HOME.
 - [RabbitMQ](https://www.rabbitmq.com/download.html) and [Erlang](https://www.rabbitmq.com/which-erlang.html).
 - [npm](https://www.npmjs.com/get-npm) for the Vue.js front-end application.
-
-Having the pre-requisites fulfilled, [download release.rar](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0) from Jumbo Store Locator v1.0 release, running the modules on separate terminals:
-- Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on its installation folder (it usually already self-starts after installing).
-- Extract the release zip on a folder of your choice.
-- Execute _`java -jar config-service`_, wait for it to initialize.
-- Execute_`java -jar discovery-service`_, wait for it to initialize.
-- With config and discovery services initialized, execute _`java -jar`_ on the remainder of jars: _`auth-service.jar`_, _`user-service.jar`_, _`store-service.jar`_ and _`api-gateway.jar`_.
-- Go into _`finder-client`_ folder and execute _`npm run serve`_ to start the Vue.js application.
-
-It is important that _`config-service`_ and _`discovery-service`_ are fully initialized before starting the other services, the latter also having dependencies on the former. The remainder of the projects can be initialized at any order, just remember to have _`RabbitMQ`_ running for _`auth-service`_ to interact with _`user-service`_. Having it all up and running, you can [run and test](#manual) the application by typing http://localhost:8081 on your favorite browser*, and either login as a guest or login with one of the following users:
-
-- andre.janino@gmail.com / Password1
-- marijn.deromph@jumbo.com / Password1
-- tamara.duric@jumbo.com / Password1
-- gustavo.henriquesmartins@jumbo.com / Password1
-
-As a side note, if you don't download the release and want to build the project yourself, you'll also need:
 - [Maven](http://maven.apache.org/download.cgi) installed and properly configured on your PATH variable.
-- Run _`mvn clean package`_ on each of the micro-services to build the jars.
-- Run _`npm i`_ on the filder-client folder to download the dependencies.
 
-**Note about docker image: it will be made available soon.*
-
-***Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website). Searching a little bit, there seems to be a few workarounds that could be tried, so that goes into the TODO list.*
+Having the pre-requisites fulfilled, you'll have to:
+- Get _`RabbitMQ`_ up and running by executing _`rabbitmq-server`_ on its installation folder (it usually already self-starts after installing).
+- Execute _`mvn package -Dmaven.test.skip=true`_ on each of the microservices to build the jar, followed by _`java -jar`_ to start the spring application.
+- Execute _`npm i`_ on _`finder-client`_ to download all the modules, followed by _`npm run serve`_ to start the Vue.js application.
 
 ## Testing <a name="testing"></a> :beetle:
 
@@ -218,13 +214,22 @@ This tool facilitates API testing by allowing the creation of get/post/put/delet
 
 #### Manual tests <a name="manual"></a>
 
-With the application [up and running](#run), head towards http://localhost:8081 on your favorite browser and you will be greeted with the store locator login page.
+With the application [up and running](#run), head towards http://localhost:8081 on your favorite browser* and you will be greeted with the store locator login page.
+
+***Note about browser support: It seems that the webp icons I borrowed from Jumbo are not playing nicely with Edge, as they are not loaded at all (the same issue is present in Jumbo's store search website). Searching a little bit, there seems to be a few workarounds that could be tried, so that goes into the TODO list.*
 
 <p align="center">
   <img src="_resources/Test-Login.png" title="Login page" alt="Login page"/>
 </p>
 
-You can choose to login with your user/pass, or to proceed as a guest (in which case, favoriting a store won't be allowed, but everything else works the same). After logging in, you should be greeted by a map filled with all Jumbo stores, as shown below:
+You can choose to login with your user/pass, or to proceed as a guest (in which case, favoriting a store won't be allowed, but everything else works the same). The available users are:
+
+- andre.janino@gmail.com / Password1
+- marijn.deromph@jumbo.com / Password1
+- tamara.duric@jumbo.com / Password1
+- gustavo.henriquesmartins@jumbo.com / Password1
+
+After logging in, you should be greeted by a map filled with all Jumbo stores, as shown below:
 
 <p align="center">
   <img src="_resources/Test-MainPage.png" title="Main page" alt="Main page"/>
