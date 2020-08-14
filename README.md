@@ -7,7 +7,7 @@
 A private repository for Jumbo coding assessment: "Create an application that shows the 5 closest Jumbo stores to a given position".
 Powered by Spring Boot + Vue.js. 
 
-Current release: [v1.0](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0)
+Current release: [v1.1](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.1)
 
 ## Index :pushpin:
 - [Design](#design)
@@ -175,7 +175,7 @@ Having it all up and running, you can [run and test](#manual) the application by
 #### The easy way :mortar_board:
 
 If you have [Docker](https://www.docker.com/products/docker-desktop) installed, you can start the project by either:
-1. Downloading [the prebuilt release](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.0), extracting it and running _`docker-compose up -d`_.
+1. Downloading [the prebuilt release](https://github.com/andre-janino/JumboStoreLocator/releases/tag/v1.1), extracting it and running _`docker-compose up -d`_.
 2. Running _`docker-compose up -d`_ on the root folder of this git project. 
 
 If you go with alternative (2), the start-up may be a bit slow on the first run due to maven artifacts download, but option (1) also has its own drawbacks due to the release.rar file size, as it contains all the jars and node_modules.
