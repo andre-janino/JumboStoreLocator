@@ -235,13 +235,13 @@ After logging in, you should be greeted by a map filled with all Jumbo stores wi
   <img src="_resources/Test-MainPage.png" title="Main page" alt="Main page"/>
 </p>
 
-Stores can be filtered by type: _`Supermarkten/Pickup point/Drive through`_. If an address is provided, stores ordered by distance of the given location on the search panel:
+Stores can be filtered by type: _`Supermarkten/Pickup point/Drive through`_. If an address is provided, stores are ordered by distance of the given location:
 
 <p align="center">
   <img src="_resources/Test-Filters-AddressSearch.png" title="Searching for an address" alt="Searching"/>
 </p>
 
-The feature that was requested on this coding challenge is available on the second tab, under _`Nearby Stores`_. It has the same functionalities as the _`All Stores`_, but it limits the amount of results by _`5, 10, 25 or 50`_, depending on the user selection:
+The feature that was requested on this coding assignment is available on the _`Nearby Stores`_ tab. It has the same functionalities as _`All Stores`_, but it limits the amount of results by _`5, 10, 25 or 50`_, depending on the user selection:
 
 <p align="center">
   <img src="_resources/Test-Filters-Nearest.png" title="Nearest stores" alt="Nearest stores"/>
