@@ -229,27 +229,27 @@ You can choose to login with your user/pass, or to proceed as a guest (in which 
 - tamara.duric@jumbo.com / Password1
 - gustavo.henriquesmartins@jumbo.com / Password1
 
-After logging in, you should be greeted by a map filled with all Jumbo stores, as shown below:
+After logging in, you should be greeted by a map filled with all Jumbo stores with the _`All Stores`_ option pre-selected, as shown below:
 
 <p align="center">
   <img src="_resources/Test-MainPage.png" title="Main page" alt="Main page"/>
 </p>
 
-The user is able to search addresses (with auto-complete functionality), to see _`all/nearest/favorite`_ stores and to filter by location type:
+Stores can be filtered by type: _`Supermarkten/Pickup point/Drive through`_. If an address is provided, stores ordered by distance of the given location on the search panel:
 
 <p align="center">
   <img src="_resources/Test-Filters-AddressSearch.png" title="Searching for an address" alt="Searching"/>
 </p>
 
-Finally, the feature that was asked to be implemented on this coding challenge is available on the second tab, under _`Nearby stores`_:
+The feature that was requested on this coding challenge is available on the second tab, under _`Nearby Stores`_. It has the same functionalities as the _`All Stores`_, but it limits the amount of results by _`5, 10, 25 or 50`_, depending on the user selection:
 
 <p align="center">
   <img src="_resources/Test-Filters-Nearest.png" title="Nearest stores" alt="Nearest stores"/>
 </p>
 
-It is interesting to note that the _`Nearby stores`_ may be redundant; it functions exactly as the "All stores" tab does, but it offers a limit filter (and only allows up to 50 stores). At this point I've kept both only because it showcases different ways the search panel could be setup. Eventually, if more filters are added, it would be a good idea to change the design, either moving this option to the header or creating a filter button that displays advanced options.
+It is interesting to note that the _`Nearby stores`_ is, at this point, a little bit redundant; it functions exactly as the "All stores" tab does, but it offers a way to limit the number of results. I've only kept both to showcase different ways the search panel can be setup. Eventually, if more filters are added, it would be a good idea to change the design, either moving this option to the header (and eliminating redundant tabs) or by creating a filter button that displays advanced options.
 
-As for the other functionalities: upon clicking on a store (either on a search panel or on a marker), the search panel focus on and expands the selected store, displaying its details. The open hours fields (over the week) are hardcoded, but the favorite toggle button works and enables favorited stores to be seen on the third tab, under _`Favorite stores`_.  
+As for the other functionalities: upon clicking on a store (either on a search panel or on a marker), the search panel focus on and expands the selected store, displaying its details. The open hours fields (over the week) are hardcoded, but the favorite toggle button works and enables favorited stores to be seen on the third tab, under _`Favorite Stores`_:  
 
 <p align="center">
   <img src="_resources/Test-Filters-Nearest-25.png" title="Nearest stores" alt="Nearest stores"/>
@@ -262,7 +262,7 @@ Clicking on the _`directions`_ and _`pick-up`_ buttons opens a new tab, displayi
 - Migrate the _`h2 database`_ into _`MySQL/PostgreeSQL/etc`_, as h2 is only suitable for simple tests.
 - Add admin-specific pages for managing users and stores. When this is done, also implement _`event-sourcing`_ to synchronize services which rely on this data (eliminate querying across services as much as possible and allowing better decoupling).
 - Add security for _`Spring Cloud Config`_, and move the config to a github repo (JDBC-based Spring Cloud Config is interesting, but harder to configure).
-- Improve logging (_`ELK Stack`_).
+- Improve logging by using the _`ELK Stack`_.
 - Improve the search panel responsiveness for mobile (need to add some @media breakpoint behaviors to displaty it differently for phones).
 - Add _`selenium`_ tests (that is, don't rely on JUnit and Postman alone).
 - Fix the bug with webp icons on Edge.
