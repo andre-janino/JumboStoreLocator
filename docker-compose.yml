@@ -1,0 +1,95 @@
+version: '3'
+services:   
+  rabbit:
+    image: rabbitmq:management
+    hostname: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      
+  config:
+    image: jumbo/config-service
+    build:
+      context: ./config-service
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+
+  discovery:
+    image: jumbo/discovery-service
+    build:
+      context: ./discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - "9999:9999"
+    depends_on:
+      - config
+    links:
+      - config:config
+    environment:
+      - server.port=9999
+
+  gateway:
+    image: jumbo/api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - config
+      - discovery
+    links:
+      - discovery:discovery
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:9999/eureka/
+      
+  auth:
+    image: jumbo/auth-service
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - config
+      - discovery
+    links:
+      - discovery:discovery
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:9999/eureka/
+      - spring.rabbitmq.host=rabbit
+      
+  user:
+    image: jumbo/user-service
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - config
+      - discovery
+    links:
+      - discovery:discovery
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:9999/eureka/
+      - spring.rabbitmq.host=rabbit
+      
+  store:
+    image: jumbo/store-service
+    build:
+      context: ./store-service
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    environment:
+      - server.port=5555
+      - eureka.client.serviceUrl.defaultZone=http://discovery:9999/eureka/
+      - spring.data.mongodb.uri=mongodb+srv://jumbo:jumbodb@storescluster.ssuzl.mongodb.net/storeData?retryWrites=true&w=majority
+      - spring.data.mongodb.database=storeData
+      
+  front:
+    build: ./finder-client
+    ports:
+      - "8081:8081"
