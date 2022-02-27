@@ -18,8 +18,6 @@ Current release: [v1.1](https://github.com/andre-janino/JumboStoreLocator/releas
 
 ## Design <a name="design"></a> :memo:
 
-Before drafting the architecture of a system, one must first understand what is being asked to be built and define a scope. When presented with a requirement which only states the general purpose of an application without exploring the intricate details and complementing functionalities, it makes sense to understand what is already in place, both in your business and elsewhere, and then evalute what improvements can be made, if any.
-
 #### State of the art
 
 A store finder application is already available at Jumbo's website, as seen here: https://www.jumbo.com/winkels. Upon loading, it displays all existing stores and allows several different filters:  _`Open now`_, _`Open on Sundays`_, _`Open until 20:00`_, _`New store`_, _`Pickup-point`_, _`Store`_, and _`Store + pickup-point`_, as well as _`store type`_ filters*.
